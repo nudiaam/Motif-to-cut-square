@@ -1,194 +1,194 @@
 # Lalikul Cut Prep
 
 <p align="center">
-  <img src="app/assets/lalikul-cut-prep.png" alt="Logotipo de Lalikul Cut Prep" width="180">
+  <img src="app/assets/lalikul-cut-prep.png" alt="Lalikul Cut Prep logo" width="180">
 </p>
 
-Demo local para Windows que convierte una imagen de la cama de una cortadora láser en centros de motivo y cuadrados o rectángulos de corte exportables como SVG.
+A local Windows demo that converts an image of a laser cutter bed into motif centres and cut squares or rectangles that can be exported as SVG.
 
-La configuración inicial utiliza **Epilog Fusion Maker 36**, una cama de **36 × 24 in** y cortes globales de **5 × 5 in**. También permite crear máquinas personalizadas, cambiar unidades y modificar el tamaño de corte.
+The initial configuration uses an **Epilog Fusion Maker 36**, a **36 x 24 in** bed, and a global cut size of **5 x 5 in**. You can also create custom machine profiles, change working units, and adjust the cut size.
 
-> **Estado del proyecto:** prototipo funcional para validación. No controla la máquina, no inicia cortes y no configura potencia, velocidad, frecuencia, enfoque ni materiales.
+> **Project status:** functional validation prototype. It does not control the laser cutter, start cutting jobs, or configure power, speed, frequency, focus, or materials.
 
-## Documentación para dos públicos
+## Documentation for users and developers
 
-La documentación está dividida para no obligar a un usuario normal a leer detalles de programación:
+The documentation is split so that non-technical users do not have to read development details:
 
-- Este `README.md` explica qué hace la app, cómo instalarla y cómo usarla. Es también la portada del proyecto en GitHub.
-- El [manual completo de usuario](docs/Manual_de_usuario_Lalikul_Cut_Prep.docx) contiene instrucciones detalladas, capturas, estados, parámetros y resolución de problemas.
-- La [guía para desarrollo](docs/DEVELOPER_GUIDE.md) describe la arquitectura, el entorno virtual, las pruebas y las decisiones técnicas.
+- This `README.md` explains what the app does, how to install it, and how to use it. It is also the project homepage on GitHub.
+- The [complete user manual](docs/Manual_de_usuario_Lalikul_Cut_Prep.docx) provides detailed instructions, screenshots, states, settings, and troubleshooting guidance.
+- The [developer guide](docs/DEVELOPER_GUIDE.md) describes the architecture, virtual environment, tests, and technical decisions.
 
-## Inicio rápido para usuarios de Windows
+## Quick start for Windows users
 
-### 1. Descargar y descomprimir
+### 1. Download and extract
 
-En GitHub, pulsa **Code → Download ZIP**. Extrae todo el ZIP a una carpeta normal antes de continuar. No ejecutes la aplicación directamente dentro del ZIP.
+On GitHub, select **Code -> Download ZIP**. Extract the entire ZIP to a normal folder before continuing. Do not run the application from inside the ZIP file.
 
-### 2. Instalar Python
+### 2. Install Python
 
-Instala [Python para Windows](https://www.python.org/downloads/windows/) 3.10 o posterior. Durante la instalación activa **Add python.exe to PATH**.
+Install [Python for Windows](https://www.python.org/downloads/windows/) 3.10 or later. During installation, enable **Add python.exe to PATH**.
 
-### 3. Preparar la aplicación una sola vez
+### 3. Set up the application once
 
-Haz doble clic en `setup.bat` y espera a que aparezca `Setup complete`.
+Double-click `setup.bat` and wait for the `Setup complete` message.
 
-El instalador crea `.venv`, un entorno de Python privado para esta aplicación, e instala PySide6, OpenCV y NumPy. No instala Node.js ni crea un servidor web.
+The setup script creates `.venv`, a private Python environment for this application, and installs PySide6, OpenCV, and NumPy. It does not install Node.js or create a web server.
 
-### 4. Abrir con el icono de la app y sin terminal
+### 4. Open the app without a terminal
 
-Haz doble clic en **`Lalikul Cut Prep.lnk`**, que `setup.bat` crea automáticamente en la carpeta principal.
+Double-click **`Lalikul Cut Prep.lnk`**, which `setup.bat` creates automatically in the main folder.
 
-Este es el acceso recomendado: muestra el logotipo de Lalikul Cut Prep y abre la interfaz mediante `pythonw.exe`, sin dejar una terminal visible ni utilizar el icono genérico de Python.
+This is the recommended launcher. It displays the Lalikul Cut Prep icon and opens the interface through `pythonw.exe`, without leaving a terminal window visible or using Python's generic icon.
 
-También existen dos alternativas:
+Alternative launchers are also available:
 
-- `Lalikul Cut Prep.vbs`: inicia la app sin terminal si el acceso directo no está disponible, aunque el archivo VBS conserva el icono genérico de Windows en el Explorador.
-- `run.bat`: delega en el mismo lanzador oculto y se cierra inmediatamente. Windows puede mostrar un destello breve de consola porque los archivos `.bat` se ejecutan mediante `cmd`.
-- `run_console.bat`: mantiene la terminal abierta deliberadamente para mostrar errores técnicos. Úsalo solo para diagnóstico.
+- `Lalikul Cut Prep.vbs` starts the app without a terminal if the shortcut is unavailable, although Windows Explorer displays a generic VBS icon for the file.
+- `run.bat` delegates to the same hidden launcher and closes immediately. Windows may briefly flash a console because `.bat` files run through `cmd`.
+- `run_console.bat` deliberately keeps the terminal open to display technical errors. Use it only for troubleshooting.
 
-## Flujo de trabajo habitual
+## Typical workflow
 
-1. Selecciona la máquina y confirma **Work Area** y **Working units**.
-2. Carga una imagen mediante **Paste Image**, `Ctrl+V`, **Open Image** o **Demo Image**.
-3. Si es necesario, desmarca **Lock image placement** para mover o escalar la imagen desde las esquinas sin deformarla. Vuelve a bloquearla al terminar.
-4. Pulsa **Detect**.
-5. Revisa los centros y los cuadrados. Muévelos, añade centros manuales o desactiva detecciones cuando sea necesario.
-6. Resuelve todos los cortes rojos y naranjas.
-7. Pulsa **Verify Export**.
-8. Pulsa **Export SVG** y confirma el tamaño físico al importarlo en el software receptor.
+1. Select the machine and confirm **Work Area** and **Working units**.
+2. Load an image using **Paste Image**, `Ctrl+V`, **Open Image**, or **Demo Image**.
+3. If necessary, clear **Lock image placement** to move the image or scale it from its corners without distorting it. Lock it again when finished.
+4. Select **Detect**.
+5. Review the centres and cut shapes. Move them, add manual centres, or disable detections when needed.
+6. Resolve every red or orange cut.
+7. Select **Verify Export**.
+8. Select **Export SVG** and confirm its physical size when importing it into the receiving software.
 
-## Moverse y hacer zoom como en Illustrator
+## Zooming and panning like Illustrator
 
-El canvas no es una vista fija. Puedes ampliar una zona de trabajo y desplazarte manteniendo intactas las coordenadas físicas:
+The canvas is not a fixed view. You can zoom into the workspace and pan without changing any physical coordinates:
 
-| Acción | Control en Windows |
+| Action | Windows control |
 |---|---|
-| Mano temporal | Mantén `Espacio` y arrastra |
-| Herramienta Mano | Pulsa `H` y arrastra |
-| Desplazamiento alternativo | Arrastra con el botón central del ratón |
-| Herramienta Zoom | Pulsa `Z` y haz clic |
-| Alejar con Zoom | `Alt + clic` con la herramienta Zoom |
-| Zoom bajo el cursor | `Ctrl + rueda del ratón` |
-| Acercar / alejar | `Ctrl + =` / `Ctrl + -` |
-| Encajar toda la cama | `Ctrl + 0` |
-| Volver a edición normal | `V` o `Esc` |
+| Temporary Hand tool | Hold `Space` and drag |
+| Hand tool | Press `H` and drag |
+| Alternative pan | Drag with the middle mouse button |
+| Zoom tool | Press `Z` and click |
+| Zoom out with the Zoom tool | `Alt + click` |
+| Zoom at the pointer | `Ctrl + mouse wheel` |
+| Zoom in / out | `Ctrl + =` / `Ctrl + -` |
+| Fit the entire bed | `Ctrl + 0` |
+| Return to normal editing | `V` or `Esc` |
 
-La rueda sin `Ctrl` desplaza la vista verticalmente; `Shift + rueda` la desplaza horizontalmente. El zoom se centra en la posición del cursor para no perder el punto que estabas inspeccionando.
+The mouse wheel without `Ctrl` pans vertically; `Shift + mouse wheel` pans horizontally. Zooming is centred on the pointer so that the area being inspected stays in view.
 
-Estos controles siguen los atajos principales de visualización de [Adobe Illustrator](https://helpx.adobe.com/illustrator/using/default-keyboard-shortcuts.html), adaptados a la cama física de esta aplicación.
+These controls follow the main navigation shortcuts in [Adobe Illustrator](https://helpx.adobe.com/illustrator/using/default-keyboard-shortcuts.html), adapted to this application's physical bed.
 
-## Copy Background Image de Epilog
+## Epilog Copy Background Image
 
-La demo **no se conecta directamente a las cámaras de Epilog**. Está preparada para reutilizar la imagen que Epilog Dashboard copia al portapapeles:
+The demo **does not connect directly to Epilog cameras**. It is designed to reuse the image that Epilog Dashboard copies to the Windows clipboard:
 
-**Epilog Dashboard → Copy Background Image → portapapeles de Windows → Lalikul Cut Prep → Ctrl+V → detección → cuadrados → SVG**
+**Epilog Dashboard -> Copy Background Image -> Windows clipboard -> Lalikul Cut Prep -> Ctrl+V -> detection -> cut shapes -> SVG**
 
-Epilog explica que **Copy Background Image** utiliza el sistema IRIS para obtener una captura de la cama y después pegarla en otra aplicación. En este proyecto, Lalikul Cut Prep ocupa el lugar de esa aplicación receptora. Consulta la [explicación oficial de Epilog](https://support.epiloglaser.com/laser-machine/fusion-galvo/usage-and-operation/how-and-when-to-use-the-copy-background-image-feature/).
+Epilog explains that **Copy Background Image** uses the IRIS camera system to capture the bed so the image can then be pasted into another application. In this workflow, Lalikul Cut Prep is that receiving application. See [Epilog's official explanation](https://support.epiloglaser.com/laser-machine/fusion-galvo/usage-and-operation/how-and-when-to-use-the-copy-background-image-feature/).
 
-## Significado de los colores
+## Colour meanings
 
-| Color | Estado | Qué hacer |
+| Colour | State | Action |
 |---|---|---|
-| Verde | Corte válido | Puede exportarse. |
-| Amarillo | Detección seleccionada | Puedes inspeccionarla o moverla. |
-| Naranja | Colisión | Separa los cortes o desactiva uno. |
-| Rojo | Fuera de la cama | Mueve el centro o reduce el tamaño de corte. |
-| Gris | Desactivado | No se exporta mientras siga desactivado. |
+| Green | Valid cut | Ready for export. |
+| Yellow | Selected detection | Inspect or move it. |
+| Orange | Collision | Separate the cuts or disable one of them. |
+| Red | Outside the bed | Move the centre or reduce the cut size. |
+| Grey | Disabled | Excluded from export while disabled. |
 
-Dos cortes activos se consideran en colisión si se superponen o si sus bordes se tocan exactamente. Ambos pasan a `COLLISION` y se excluyen del SVG hasta resolver el problema.
+Two enabled cuts are considered to collide if they overlap or if their edges touch exactly. Both change to `COLLISION` and are excluded from the SVG until the issue is resolved.
 
-## Controles principales
+## Main controls
 
 ### Machine / Work Area
 
-- **Machine** selecciona la máquina que define la cama física.
-- **Add machine...** guarda perfiles personalizados con nombre, anchura, altura y unidad.
-- **Working units** cambia las medidas visibles entre pulgadas, centímetros y milímetros.
-- El origen está en la esquina superior izquierda. X crece hacia la derecha e Y hacia abajo.
+- **Machine** selects the profile that defines the physical bed.
+- **Add machine...** saves custom profiles with a name, width, height, and unit.
+- **Working units** changes visible measurements between inches, centimetres, and millimetres.
+- The origin is at the top-left corner. X increases to the right and Y increases downwards.
 
 ### Bed / Image
 
-- La imagen se carga centrada y contenida en la cama, manteniendo su proporción.
-- **Lock image placement** protege la imagen mientras editas cuadrados.
-- Al desbloquearla, arrastra el interior para moverla y las esquinas para escalarla.
-- **IMAGE SCALE** muestra cuántos píxeles representan una unidad física horizontal y verticalmente.
+- The image is loaded centred and contained within the bed while preserving its aspect ratio.
+- **Lock image placement** protects the image while cut shapes are being edited.
+- When unlocked, drag inside the image to move it or drag a corner to scale it.
+- **IMAGE SCALE** shows how many pixels represent one physical unit horizontally and vertically.
 
 ### Global Cut Size
 
-- El valor inicial es **5 × 5 in**.
-- Con **Keep cut square** activo puedes editar Width o Height; la otra medida se sincroniza automáticamente.
-- Al desactivarlo puedes crear rectángulos libres.
+- The default value is **5 x 5 in**.
+- With **Keep cut square** enabled, you can edit either Width or Height; the other measurement updates automatically.
+- Disable it to create freely sized rectangles.
 
 ### Detection Settings
 
-| Parámetro | Predeterminado | Función |
+| Setting | Default | Purpose |
 |---|---:|---|
-| Sensitivity | 65 | Detecta diferencias respecto al fondo. |
-| Minimum area | 500 px² | Descarta grupos demasiado pequeños. |
-| Cleanup | 25% | Reduce ruido y cierra huecos cortos. |
-| Merge distance | 0.35 in | Agrupa fragmentos próximos de un mismo motivo. |
+| Sensitivity | 65 | Detects differences from the background. |
+| Minimum area | 500 px² | Discards groups that are too small. |
+| Cleanup | 25% | Reduces noise and closes small gaps. |
+| Merge distance | 0.35 in | Groups nearby fragments belonging to the same motif. |
 
-Haz doble clic sobre cualquiera de estos controles para restaurar su valor predeterminado. Después de cambiar un ajuste, vuelve a pulsar **Detect**.
+Double-click any of these controls to restore its default value. After changing a setting, select **Detect** again.
 
-## Edición manual
+## Manual editing
 
-- Haz clic en un centro o cuadrado para seleccionarlo y arrástralo para moverlo.
-- Activa **Add Center** y haz clic en la cama para crear una detección manual.
-- Pulsa **Delete** para borrar la selección.
-- Usa **Clear Detections** para borrar todas las detecciones.
-- Usa **Include in export** para desactivar un corte sin eliminarlo.
+- Click a centre or cut shape to select it, then drag it to move it.
+- Enable **Add Center** and click on the bed to create a manual detection.
+- Press **Delete** to remove the selection.
+- Use **Clear Detections** to remove every detection.
+- Use **Include in export** to disable a cut without deleting it.
 
-## Exportación y verificación
+## Export and verification
 
-El SVG contiene únicamente cortes que estén:
+The SVG contains only cuts that are:
 
-- activados;
-- completamente dentro de la cama;
-- libres de colisiones.
+- enabled;
+- completely inside the bed;
+- free from collisions.
 
-No incluye la fotografía, textos, centros, etiquetas ni bounding boxes.
+It does not include the photograph, text, centres, labels, or detection bounding boxes.
 
-Por defecto, **Export units** utiliza la misma unidad que **Working units**. Si eliges otra unidad, la app muestra una advertencia. Comprueba siempre el tamaño de cama en el programa receptor.
+By default, **Export units** uses the same unit as **Working units**. The app displays a warning if you choose a different unit. Always verify the bed size in the receiving software.
 
-**Verify Export** reconstruye la geometría SVG en píxeles y muestra el error máximo del recorrido imagen → coordenadas físicas → SVG → imagen. El contorno púrpura permite comparar el resultado.
+**Verify Export** reconstructs the SVG geometry in pixels and displays the maximum round-trip error across image -> physical coordinates -> SVG -> image. A purple outline lets you compare the result visually.
 
-La opción **Write debug JSON beside SVG** genera un archivo adicional con coordenadas, escalas y estados para diagnóstico.
+**Write debug JSON beside SVG** creates an additional diagnostic file containing coordinates, scales, and states.
 
-## Ayuda dentro de la aplicación
+## In-app help
 
-- Pulsa los pequeños iconos circulares de información para abrir explicaciones en inglés.
-- Mantén el cursor quieto sobre un botón de la barra superior durante aproximadamente 1,3 segundos para ver su ayuda.
+- Select the small circular information icons to open explanations in English.
+- Keep the pointer still over a top-toolbar button for approximately 1.3 seconds to display its help text.
 
-## Problemas frecuentes
+## Troubleshooting
 
-### La aplicación dice que falta o está roto el entorno
+### The application reports a missing or broken environment
 
-Ejecuta `setup.bat` otra vez. Si Python fue desinstalado, reinstálalo primero.
+Run `setup.bat` again. If Python has been uninstalled, reinstall it first.
 
-### Ctrl+V no carga la imagen
+### Ctrl+V does not load the image
 
-Vuelve a Epilog Dashboard, pulsa **Copy Background Image** y pega inmediatamente. También puedes probar **Open Image** con un PNG, JPG, JPEG o BMP.
+Return to Epilog Dashboard, select **Copy Background Image**, and paste immediately. You can also use **Open Image** with a PNG, JPG, JPEG, or BMP file.
 
-### La aplicación no abre y el lanzador oculto no muestra el motivo
+### The application does not open and the hidden launcher gives no reason
 
-Ejecuta `run_console.bat`. La terminal permanecerá abierta y mostrará el error técnico.
+Run `run_console.bat`. The terminal will remain open and display the technical error.
 
-### El SVG llega con tamaño incorrecto
+### The imported SVG has the wrong size
 
-Haz coincidir **Export units** con **Working units** y comprueba el tamaño de página al importar.
+Match **Export units** to **Working units** and verify the page size during import.
 
-## Límites actuales
+## Current limitations
 
-- No hay conexión directa con cámaras, Epilog Dashboard, PrintAPI ni la cortadora.
-- El detector utiliza OpenCV, no YOLO ni un modelo entrenado.
-- No hay corrección de perspectiva u homografía.
-- La relación imagen ↔ cama, el origen y el SVG deben validarse físicamente antes de producción.
-- El perfil predeterminado es Epilog Fusion Maker 36, pero pueden añadirse otras máquinas.
+- There is no direct connection to the cameras, Epilog Dashboard, PrintAPI, or laser cutter.
+- The detector uses OpenCV, not YOLO or a trained model.
+- There is no perspective or homography correction.
+- The image-to-bed relationship, origin, and SVG must be physically validated before production use.
+- The default profile is Epilog Fusion Maker 36, but additional machines can be added.
 
-## Desarrollo y pruebas
+## Development and testing
 
-La información técnica se mantiene fuera de la guía principal para que esta página siga siendo útil a usuarios no programadores. Consulta [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) para preparar el entorno desde PowerShell, conocer la estructura del código y ejecutar las pruebas.
+Technical information is kept outside this main guide so that the page remains useful to non-technical users. See [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) for PowerShell environment setup, code structure, and test instructions.
 
-## Estado de publicación
+## Release status
 
-Antes de distribuir públicamente una versión de producción conviene añadir un instalador firmado, una licencia explícita, control de versiones y una sección de releases. Esta carpeta contiene actualmente una demo local validable, no un paquete de producción certificado.
+Before distributing a production release publicly, the project should add a signed installer, an explicit licence, versioning, and a release section. This folder currently contains a local validation demo, not a certified production package.
