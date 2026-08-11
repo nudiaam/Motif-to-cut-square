@@ -62,10 +62,6 @@ class BedCanvas(QWidget):
         self.setMinimumSize(560, 380)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.setToolTip(
-            "View controls: Space+drag or H to pan; Z or Ctrl+wheel to zoom; "
-            "Ctrl+= / Ctrl+- to zoom; Ctrl+0 to fit."
-        )
 
     def set_scene(
         self,

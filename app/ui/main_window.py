@@ -12,10 +12,14 @@ from PySide6.QtGui import QAction, QImage, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
+    QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QMainWindow,
     QMessageBox,
+    QSizePolicy,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -32,7 +36,7 @@ from app.export.verifier import verify_export_geometry
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.units import LengthUnit
 from app.imaging.detector import MotifDetector
-from app.models import Detection, recalculate_cut_overlaps
+from app.models import Detection, recalculate_cut_overlaps, resolve_cut_overlaps
 from app.ui.canvas import BedCanvas
 from app.ui.help_widgets import DelayedHelpToolBar
 from app.ui.machine_dialog import AddMachineDialog
@@ -52,6 +56,10 @@ TOOLBAR_HELP = {
     "detect": (
         "Run the classical OpenCV detector using the current sensitivity, minimum "
         "area, and morphological cleanup settings."
+    ),
+    "fix": (
+        "Move only colliding cut shapes to the nearest free positions on the bed. "
+        "Cut sizes are preserved, and any remaining collision can still be moved manually."
     ),
     "add": (
         "Toggle manual center placement. While active, click anywhere on the bed "
@@ -117,6 +125,8 @@ class MainWindow(QMainWindow):
         )
         self.open_action = self._action("Open Image", self.open_image)
         self.detect_action = self._action("Detect", self.detect_motifs)
+        self.fix_overlaps_action = self._action("Fix Overlaps", self.fix_overlaps)
+        self.fix_overlaps_action.setVisible(False)
         self.add_action = self._action("Add Center", self._toggle_add_mode)
         self.add_action.setCheckable(True)
         self.delete_action = self._action(
@@ -136,6 +146,7 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
         toolbar.addSeparator()
         toolbar.addAction(self.detect_action)
+        toolbar.addAction(self.fix_overlaps_action)
         toolbar.addAction(self.add_action)
         toolbar.addAction(self.delete_action)
         toolbar.addAction(self.clear_action)
@@ -148,6 +159,7 @@ class MainWindow(QMainWindow):
             (self.paste_action, TOOLBAR_HELP["paste"]),
             (self.open_action, TOOLBAR_HELP["open"]),
             (self.detect_action, TOOLBAR_HELP["detect"]),
+            (self.fix_overlaps_action, TOOLBAR_HELP["fix"]),
             (self.add_action, TOOLBAR_HELP["add"]),
             (self.delete_action, TOOLBAR_HELP["delete"]),
             (self.clear_action, TOOLBAR_HELP["clear"]),
@@ -165,7 +177,21 @@ class MainWindow(QMainWindow):
         content_layout = QHBoxLayout(content)
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
-        content_layout.addWidget(self.canvas, 1)
+
+        workspace = QWidget()
+        workspace.setObjectName("workspaceColumn")
+        workspace_layout = QGridLayout(workspace)
+        workspace_layout.setContentsMargins(0, 0, 0, 0)
+        workspace_layout.addWidget(self.canvas, 0, 0)
+        self.navigation_help = self._build_navigation_help()
+        workspace_layout.addWidget(
+            self.navigation_help,
+            0,
+            0,
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom,
+        )
+
+        content_layout.addWidget(workspace, 1)
         content_layout.addWidget(self.panel)
         outer.addWidget(content, 1)
 
@@ -176,6 +202,56 @@ class MainWindow(QMainWindow):
         outer.addWidget(self.assumption_label)
         self._update_assumption_text()
         self.setCentralWidget(central)
+
+    def _build_navigation_help(self) -> QFrame:
+        container = QFrame()
+        container.setObjectName("navigationHelp")
+        container.setSizePolicy(
+            QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum
+        )
+        container.setMaximumWidth(440)
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(8, 5, 10, 7)
+        layout.setSpacing(3)
+
+        self.navigation_toggle = QToolButton()
+        self.navigation_toggle.setObjectName("navigationToggle")
+        self.navigation_toggle.setText("Navigation controls")
+        self.navigation_toggle.setCheckable(True)
+        self.navigation_toggle.setArrowType(Qt.ArrowType.RightArrow)
+        self.navigation_toggle.setToolButtonStyle(
+            Qt.ToolButtonStyle.ToolButtonTextBesideIcon
+        )
+        self.navigation_toggle.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.navigation_toggle.toggled.connect(self._toggle_navigation_help)
+        layout.addWidget(
+            self.navigation_toggle, 0, Qt.AlignmentFlag.AlignLeft
+        )
+
+        self.navigation_details = QWidget()
+        self.navigation_details.setObjectName("navigationDetails")
+        details_layout = QVBoxLayout(self.navigation_details)
+        details_layout.setContentsMargins(10, 8, 10, 8)
+        controls = QLabel(
+            "<b>Pan</b>&nbsp;&nbsp; Space + drag / H + drag / middle-button drag"
+            "<br><b>Zoom</b>&nbsp;&nbsp; Z + click / Alt + click out / Ctrl + wheel"
+            "<br><b>Fit bed</b>&nbsp;&nbsp; Ctrl + 0"
+            "<br><b>Edit mode</b>&nbsp;&nbsp; V or Esc"
+        )
+        controls.setObjectName("navigationText")
+        controls.setTextFormat(Qt.TextFormat.RichText)
+        details_layout.addWidget(controls)
+        self.navigation_details.setVisible(False)
+        layout.addWidget(
+            self.navigation_details, 0, Qt.AlignmentFlag.AlignLeft
+        )
+        return container
+
+    def _toggle_navigation_help(self, expanded: bool) -> None:
+        self.navigation_toggle.setArrowType(
+            Qt.ArrowType.DownArrow if expanded else Qt.ArrowType.RightArrow
+        )
+        self.navigation_details.setVisible(expanded)
 
     def _connect_signals(self) -> None:
         self.canvas.detection_selected.connect(self.select_detection)
@@ -366,6 +442,34 @@ class MainWindow(QMainWindow):
         self._refresh()
         self.statusBar().showMessage("Detections cleared", 4000)
 
+    def fix_overlaps(self) -> None:
+        """Automatically separate colliding cuts while preserving manual editing."""
+        if self.mapper is None:
+            self._request_image()
+            return
+        moved_ids, unresolved_ids = resolve_cut_overlaps(
+            self.detections, self.mapper
+        )
+        if moved_ids:
+            self.selected_id = moved_ids[-1]
+        elif unresolved_ids:
+            self.selected_id = unresolved_ids[0]
+        self._refresh()
+        if unresolved_ids:
+            self.statusBar().showMessage(
+                f"Moved {len(moved_ids)} cuts automatically — "
+                f"{len(unresolved_ids)} still collide; drag them manually or disable one",
+                10000,
+            )
+        elif moved_ids:
+            self.statusBar().showMessage(
+                f"Fixed all overlaps by moving {len(moved_ids)} cuts — "
+                "you can still reposition them manually",
+                8000,
+            )
+        else:
+            self.statusBar().showMessage("No overlaps to fix", 4000)
+
     def verify_export(self) -> None:
         if self.mapper is None:
             self._request_image()
@@ -539,6 +643,14 @@ class MainWindow(QMainWindow):
 
     def _refresh(self) -> None:
         recalculate_cut_overlaps(self.detections)
+        collision_count = sum(
+            detection.enabled and detection.overlaps_cut
+            for detection in self.detections
+        )
+        self.fix_overlaps_action.setVisible(collision_count > 0)
+        self.fix_overlaps_action.setText(
+            f"Fix Overlaps ({collision_count})" if collision_count else "Fix Overlaps"
+        )
         self.canvas.set_detections(self.detections)
         self.canvas.set_selected_id(self.selected_id)
         self.canvas.set_verification_rectangles({})

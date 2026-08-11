@@ -53,13 +53,19 @@ Alternative launchers are also available:
 3. If necessary, clear **Lock image placement** to move the image or scale it from its corners without distorting it. Lock it again when finished.
 4. Select **Detect**.
 5. Review the centres and cut shapes. Move them, add manual centres, or disable detections when needed.
-6. Resolve every red or orange cut.
+6. Resolve every red or orange cut. When collisions exist, use **Fix Overlaps** to
+   separate them automatically, or drag individual cuts to arrange them manually.
 7. Select **Verify Export**.
 8. Select **Export SVG** and confirm its physical size when importing it into the receiving software.
 
 ## Zooming and panning like Illustrator
 
-The canvas is not a fixed view. You can zoom into the workspace and pan without changing any physical coordinates:
+The canvas is not a fixed view. Open **Navigation controls** in the bottom-left
+corner of the workspace to see these controls at any time. The compact guide
+floats over the canvas, so opening it never moves or resizes the bed. It opens only
+when selected and is never shown automatically when the pointer is idle.
+
+You can zoom into the workspace and pan without changing any physical coordinates:
 
 | Action | Windows control |
 |---|---|
@@ -97,11 +103,22 @@ Epilog explains that **Copy Background Image** uses the IRIS camera system to ca
 
 Two enabled cuts are considered to collide if they overlap or if their edges touch exactly. Both change to `COLLISION` and are excluded from the SVG until the issue is resolved.
 
+When at least one collision exists, **Fix Overlaps** appears in the top toolbar.
+It keeps each detected visual centre as an anchor, leaves collision-free cuts in
+place, and shares the minimum required movement between colliding cuts. This keeps
+the complete arrangement as close as possible to the original motifs instead of
+arbitrarily pinning one cut and moving another. If there is not enough free space
+on the bed, the remaining cuts stay orange and can be dragged manually or disabled.
+Automatic placement never prevents later manual editing.
+
 ## Main controls
 
 ### Machine / Work Area
 
 - **Machine** selects the profile that defines the physical bed.
+- The built-in **Epilog Fusion Maker 36** profile uses the manufacturer's stated
+  maximum engraving area of **36 x 24 in** (approximately 915 x 610 mm), as listed
+  in the [official Epilog 17000 Series manual](https://www.epiloglaser.com/es/assets/downloads/manuals/17000-series_manual.pdf).
 - **Add machine...** saves custom profiles with a name, width, height, and unit.
 - **Working units** changes visible measurements between inches, centimetres, and millimetres.
 - The origin is at the top-left corner. X increases to the right and Y increases downwards.
@@ -112,6 +129,9 @@ Two enabled cuts are considered to collide if they overlap or if their edges tou
 - **Lock image placement** protects the image while cut shapes are being edited.
 - When unlocked, drag inside the image to move it or drag a corner to scale it.
 - **IMAGE SCALE** shows how many pixels represent one physical unit horizontally and vertically.
+- A motif centre is calculated from the geometric centre of its complete detected
+  visual extent, preventing dense lower areas in ships, violins, or machines from
+  pulling the centre away from the artwork's middle.
 
 ### Global Cut Size
 
@@ -133,6 +153,7 @@ Double-click any of these controls to restore its default value. After changing 
 ## Manual editing
 
 - Click a centre or cut shape to select it, then drag it to move it.
+- If cuts collide, either select **Fix Overlaps** or continue arranging them manually.
 - Enable **Add Center** and click on the bed to create a manual detection.
 - Press **Delete** to remove the selection.
 - Use **Clear Detections** to remove every detection.

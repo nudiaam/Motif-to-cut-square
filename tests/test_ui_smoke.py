@@ -7,7 +7,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QPoint, QPointF, Qt  # noqa: E402
 from PySide6.QtTest import QTest  # noqa: E402
-from PySide6.QtWidgets import QApplication  # noqa: E402
+from PySide6.QtWidgets import QApplication, QStyle, QStyleOptionSpinBox  # noqa: E402
 
 from app.ui.help_widgets import DelayedHelpToolBar, InfoButton  # noqa: E402
 from app.ui.main_window import MainWindow  # noqa: E402
@@ -45,6 +45,9 @@ class UISmokeTests(unittest.TestCase):
 
     def test_contextual_help_is_registered(self) -> None:
         window = MainWindow()
+        window.resize(1280, 800)
+        window.show()
+        self.application.processEvents()
         info_buttons = window.panel.findChildren(InfoButton)
         self.assertEqual(len(info_buttons), 21)
         self.assertTrue(all(button.help_text.strip() for button in info_buttons))
@@ -53,8 +56,18 @@ class UISmokeTests(unittest.TestCase):
         self.assertIsNotNone(toolbar)
         assert toolbar is not None
         self.assertEqual(toolbar.HOVER_DELAY_MS, 1300)
-        self.assertEqual(len(toolbar._help_by_widget), 9)
+        self.assertEqual(len(toolbar._help_by_widget), 10)
         self.assertTrue(all(text.strip() for text in toolbar._help_by_widget.values()))
+        self.assertEqual(window.canvas.toolTip(), "")
+        self.assertFalse(window.navigation_details.isVisible())
+        canvas_geometry = window.canvas.geometry()
+        window.navigation_toggle.setChecked(True)
+        self.application.processEvents()
+        self.assertFalse(window.navigation_details.isHidden())
+        self.assertEqual(window.canvas.geometry(), canvas_geometry)
+        self.assertLess(window.navigation_help.width(), window.canvas.width())
+        window.navigation_toggle.setChecked(False)
+        self.assertTrue(window.navigation_details.isHidden())
         window.close()
 
     def test_working_units_cut_size_and_physical_minimum_area(self) -> None:
@@ -95,6 +108,41 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(window.cut_height_inches, 6.0)
         window.close()
 
+    def test_panel_width_and_spin_buttons_stay_visible_after_size_change(self) -> None:
+        window = MainWindow()
+        window.resize(1280, 800)
+        window.show()
+        window.load_demo_image()
+        self.application.processEvents()
+        initial_width = window.panel.width()
+
+        window.panel.cut_width_spin.setValue(6.0)
+        assert window.mapper is not None
+        window.add_center(*window.mapper.inches_to_pixel(10.0, 10.0))
+        window.add_center(*window.mapper.inches_to_pixel(12.0, 10.0))
+        self.application.processEvents()
+
+        self.assertEqual(initial_width, 420)
+        self.assertEqual(window.panel.width(), initial_width)
+        self.assertIn("COLLISION", window.panel.detection_list.item(0).text())
+        for spin in (window.panel.cut_width_spin, window.panel.cut_height_spin):
+            option = QStyleOptionSpinBox()
+            spin.initStyleOption(option)
+            for control in (
+                QStyle.SubControl.SC_SpinBoxUp,
+                QStyle.SubControl.SC_SpinBoxDown,
+            ):
+                button = spin.style().subControlRect(
+                    QStyle.ComplexControl.CC_SpinBox,
+                    option,
+                    control,
+                    spin,
+                )
+                self.assertGreater(button.width(), 0)
+                self.assertGreaterEqual(button.left(), 0)
+                self.assertLess(button.right(), spin.width())
+        window.close()
+
     def test_cut_collisions_update_status_and_counts(self) -> None:
         window = MainWindow()
         window.load_demo_image()
@@ -104,6 +152,7 @@ class UISmokeTests(unittest.TestCase):
         window.add_center(*first)
         window.add_center(*second)
         self.assertTrue(all(item.overlaps_cut for item in window.detections))
+        self.assertTrue(window.fix_overlaps_action.isVisible())
         self.assertEqual(window.panel.valid_value_label.text(), "0")
         self.assertEqual(window.panel.invalid_value_label.text(), "2")
         self.assertEqual(window.panel.disabled_value_label.text(), "0")
@@ -112,6 +161,26 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(window.panel.valid_value_label.text(), "1")
         self.assertEqual(window.panel.invalid_value_label.text(), "0")
         self.assertEqual(window.panel.disabled_value_label.text(), "1")
+        window.close()
+
+    def test_fix_overlaps_action_preserves_manual_repositioning(self) -> None:
+        window = MainWindow()
+        window.load_demo_image()
+        assert window.mapper is not None
+        window.add_center(*window.mapper.inches_to_pixel(10.0, 10.0))
+        window.add_center(*window.mapper.inches_to_pixel(12.0, 10.0))
+        original_first = window.detections[0].center_inches
+
+        window.fix_overlaps()
+
+        self.assertFalse(any(item.overlaps_cut for item in window.detections))
+        self.assertNotEqual(window.detections[0].center_inches, original_first)
+        self.assertFalse(window.fix_overlaps_action.isVisible())
+        moved = window.detections[1]
+        manual_position = window.mapper.inches_to_pixel(22.0, 15.0)
+        window.move_detection(moved.id, *manual_position)
+        self.assertAlmostEqual(moved.center_inches[0], 22.0)
+        self.assertAlmostEqual(moved.center_inches[1], 15.0)
         window.close()
 
     def test_detection_controls_reset_on_double_click(self) -> None:

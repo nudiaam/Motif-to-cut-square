@@ -42,6 +42,24 @@ QToolBar QToolButton:pressed, QToolBar QToolButton:checked {
     background: #197a67;
     border-color: #39d6a4;
 }
+QFrame#navigationHelp {
+    background: #282e36;
+    border: 1px solid #39424c;
+    border-radius: 4px;
+}
+QToolButton#navigationToggle {
+    background: transparent;
+    color: #9ca8b3;
+    border: none;
+    padding: 3px 5px;
+    font-size: 9pt;
+}
+QToolButton#navigationToggle:hover { color: #d7dee4; }
+QWidget#navigationDetails { background: transparent; border: none; }
+QLabel#navigationText {
+    color: #c5ced6;
+    font-size: 9pt;
+}
 QFrame#panelSection {
     background: #282e36;
     border: 1px solid #39424c;

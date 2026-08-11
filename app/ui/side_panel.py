@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSlider,
+    QSizePolicy,
     QStyle,
     QStyleOptionSpinBox,
     QVBoxLayout,
@@ -116,8 +117,9 @@ class SidePanel(QWidget):
         self._minimum_area_mode = "px2"
         self._syncing_cut_size = False
         self._double_click_resets: dict[QObject, object] = {}
-        self.setMinimumWidth(390)
-        self.setMaximumWidth(460)
+        # Long detection states such as "COLLISION" must never resize the
+        # inspector or push numerical step buttons outside the viewport.
+        self.setFixedWidth(420)
 
         root_layout = QVBoxLayout(self)
         root_layout.setContentsMargins(0, 0, 0, 0)
@@ -130,6 +132,10 @@ class SidePanel(QWidget):
 
         content = QWidget()
         content.setObjectName("sidePanelContent")
+        content.setMinimumWidth(0)
+        content.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         layout = QVBoxLayout(content)
         layout.setContentsMargins(14, 14, 14, 14)
         layout.setSpacing(10)
@@ -154,6 +160,10 @@ class SidePanel(QWidget):
         export_layout.addWidget(export_label)
         export_layout.addWidget(InfoButton(HELP["export_units"]), 0, Qt.AlignmentFlag.AlignTop)
         self.export_unit_combo = QComboBox()
+        self.export_unit_combo.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.export_unit_combo.setMinimumContentsLength(16)
         self.export_unit_combo.addItem("Same as working units", "same")
         for unit in LengthUnit:
             self.export_unit_combo.addItem(f"{unit.display_name} ({unit.value})", unit.value)
@@ -176,6 +186,10 @@ class SidePanel(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
         self.machine_combo = QComboBox()
+        self.machine_combo.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.machine_combo.setMinimumContentsLength(18)
         self.machine_combo.currentIndexChanged.connect(self._on_machine_changed)
         add_button = QPushButton("Add machine…")
         add_button.clicked.connect(self.add_machine_requested)
@@ -278,6 +292,10 @@ class SidePanel(QWidget):
         minimum_layout.setContentsMargins(0, 0, 0, 0)
         minimum_layout.setSpacing(4)
         self.minimum_area_spin = MinimalArrowDoubleSpinBox()
+        self.minimum_area_spin.setMinimumWidth(0)
+        self.minimum_area_spin.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         self.minimum_area_spin.setRange(1, 500_000)
         self.minimum_area_spin.setDecimals(0)
         self.minimum_area_spin.setValue(500)
@@ -346,6 +364,9 @@ class SidePanel(QWidget):
 
         self.detection_list = QListWidget()
         self.detection_list.setMinimumHeight(170)
+        self.detection_list.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         self.detection_list.setAlternatingRowColors(True)
         self.detection_list.currentItemChanged.connect(self._on_current_item_changed)
         self.detection_list.itemChanged.connect(self._on_item_changed)
@@ -738,6 +759,10 @@ class SidePanel(QWidget):
     @staticmethod
     def _physical_spin(value: float) -> QDoubleSpinBox:
         spin = MinimalArrowDoubleSpinBox()
+        spin.setMinimumWidth(0)
+        spin.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed
+        )
         spin.setRange(0.001, 100_000.0)
         spin.setDecimals(3)
         spin.setValue(value)
@@ -786,6 +811,10 @@ class SidePanel(QWidget):
             )
         label_layout.addStretch(1)
         layout.addWidget(label_group)
+        control.setMinimumWidth(0)
+        control_policy = control.sizePolicy()
+        control_policy.setHorizontalPolicy(QSizePolicy.Policy.Ignored)
+        control.setSizePolicy(control_policy)
         layout.addWidget(control, 1)
         if value_label is not None:
             value_label.setMinimumWidth(30)

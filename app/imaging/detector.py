@@ -28,7 +28,6 @@ class MotifCandidate:
 @dataclass(frozen=True, slots=True)
 class _RawComponent:
     bounding_box_px: tuple[int, int, int, int]
-    center_px: tuple[float, float]
     area_px: int
     contrast: float
 
@@ -117,7 +116,7 @@ class MotifDetector:
         merge_distance_px_x: float,
         merge_distance_px_y: float,
     ) -> list[MotifCandidate]:
-        count, labels, stats, centroids = cv2.connectedComponentsWithStats(
+        count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
             mask, connectivity=8
         )
         components: list[_RawComponent] = []
@@ -132,7 +131,6 @@ class MotifDetector:
             components.append(
                 _RawComponent(
                     (x, y, width, height),
-                    (float(centroids[label][0]), float(centroids[label][1])),
                     area,
                     contrast,
                 )
@@ -154,10 +152,12 @@ class MotifDetector:
             bottom = max(
                 item.bounding_box_px[1] + item.bounding_box_px[3] for item in group
             )
-            center = (
-                sum(item.center_px[0] * item.area_px for item in group) / area,
-                sum(item.center_px[1] * item.area_px for item in group) / area,
-            )
+            # Use the geometric centre of the complete detected motif, not the
+            # ink-density centroid. A mass centroid is pulled towards visually
+            # dense areas (for example the hull of a ship, the body of a violin,
+            # or the base of a sewing machine) even when the artwork itself is
+            # centred correctly in its full visual extent.
+            center = ((x + right) / 2.0, (y + bottom) / 2.0)
             contrast = sum(item.contrast * item.area_px for item in group) / area
             contrast_score = np.clip((contrast - threshold) / 80.0, 0.0, 1.0)
             area_score = np.clip(area / max(minimum_area_px * 8.0, 1.0), 0.0, 1.0)
