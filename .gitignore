@@ -1,0 +1,9 @@
+.venv/
+.qa-deps/
+qa_artifacts/
+tmp/
+__pycache__/
+*.py[cod]
+lalikul_cut_*.svg
+lalikul_cut_*.json
+Lalikul Cut Prep.lnk
