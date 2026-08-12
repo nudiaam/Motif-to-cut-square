@@ -15,7 +15,11 @@ The initial configuration uses an **Epilog Fusion Maker 36**, a **36 x 24 in** b
 The documentation is split so that non-technical users do not have to read development details:
 
 - This `README.md` explains what the app does, how to install it, and how to use it. It is also the project homepage on GitHub.
-- The [complete user manual](docs/Manual_de_usuario_Lalikul_Cut_Prep.docx) provides detailed instructions, screenshots, states, settings, and troubleshooting guidance.
+- The complete user manual is available in both languages:
+  - [English user manual](docs/Lalikul_Cut_Prep_User_Manual_EN.docx)
+  - [Spanish user manual](docs/Lalikul_Cut_Prep_Manual_de_usuario_ES.docx)
+  Both editions include detailed instructions, screenshots, states, settings,
+  navigation controls, automatic overlap correction, and troubleshooting guidance.
 - The [developer guide](docs/DEVELOPER_GUIDE.md) describes the architecture, virtual environment, tests, and technical decisions.
 
 ## Quick start for Windows users
