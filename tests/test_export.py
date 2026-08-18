@@ -13,11 +13,11 @@ from app.export.verifier import verify_export_geometry
 
 
 class SVGExporterTests(unittest.TestCase):
-    def test_svg_physical_size_and_only_valid_enabled_rectangles(self) -> None:
+    def test_svg_physical_size_exports_every_enabled_rectangle(self) -> None:
         mapper = CoordinateMapper(1800, 1200)
         detections = [
             Detection.from_pixel_center(1, (900, 600), mapper),
-            Detection.from_pixel_center(2, (50, 50), mapper),  # invalid
+            Detection.from_pixel_center(2, (50, 50), mapper),  # enabled but clipped
             Detection.from_pixel_center(3, (1200, 800), mapper, enabled=False),
             Detection.from_pixel_center(4, (400, 300), mapper),
         ]
@@ -30,8 +30,10 @@ class SVGExporterTests(unittest.TestCase):
         self.assertEqual(root.attrib["height"], "24in")
         self.assertEqual(root.attrib["viewBox"], "0 0 36 24")
         rectangles = root.findall(f"{{{SVG_NAMESPACE}}}rect")
-        self.assertEqual(len(rectangles), 2)
-        self.assertEqual(result.rectangle_count, 2)
+        # Every checked cut is exported; only the unchecked #3 is skipped, even
+        # though #2 is clipped and would raise a warning during preflight.
+        self.assertEqual(len(rectangles), 3)
+        self.assertEqual(result.rectangle_count, 3)
         self.assertTrue(all(rect.attrib["width"] == "5" for rect in rectangles))
         self.assertTrue(all(rect.attrib["height"] == "5" for rect in rectangles))
 

@@ -2,8 +2,16 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QObject, QPointF, QSignalBlocker, Qt, Signal
-from PySide6.QtGui import QColor, QFont, QPainter, QPen
+from PySide6.QtCore import (
+    QEvent,
+    QItemSelectionModel,
+    QObject,
+    QPointF,
+    QSignalBlocker,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import QColor, QPainter, QPen
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -16,7 +24,9 @@ from PySide6.QtWidgets import (
     QListWidgetItem,
     QPushButton,
     QScrollArea,
+    QAbstractItemView,
     QSlider,
+    QSpinBox,
     QSizePolicy,
     QStyle,
     QStyleOptionSpinBox,
@@ -83,11 +93,15 @@ HELP = {
     "cut_width": "The physical width of every exported cut rectangle, displayed in the current working units.",
     "cut_height": "The physical height of every exported cut rectangle, displayed in the current working units.",
     "keep_square": "When enabled, cut height follows cut width so every cut remains square.",
-    "settings_section": "Controls the classical OpenCV detector. Change a value and press Detect again to recalculate automatic detections.",
-    "sensitivity": "Higher sensitivity detects subtler differences from the estimated fabric background, but may also detect more noise. Double-click the control to reset it to 65.",
-    "minimum_area": "Rejects motif groups smaller than this area. Use image pixels squared or the current physical working unit squared; physical values are converted automatically from the loaded image scale. Double-click to reset to 500 px².",
-    "cleanup": "A dimensionless, freely adjustable OpenCV cleanup strength. It removes small noise and closes short gaps; it is not a physical measurement. Double-click to reset to 25 percent.",
-    "merge": "The maximum physical gap used to group nearby printed fragments into one motif, such as a bird and branch or a mushroom cap and stem. Large values may merge separate motifs. Double-click to reset to 0.35 inches.",
+    "settings_section": "Technical detection overrides. Normal grid correction and cut review do not require changing these values.",
+    "layout": "This choice applies only when improving an existing free detection. Automatic estimates repeated panels, Use a panel grid lets you enter boundaries, and No grid keeps a free composition.",
+    "result_style": "Clean result favours fewer false detections on busy fabric. Balanced works for most images. Find faint figures accepts subtler differences and may need more review.",
+    "join_parts": "Keeps nearby detached pieces of the same figure together, such as an antenna, branch, or separate appliqué detail.",
+    "grid": "Panel guides are independent from detector settings. Show or hide them, unlock them for dragging, or enter rows and columns. Changes preserve the current result until you explicitly detect again.",
+    "sensitivity": "Controls how different a region must be from the estimated local fabric background. Low values keep only strong visual differences, reducing noise but possibly missing faint motifs. High values include subtler differences, detecting pale motifs but also more fabric texture, shadows, and noise.",
+    "minimum_area": "Rejects detected groups smaller than this area. Low values retain small motifs and fragments, but may also keep specks and texture. High values suppress more noise, but may discard small or faint motifs. Use image pixels squared or the current physical working unit squared; physical values are converted automatically from the loaded image scale.",
+    "cleanup": "Controls the strength of OpenCV noise removal and gap closing; it is dimensionless, not a physical measurement. Low values preserve fine details and separate fragments, but leave more specks and gaps. High values remove noise and close gaps more aggressively, but may erase thin details or join nearby shapes.",
+    "merge": "Sets the maximum physical gap for grouping nearby printed fragments into one motif, such as a bird and branch or a mushroom cap and stem. Low values keep groups separate and may split one motif into several detections. High values join fragments farther apart, but may combine neighboring motifs.",
     "detections_section": "Lists every automatically detected or manually added motif center. A row checkbox controls export inclusion.",
     "total": "The total number of detections currently present.",
     "valid": "Enabled detections whose global cut rectangle fits inside the bed and does not touch another enabled cut.",
@@ -100,35 +114,48 @@ HELP = {
 
 class SidePanel(QWidget):
     detection_selected = Signal(int)
+    detection_selection_changed = Signal(object)
     enabled_changed = Signal(int, bool)
     machine_changed = Signal(str)
     add_machine_requested = Signal()
     working_unit_changed = Signal(str)
     cut_size_changed = Signal(float, float)
     image_lock_changed = Signal(bool)
+    grid_dimensions_changed = Signal(int, int)
+    grid_action_requested = Signal(str)
+    grid_edit_toggled = Signal(bool)
+    grid_visibility_changed = Signal(bool)
+    layout_mode_changed = Signal(str)
+    grid_confirmation_requested = Signal()
+    advanced_visibility_changed = Signal(bool)
+    detection_settings_changed = Signal()
+    detection_confirmation_requested = Signal()
+    grid_review_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._detections: list[Detection] = []
         self._selected_id: int | None = None
+        self._selected_ids: set[int] = set()
         self._mapper: CoordinateMapper | None = None
         self._machine: MachineProfile | None = None
         self._working_unit = LengthUnit.INCHES
         self._minimum_area_mode = "px2"
         self._syncing_cut_size = False
+        self._grid_available = False
         self._double_click_resets: dict[QObject, object] = {}
-        # Long detection states such as "COLLISION" must never resize the
+        # Long cut states such as "TOO SMALL" must never resize the
         # inspector or push numerical step buttons outside the viewport.
-        self.setFixedWidth(420)
+        self.setFixedWidth(360)
 
         root_layout = QVBoxLayout(self)
         root_layout.setContentsMargins(0, 0, 0, 0)
-        scroll = QScrollArea()
-        scroll.setObjectName("sidePanelScroll")
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        root_layout.addWidget(scroll)
+        self.scroll = QScrollArea()
+        self.scroll.setObjectName("sidePanelScroll")
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        root_layout.addWidget(self.scroll)
 
         content = QWidget()
         content.setObjectName("sidePanelContent")
@@ -140,17 +167,47 @@ class SidePanel(QWidget):
         layout.setContentsMargins(14, 14, 14, 14)
         layout.setSpacing(10)
 
-        title = QLabel("CUT PREP")
-        title.setObjectName("panelTitle")
-        title.setFont(QFont("Segoe UI", 15, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self.context_title = QLabel("1  PREPARE THE JOB")
+        self.context_title.setObjectName("contextTitle")
+        self.context_hint = QLabel(
+            "Choose the machine, load the bed image, and confirm its divisions."
+        )
+        self.context_hint.setObjectName("contextHint")
+        self.context_hint.setWordWrap(True)
+        layout.addWidget(self.context_title)
+        layout.addWidget(self.context_hint)
 
-        layout.addWidget(self._build_machine_section())
-        layout.addWidget(self._build_bed_image_section())
-        layout.addWidget(self._build_cut_section())
-        layout.addWidget(self._build_detection_settings_section())
-        layout.addWidget(self._build_detections_section(), 1)
-        layout.addWidget(self._build_selected_section())
+        self.machine_section = self._build_machine_section()
+        self.bed_image_section = self._build_bed_image_section()
+        self.cut_section = self._build_cut_section()
+        self.grid_section = self._build_grid_section()
+        self.advanced_toggle = QPushButton("Show advanced detection settings")
+        self.advanced_toggle.setCheckable(True)
+        self.advanced_toggle.setObjectName("advancedToggle")
+        self.advanced_toggle.toggled.connect(self._toggle_advanced_settings)
+        self.advanced_section = self._build_advanced_detection_settings_section()
+        self.detections_section = self._build_detections_section()
+        self.selected_section = self._build_selected_section()
+        self.detection_review = self._build_detection_review()
+        self.review_actions = QWidget()
+        self.review_actions.setObjectName("reviewActions")
+        self.review_actions_layout = QVBoxLayout(self.review_actions)
+        self.review_actions_layout.setContentsMargins(0, 0, 0, 0)
+        self.review_actions_layout.setSpacing(6)
+
+        for widget in (
+            self.machine_section,
+            self.bed_image_section,
+            self.cut_section,
+            self.grid_section,
+            self.advanced_toggle,
+            self.advanced_section,
+            self.detection_review,
+            self.review_actions,
+            self.detections_section,
+            self.selected_section,
+        ):
+            layout.addWidget(widget)
 
         export_row = QWidget()
         export_layout = QHBoxLayout(export_row)
@@ -168,17 +225,57 @@ class SidePanel(QWidget):
         for unit in LengthUnit:
             self.export_unit_combo.addItem(f"{unit.display_name} ({unit.value})", unit.value)
         export_layout.addWidget(self.export_unit_combo, 1)
-        layout.addWidget(export_row)
+        self.export_options = QWidget()
+        export_options_layout = QVBoxLayout(self.export_options)
+        export_options_layout.setContentsMargins(0, 0, 0, 0)
+        export_options_layout.setSpacing(8)
+        export_options_layout.addWidget(export_row)
 
         self.debug_json_checkbox = QCheckBox("Write debug JSON beside SVG")
-        self.debug_json_checkbox.setChecked(True)
-        layout.addWidget(self.debug_json_checkbox)
+        self.debug_json_checkbox.setChecked(False)
+        self.debug_json_checkbox.setVisible(False)
+        export_options_layout.addWidget(self.debug_json_checkbox)
 
         self.verification_label = QLabel("Round-trip verification not run")
         self.verification_label.setObjectName("verificationLabel")
         self.verification_label.setWordWrap(True)
-        layout.addWidget(self.verification_label)
-        scroll.setWidget(content)
+        export_options_layout.addWidget(self.verification_label)
+        layout.addWidget(self.export_options)
+        # Keep contextual controls packed at the top. Without this terminal
+        # stretch, Qt distributes spare viewport height between labels and
+        # creates large, misleading gaps when most phase sections are hidden.
+        layout.addStretch(1)
+        self.scroll.setWidget(content)
+        self.set_phase("setup")
+
+    def _build_detection_review(self) -> QFrame:
+        box = QWidget()
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(7)
+        self.detection_review_hint = QLabel(
+            "Run detection, then compare every result with the image."
+        )
+        self.detection_review_hint.setWordWrap(True)
+        layout.addWidget(self.detection_review_hint)
+        self.confirm_detection_button = QPushButton(
+            "Detection is correct — continue"
+        )
+        self.confirm_detection_button.setObjectName("primaryPanelAction")
+        self.confirm_detection_button.setEnabled(False)
+        self.confirm_detection_button.clicked.connect(
+            self.detection_confirmation_requested
+        )
+        layout.addWidget(self.confirm_detection_button)
+        self.review_grid_button = QPushButton("Improve with panel grid")
+        self.review_grid_button.setEnabled(False)
+        self.review_grid_button.clicked.connect(self.grid_review_requested)
+        layout.addWidget(self.review_grid_button)
+        return self._section(
+            "CHECK THE DETECTION",
+            box,
+            "Confirm only after every intended figure has one cut area. Use a panel grid when the free detection misses or merges figures.",
+        )
 
     def _build_machine_section(self) -> QFrame:
         box = QWidget()
@@ -268,11 +365,226 @@ class SidePanel(QWidget):
         layout.addWidget(self.keep_square_checkbox)
         return self._section("GLOBAL CUT SIZE", box, HELP["cut_section"])
 
-    def _build_detection_settings_section(self) -> QFrame:
+    def _build_grid_section(self) -> QFrame:
         controls = QWidget()
         layout = QVBoxLayout(controls)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
+
+        self.layout_mode_combo = QComboBox()
+        self.layout_mode_combo.addItem("Automatic", "auto")
+        self.layout_mode_combo.addItem("Use a panel grid", "panels")
+        self.layout_mode_combo.addItem("No grid", "free")
+        self.layout_mode_combo.currentIndexChanged.connect(
+            self._on_layout_mode_changed
+        )
+        layout.addLayout(
+            self._labeled_control(
+                "Grid source", self.layout_mode_combo, HELP["layout"]
+            )
+        )
+
+        self.grid_controls = QWidget()
+        grid_layout = QVBoxLayout(self.grid_controls)
+        grid_layout.setContentsMargins(0, 0, 0, 0)
+        grid_layout.setSpacing(6)
+        self.grid_status_label = QLabel("No panel grid detected")
+        self.grid_status_label.setWordWrap(True)
+        self.grid_status_label.setObjectName("infoBlock")
+        grid_layout.addWidget(self.grid_status_label)
+
+        visibility_row = QWidget()
+        visibility_layout = QHBoxLayout(visibility_row)
+        visibility_layout.setContentsMargins(0, 0, 0, 0)
+        self.show_grid_checkbox = QCheckBox("Show grid")
+        self.show_grid_checkbox.setChecked(True)
+        self.show_grid_checkbox.setEnabled(False)
+        self.show_grid_checkbox.toggled.connect(self._on_grid_visibility_toggled)
+        self.edit_grid_checkbox = QCheckBox("Edit grid lines")
+        self.edit_grid_checkbox.setEnabled(False)
+        self.edit_grid_checkbox.toggled.connect(self._on_grid_edit_toggled)
+        visibility_layout.addWidget(self.show_grid_checkbox)
+        visibility_layout.addWidget(self.edit_grid_checkbox)
+        visibility_layout.addStretch(1)
+        grid_layout.addWidget(visibility_row)
+
+        dimensions = QWidget()
+        dimensions_layout = QGridLayout(dimensions)
+        dimensions_layout.setContentsMargins(0, 0, 0, 0)
+        dimensions_layout.setHorizontalSpacing(6)
+        self.grid_columns_spin = QSpinBox()
+        self.grid_columns_spin.setRange(2, 24)
+        self.grid_columns_spin.setValue(2)
+        self.grid_rows_spin = QSpinBox()
+        self.grid_rows_spin.setRange(2, 24)
+        self.grid_rows_spin.setValue(2)
+        dimensions_layout.addWidget(QLabel("Columns"), 0, 0)
+        dimensions_layout.addWidget(self.grid_columns_spin, 0, 1)
+        dimensions_layout.addWidget(QLabel("Rows"), 0, 2)
+        dimensions_layout.addWidget(self.grid_rows_spin, 0, 3)
+        grid_layout.addWidget(dimensions)
+
+        self.grid_columns_spin.valueChanged.connect(self._emit_grid_dimensions)
+        self.grid_rows_spin.valueChanged.connect(self._emit_grid_dimensions)
+        immediate_hint = QLabel("Rows and columns update immediately")
+        immediate_hint.setObjectName("mutedHint")
+        grid_layout.addWidget(immediate_hint)
+
+        self.grid_spacing_controls = QWidget()
+        distribute_layout = QHBoxLayout(self.grid_spacing_controls)
+        distribute_layout.setContentsMargins(0, 0, 0, 0)
+        distribute_layout.setSpacing(5)
+        self.distribute_columns_button = QPushButton("Space columns evenly")
+        self.distribute_rows_button = QPushButton("Space rows evenly")
+        self.distribute_columns_button.setEnabled(False)
+        self.distribute_rows_button.setEnabled(False)
+        self.distribute_columns_button.setToolTip(
+            "Space all vertical lines evenly between the left and right boundaries."
+        )
+        self.distribute_rows_button.setToolTip(
+            "Space all horizontal lines evenly between the top and bottom boundaries."
+        )
+        self.distribute_columns_button.clicked.connect(
+            lambda: self.grid_action_requested.emit("distribute_columns")
+        )
+        self.distribute_rows_button.clicked.connect(
+            lambda: self.grid_action_requested.emit("distribute_rows")
+        )
+        distribute_layout.addWidget(self.distribute_columns_button)
+        distribute_layout.addWidget(self.distribute_rows_button)
+        self.grid_spacing_controls.setVisible(False)
+        grid_layout.addWidget(self.grid_spacing_controls)
+
+        self.redetect_grid_button = QPushButton("Restore automatic grid")
+        self.redetect_grid_button.clicked.connect(
+            lambda: self.grid_action_requested.emit("redetect")
+        )
+        grid_layout.addWidget(self.redetect_grid_button)
+        self.confirm_grid_button = QPushButton("Confirm: divisions are correct")
+        self.confirm_grid_button.setObjectName("primaryPanelAction")
+        self.confirm_grid_button.setEnabled(False)
+        self.confirm_grid_button.clicked.connect(self.grid_confirmation_requested)
+        grid_layout.addWidget(self.confirm_grid_button)
+        layout.addWidget(self.grid_controls)
+        self.grid_section = self._section("PANEL GRID", controls, HELP["grid"])
+        self.grid_section.setObjectName("panelGridSection")
+        self.grid_section.setProperty("workflowActive", False)
+        return self.grid_section
+
+    def add_review_action(self, widget: QWidget) -> None:
+        """Place a review command in the contextual review phase."""
+        self.review_actions_layout.addWidget(widget)
+
+    def set_phase(self, phase: str) -> None:
+        """Expose only controls that belong to the current user goal."""
+        phase = phase if phase in {"setup", "grid", "detect", "review", "export"} else "setup"
+        titles = {
+            "setup": (
+                "1  PREPARE THE IMAGE",
+                "Choose the machine, units, image placement, and cut size.",
+            ),
+            "grid": (
+                "2  IMPROVE WITH A GRID",
+                "Adjust panel boundaries, then detect again and check the new result.",
+            ),
+            "detect": (
+                "2  DETECT AND CHECK",
+                "Run detection, inspect every result, and continue only when it is correct.",
+            ),
+            "review": (
+                "3  REVIEW CUTS",
+                "Correct missing, false, clipped, or overlapping cut areas.",
+            ),
+            "export": (
+                "4–5  CHECK AND EXPORT",
+                "Confirm exactly what will be saved before creating the SVG.",
+            ),
+        }
+        title, hint = titles[phase]
+        self.context_title.setText(title)
+        self.context_hint.setText(hint)
+        visibility = {
+            "setup": {"machine", "bed", "cut"},
+            "grid": {"bed", "grid"},
+            "detect": {"cut", "advanced", "detection_review", "detections"},
+            "review": {"cut", "detections", "selected", "actions"},
+            "export": {"detections", "export"},
+        }[phase]
+        self.machine_section.setVisible("machine" in visibility)
+        self.bed_image_section.setVisible("bed" in visibility)
+        self.cut_section.setVisible("cut" in visibility)
+        self.grid_section.setVisible("grid" in visibility)
+        self.advanced_toggle.setVisible("advanced" in visibility)
+        self.advanced_section.setVisible(
+            "advanced" in visibility and self.advanced_toggle.isChecked()
+        )
+        self.detection_review.setVisible("detection_review" in visibility)
+        self.detections_section.setVisible("detections" in visibility)
+        self.selected_section.setVisible("selected" in visibility)
+        self.review_actions.setVisible("actions" in visibility)
+        self.export_options.setVisible("export" in visibility)
+        self.scroll.verticalScrollBar().setValue(0)
+
+    def set_detection_review_state(
+        self, has_detections: bool, confirmed: bool
+    ) -> None:
+        self.confirm_detection_button.setEnabled(has_detections and not confirmed)
+        self.review_grid_button.setEnabled(has_detections and not confirmed)
+        if confirmed:
+            self.detection_review_hint.setText(
+                "✓ Detection confirmed. Review the cut areas next."
+            )
+            self.confirm_detection_button.setText("✓ Detection confirmed")
+        elif has_detections:
+            self.detection_review_hint.setText(
+                "Compare every cut area with the image. Are all intended figures detected exactly once?"
+            )
+            self.confirm_detection_button.setText(
+                "Detection is correct — continue"
+            )
+        else:
+            self.detection_review_hint.setText(
+                "Run detection, then compare every result with the image."
+            )
+            self.confirm_detection_button.setText(
+                "Detection is correct — continue"
+            )
+
+    def set_grid_confirmation_state(
+        self, enabled: bool, confirmed: bool, has_grid: bool
+    ) -> None:
+        self.confirm_grid_button.setEnabled(enabled)
+        if confirmed:
+            self.confirm_grid_button.setText(
+                "✓ Divisions confirmed" if has_grid else "✓ No grid confirmed"
+            )
+        else:
+            self.confirm_grid_button.setText(
+                "Use this grid and detect again"
+                if has_grid
+                else "Detect again without a grid"
+            )
+
+    def _toggle_advanced_settings(self, visible: bool) -> None:
+        self.advanced_toggle.setText(
+            "Hide advanced detection settings"
+            if visible
+            else "Show advanced detection settings"
+        )
+        self.advanced_section.setVisible(visible and self.advanced_toggle.isVisible())
+        self.advanced_visibility_changed.emit(visible)
+
+    def _build_advanced_detection_settings_section(self) -> QFrame:
+        self.advanced_detection_controls = QWidget()
+        advanced_layout = QVBoxLayout(self.advanced_detection_controls)
+        advanced_layout.setContentsMargins(0, 0, 0, 0)
+        advanced_layout.setSpacing(6)
+
+        self.join_parts_checkbox = QCheckBox("Join separated parts of one figure")
+        self.join_parts_checkbox.setChecked(True)
+        self.join_parts_checkbox.setToolTip(HELP["join_parts"])
+        self.join_parts_checkbox.toggled.connect(self.detection_settings_changed)
+        advanced_layout.addWidget(self.join_parts_checkbox)
 
         self.sensitivity_slider = QSlider(Qt.Orientation.Horizontal)
         self.sensitivity_slider.setRange(0, 100)
@@ -281,7 +593,10 @@ class SidePanel(QWidget):
         self.sensitivity_slider.valueChanged.connect(
             lambda value: self.sensitivity_value.setText(str(value))
         )
-        layout.addLayout(
+        self.sensitivity_slider.valueChanged.connect(
+            lambda _value: self.detection_settings_changed.emit()
+        )
+        advanced_layout.addLayout(
             self._labeled_control(
                 "Sensitivity", self.sensitivity_slider, HELP["sensitivity"], self.sensitivity_value
             )
@@ -305,9 +620,15 @@ class SidePanel(QWidget):
         self.minimum_area_unit_combo.currentIndexChanged.connect(
             self._on_minimum_area_mode_changed
         )
+        self.minimum_area_spin.valueChanged.connect(
+            lambda _value: self.detection_settings_changed.emit()
+        )
+        self.minimum_area_unit_combo.currentIndexChanged.connect(
+            lambda _index: self.detection_settings_changed.emit()
+        )
         minimum_layout.addWidget(self.minimum_area_spin, 1)
         minimum_layout.addWidget(self.minimum_area_unit_combo)
-        layout.addLayout(
+        advanced_layout.addLayout(
             self._labeled_control("Minimum area", minimum_widget, HELP["minimum_area"])
         )
 
@@ -318,20 +639,30 @@ class SidePanel(QWidget):
         self.cleanup_slider.valueChanged.connect(
             lambda value: self.cleanup_value.setText(f"{value}%")
         )
-        layout.addLayout(
+        self.cleanup_slider.valueChanged.connect(
+            lambda _value: self.detection_settings_changed.emit()
+        )
+        advanced_layout.addLayout(
             self._labeled_control(
                 "Cleanup", self.cleanup_slider, HELP["cleanup"], self.cleanup_value
             )
         )
 
         self.merge_distance_spin = self._physical_spin(0.35)
-        layout.addLayout(
+        self.merge_distance_spin.valueChanged.connect(
+            lambda _value: self.detection_settings_changed.emit()
+        )
+        advanced_layout.addLayout(
             self._labeled_control(
                 "Merge distance", self.merge_distance_spin, HELP["merge"]
             )
         )
         self._register_detection_resets()
-        return self._section("DETECTION SETTINGS", controls, HELP["settings_section"])
+        return self._section(
+            "ADVANCED DETECTION SETTINGS",
+            self.advanced_detection_controls,
+            HELP["settings_section"],
+        )
 
     def _build_detections_section(self) -> QFrame:
         box = QWidget()
@@ -349,9 +680,9 @@ class SidePanel(QWidget):
         for column, (label, value, help_text) in enumerate(
             (
                 ("Total", self.total_value_label, HELP["total"]),
-                ("Valid", self.valid_value_label, HELP["valid"]),
-                ("Invalid", self.invalid_value_label, HELP["invalid"]),
-                ("Disabled", self.disabled_value_label, HELP["disabled"]),
+                ("Ready", self.valid_value_label, HELP["valid"]),
+                ("Problems", self.invalid_value_label, HELP["invalid"]),
+                ("Excluded", self.disabled_value_label, HELP["disabled"]),
             )
         ):
             stats_layout.setColumnMinimumWidth(column, 0)
@@ -363,31 +694,37 @@ class SidePanel(QWidget):
         layout.addWidget(stats)
 
         self.detection_list = QListWidget()
+        self.detection_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.ExtendedSelection
+        )
         self.detection_list.setMinimumHeight(170)
         self.detection_list.setHorizontalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
         self.detection_list.setAlternatingRowColors(True)
-        self.detection_list.currentItemChanged.connect(self._on_current_item_changed)
+        self.detection_list.itemSelectionChanged.connect(
+            self._on_detection_selection_changed
+        )
         self.detection_list.itemChanged.connect(self._on_item_changed)
+        self.detection_list.viewport().installEventFilter(self)
         layout.addWidget(self.detection_list)
-        return self._section("DETECTIONS", box, HELP["detections_section"])
+        return self._section("CUT AREAS", box, HELP["detections_section"])
 
     def _build_selected_section(self) -> QFrame:
         box = QWidget()
         layout = QVBoxLayout(box)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.include_checkbox = QCheckBox("Include in export")
+        self.include_checkbox = QCheckBox("Include in SVG")
         self.include_checkbox.setEnabled(False)
         self.include_checkbox.toggled.connect(self._on_include_toggled)
-        self.detail_label = QLabel("Select a detection to inspect its geometry.")
+        self.detail_label = QLabel("Select a cut area to inspect it.")
         self.detail_label.setObjectName("detailBlock")
         self.detail_label.setTextInteractionFlags(
             Qt.TextInteractionFlag.TextSelectableByMouse
         )
         layout.addWidget(self.include_checkbox)
         layout.addWidget(self.detail_label)
-        return self._section("SELECTED", box, HELP["selected_section"])
+        return self._section("SELECTED CUT", box, HELP["selected_section"])
 
     def set_machine_profiles(
         self, profiles: list[MachineProfile], selected_id: str
@@ -449,13 +786,112 @@ class SidePanel(QWidget):
                 int(round(area_in2 * mapper.px_per_inch_x * mapper.px_per_inch_y)),
             )
         merge_in = to_inches(self.merge_distance_spin.value(), self._working_unit)
+        if not self.join_parts_checkbox.isChecked():
+            merge_in = 0.0
         return DetectorSettings(
             sensitivity=self.sensitivity_slider.value(),
             minimum_area_px=minimum_area_px,
             morphological_cleanup=self.cleanup_slider.value() / 100.0,
             merge_distance_px_x=merge_in * mapper.px_per_inch_x,
             merge_distance_px_y=merge_in * mapper.px_per_inch_y,
+            layout_mode=str(self.layout_mode_combo.currentData() or "auto"),
         )
+
+    def set_grid_info(
+        self,
+        columns: int | None,
+        rows: int | None,
+        confidence: float = 0.0,
+        source: str = "automatic",
+        figure_count: int | None = None,
+    ) -> None:
+        available = columns is not None and rows is not None
+        forced_panels = self.layout_mode_combo.currentData() == "panels"
+        self.show_grid_checkbox.setEnabled(available)
+        self.edit_grid_checkbox.setEnabled(available)
+        edit_enabled = available and self.edit_grid_checkbox.isChecked()
+        self.distribute_columns_button.setEnabled(edit_enabled)
+        self.distribute_rows_button.setEnabled(edit_enabled)
+        self.grid_spacing_controls.setVisible(edit_enabled)
+        self.redetect_grid_button.setEnabled(available)
+        if not available:
+            self.grid_status_label.setText(
+                "Enter rows and columns to create the panel grid"
+                if forced_panels
+                else "No panel grid detected"
+            )
+            blocker = QSignalBlocker(self.edit_grid_checkbox)
+            self.edit_grid_checkbox.setChecked(False)
+            del blocker
+            show_blocker = QSignalBlocker(self.show_grid_checkbox)
+            self.show_grid_checkbox.setChecked(False)
+            del show_blocker
+            self._grid_available = False
+            return
+        if not self._grid_available:
+            show_blocker = QSignalBlocker(self.show_grid_checkbox)
+            self.show_grid_checkbox.setChecked(True)
+            del show_blocker
+            self.grid_visibility_changed.emit(True)
+        self._grid_available = True
+        column_blocker = QSignalBlocker(self.grid_columns_spin)
+        row_blocker = QSignalBlocker(self.grid_rows_spin)
+        self.grid_columns_spin.setValue(int(columns))
+        self.grid_rows_spin.setValue(int(rows))
+        del column_blocker, row_blocker
+        if source == "automatic":
+            status = (
+                f"Detected {columns} columns × {rows} rows · "
+                f"{confidence:.0%} confidence"
+            )
+        else:
+            status = f"Manual grid · {columns} columns × {rows} rows"
+        if figure_count is not None:
+            total = int(columns) * int(rows)
+            review = max(0, total - figure_count)
+            status += f"\n{figure_count} figures · {review} cells need review"
+        self.grid_status_label.setText(status)
+
+    def _on_layout_mode_changed(self) -> None:
+        mode = str(self.layout_mode_combo.currentData() or "auto")
+        if mode == "panels":
+            if self.grid_status_label.text() == "No panel grid detected":
+                self.grid_status_label.setText(
+                    "Enter rows and columns to create the panel grid"
+                )
+        elif mode == "free":
+            self.show_grid_checkbox.setChecked(False)
+            self.edit_grid_checkbox.setChecked(False)
+        self.layout_mode_changed.emit(mode)
+
+    def _emit_grid_dimensions(self) -> None:
+        self.grid_dimensions_changed.emit(
+            self.grid_columns_spin.value(), self.grid_rows_spin.value()
+        )
+
+    def _on_grid_edit_toggled(self, active: bool) -> None:
+        if active and not self.show_grid_checkbox.isChecked():
+            self.show_grid_checkbox.setChecked(True)
+        self.distribute_columns_button.setEnabled(active)
+        self.distribute_rows_button.setEnabled(active)
+        self.grid_spacing_controls.setVisible(active)
+        self.grid_edit_toggled.emit(active)
+
+    def _on_grid_visibility_toggled(self, visible: bool) -> None:
+        if not visible and self.edit_grid_checkbox.isChecked():
+            self.edit_grid_checkbox.setChecked(False)
+        self.grid_visibility_changed.emit(visible)
+
+    def set_grid_workflow_active(self, active: bool) -> None:
+        """Highlight and reveal the controls belonging to the grid step."""
+        active = bool(active)
+        if self.grid_section.property("workflowActive") != active:
+            self.grid_section.setProperty("workflowActive", active)
+            self.grid_section.style().unpolish(self.grid_section)
+            self.grid_section.style().polish(self.grid_section)
+            self.grid_section.update()
+        if active:
+            self.scroll.ensureWidgetVisible(self.grid_section, 12, 24)
 
     def set_image_info(self, mapper: CoordinateMapper | None) -> None:
         self._mapper = mapper
@@ -476,22 +912,37 @@ class SidePanel(QWidget):
         self._update_physical_readouts()
 
     def set_detections(
-        self, detections: list[Detection], selected_id: int | None
+        self,
+        detections: list[Detection],
+        selected_ids: set[int] | int | None,
+        primary_id: int | None = None,
     ) -> None:
         self._detections = detections
-        self._selected_id = selected_id
+        if isinstance(selected_ids, int):
+            selected_ids = {selected_ids}
+        self._selected_ids = set(selected_ids or set())
+        self._selected_id = (
+            primary_id
+            if primary_id in self._selected_ids
+            else next(iter(self._selected_ids), None)
+        )
         blocker = QSignalBlocker(self.detection_list)
         self.detection_list.clear()
-        selected_item: QListWidgetItem | None = None
+        primary_item: QListWidgetItem | None = None
         for detection in detections:
             if not detection.enabled:
-                state = "DISABLED"
+                state = "EXCLUDED"
             elif detection.overlaps_cut:
-                state = "COLLISION"
+                state = "OVERLAP"
             elif not detection.valid_cut:
-                state = "OUTSIDE"
+                state = (
+                    "TOO SMALL"
+                    if self._mapper is not None
+                    and not detection.contains_artwork(self._mapper)
+                    else "OUTSIDE"
+                )
             else:
-                state = "VALID"
+                state = "READY"
             source = "manual" if detection.manual else f"{detection.score:.0%}"
             item = QListWidgetItem(f"#{detection.id:02d}   {state:<9}   {source}")
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
@@ -504,10 +955,14 @@ class SidePanel(QWidget):
             elif not detection.valid_cut and detection.enabled:
                 item.setForeground(Qt.GlobalColor.red)
             self.detection_list.addItem(item)
-            if detection.id == selected_id:
-                selected_item = item
-        if selected_item is not None:
-            self.detection_list.setCurrentItem(selected_item)
+            if detection.id in self._selected_ids:
+                item.setSelected(True)
+            if detection.id == self._selected_id:
+                primary_item = item
+        if primary_item is not None:
+            self.detection_list.setCurrentItem(
+                primary_item, QItemSelectionModel.SelectionFlag.NoUpdate
+            )
         del blocker
         disabled = sum(1 for item in detections if not item.enabled)
         valid = sum(1 for item in detections if item.exportable)
@@ -523,17 +978,39 @@ class SidePanel(QWidget):
         self._update_details()
 
     def set_selected_id(self, detection_id: int | None) -> None:
-        self._selected_id = detection_id
+        self.set_selected_ids(
+            {detection_id} if detection_id is not None else set(), detection_id
+        )
+
+    def set_selected_ids(
+        self, detection_ids: set[int], primary_id: int | None = None
+    ) -> None:
+        self._selected_ids = set(detection_ids)
+        self._selected_id = (
+            primary_id
+            if primary_id in self._selected_ids
+            else next(iter(self._selected_ids), None)
+        )
         blocker = QSignalBlocker(self.detection_list)
         for index in range(self.detection_list.count()):
             item = self.detection_list.item(index)
-            if item.data(Qt.ItemDataRole.UserRole) == detection_id:
-                self.detection_list.setCurrentItem(item)
-                break
-        else:
-            self.detection_list.setCurrentRow(-1)
+            item.setSelected(
+                int(item.data(Qt.ItemDataRole.UserRole)) in self._selected_ids
+            )
+            if item.data(Qt.ItemDataRole.UserRole) == self._selected_id:
+                self.detection_list.setCurrentItem(
+                    item, QItemSelectionModel.SelectionFlag.NoUpdate
+                )
+        if not self._selected_ids:
+            # Clearing only the current row can leave its selection bit set in
+            # ExtendedSelection mode. Clear both states so canvas and list
+            # cannot disagree after a toggle-off or a fresh detection pass.
+            self.detection_list.clearSelection()
+            self.detection_list.setCurrentItem(None)
         del blocker
         self._update_details()
+        if self._selected_ids and not self.selected_section.isHidden():
+            self.scroll.ensureWidgetVisible(self.selected_section, 12, 24)
 
     def set_verification_result(self, error_x_px: float, error_y_px: float) -> None:
         self.verification_label.setText(
@@ -556,6 +1033,17 @@ class SidePanel(QWidget):
         self.bed_value_label.setText(text)
 
     def _update_details(self) -> None:
+        if len(self._selected_ids) > 1:
+            blocker = QSignalBlocker(self.include_checkbox)
+            self.include_checkbox.setChecked(False)
+            self.include_checkbox.setEnabled(False)
+            self.detail_label.setText(
+                f"{len(self._selected_ids)} cut areas selected\n\n"
+                "Shift+click to add or remove items from the selection.\n"
+                "Use Delete to remove them together."
+            )
+            del blocker
+            return
         detection = next(
             (item for item in self._detections if item.id == self._selected_id), None
         )
@@ -563,7 +1051,7 @@ class SidePanel(QWidget):
         if detection is None:
             self.include_checkbox.setChecked(False)
             self.include_checkbox.setEnabled(False)
-            self.detail_label.setText("Select a detection to inspect its geometry.")
+            self.detail_label.setText("Select a cut area to inspect it.")
             del blocker
             return
         self.include_checkbox.setEnabled(True)
@@ -577,27 +1065,28 @@ class SidePanel(QWidget):
         width = from_inches(square.width, unit)
         height = from_inches(square.height, unit)
         if not detection.enabled:
-            status = "Disabled - excluded from export"
+            status = "Excluded from the SVG"
         elif detection.overlaps_cut:
-            status = "Collision - touches another enabled cut; not exported"
+            status = "Overlap - touches another cut; not exported"
         elif not detection.valid_cut:
-            status = "Outside bed - not exported"
+            status = (
+                "Cut is too small for the drawing - not exported"
+                if self._mapper is not None
+                and not detection.contains_artwork(self._mapper)
+                else "Outside bed - not exported"
+            )
         else:
-            status = "Valid"
+            status = "Ready for export"
         self.detail_label.setText(
-            f"Detection #{detection.id:02d}\n\n"
-            "PIXELS\n"
-            f"center X:  {detection.center_px[0]:.3f}\n"
-            f"center Y:  {detection.center_px[1]:.3f}\n\n"
-            f"PHYSICAL POSITION ({unit.value})\n"
+            f"CUT #{detection.id:02d}\n"
+            f"STATUS\n{status}\n\n"
+            f"CENTER ({unit.value})\n"
             f"center X:  {center_x:.3f} {unit.value}\n"
             f"center Y:  {center_y:.3f} {unit.value}\n\n"
-            f"CUT ({unit.value})\n"
-            f"x:       {x:.3f}\n"
-            f"y:       {y:.3f}\n"
+            f"SIZE ({unit.value})\n"
             f"width:   {width:.3f}\n"
             f"height:  {height:.3f}\n\n"
-            f"STATUS\n{status}"
+            f"Top-left: {x:.3f}, {y:.3f} {unit.value}"
         )
         del blocker
 
@@ -727,6 +1216,17 @@ class SidePanel(QWidget):
         self.minimum_area_spin.setValue(500.0)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
+        detection_list = getattr(self, "detection_list", None)
+        if (
+            detection_list is not None
+            and watched is detection_list.viewport()
+            and event.type() == QEvent.Type.MouseButtonPress
+            and detection_list.itemAt(event.position().toPoint()) is None  # type: ignore[attr-defined]
+        ):
+            # Empty list space is not a selection command. This mirrors the
+            # canvas and protects a prepared multi-selection from stray clicks.
+            event.accept()
+            return True
         if event.type() == QEvent.Type.MouseButtonDblClick:
             callback = self._double_click_resets.get(watched)
             if callback is not None:
@@ -735,16 +1235,24 @@ class SidePanel(QWidget):
                 return True
         return super().eventFilter(watched, event)
 
-    def _on_current_item_changed(
-        self, current: QListWidgetItem | None, previous: QListWidgetItem | None
-    ) -> None:
-        del previous
-        if current is None:
-            return
-        detection_id = int(current.data(Qt.ItemDataRole.UserRole))
-        self._selected_id = detection_id
+    def _on_detection_selection_changed(self) -> None:
+        selected_items = self.detection_list.selectedItems()
+        selected_ids = {
+            int(item.data(Qt.ItemDataRole.UserRole)) for item in selected_items
+        }
+        current = self.detection_list.currentItem()
+        current_id = (
+            int(current.data(Qt.ItemDataRole.UserRole))
+            if current is not None
+            and int(current.data(Qt.ItemDataRole.UserRole)) in selected_ids
+            else next(iter(selected_ids), None)
+        )
+        self._selected_ids = selected_ids
+        self._selected_id = current_id
         self._update_details()
-        self.detection_selected.emit(detection_id)
+        self.detection_selection_changed.emit((selected_ids, current_id))
+        if current_id is not None:
+            self.detection_selected.emit(current_id)
 
     def _on_item_changed(self, item: QListWidgetItem) -> None:
         self.enabled_changed.emit(
@@ -804,7 +1312,9 @@ class SidePanel(QWidget):
         label_layout = QHBoxLayout(label_group)
         label_layout.setContentsMargins(0, 0, 0, 0)
         label_layout.setSpacing(5)
-        label_layout.addWidget(QLabel(label_text))
+        label = QLabel(label_text)
+        label.setBuddy(control)
+        label_layout.addWidget(label)
         if help_text:
             label_layout.addWidget(
                 InfoButton(help_text), 0, Qt.AlignmentFlag.AlignTop

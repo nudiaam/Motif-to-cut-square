@@ -53,6 +53,8 @@ La suite cubre:
 - colocación proporcional de la imagen;
 - tamaños de cama y perfiles de máquina personalizados;
 - detector y agrupación de fragmentos;
+- centrado del corte por límites completos del dibujo y conservación de esos
+  límites al resolver solapes;
 - cuadrados y rectángulos configurables;
 - límites de cama y colisiones entre cortes;
 - zoom, encaje y desplazamiento del canvas;
@@ -106,18 +108,98 @@ La propiedad `exportable` exige `enabled and valid_cut and not overlaps_cut`.
 
 `recalculate_cut_overlaps` considera conflicto tanto una intersección con área como el contacto exacto de bordes. Las detecciones desactivadas no participan. La interfaz recalcula después de mover, redimensionar, activar, desactivar, detectar o cambiar la colocación de la imagen. El exportador y el verificador vuelven a calcular como defensa adicional.
 
+`center_cuts_on_visual_anchors` centra primero cada corte usando los límites
+completos del dibujo. Después, `resolve_cut_overlaps` separa los conflictos dentro
+del intervalo que todavía contiene esos límites. Este orden evita el ciclo
+centrar → recrear solape → volver a separar.
+
+El flujo vive en una barra horizontal `WORKFLOW` sobre el canvas: preparar la
+imagen, detectar y validar, revisar, comprobar salida y exportar. `SidePanel`
+es contextual y muestra únicamente los controles de la fase activa. Las acciones
+condicionales de borrar, resolver solapes y centrar pertenecen a revisión, no al
+indicador principal. No se duplica `Detect` en el toolbar global.
+
+La primera detección fuerza `layout_mode="free"` y permanece en la fase `detect`.
+Tener resultados y haberlos aceptado son estados diferentes:
+`_detection_review_complete` solo cambia mediante la confirmación explícita del
+usuario. Hasta entonces, revisión y preflight permanecen bloqueados.
+
+`PANEL GRID` es una mejora opcional posterior a esa primera detección. Mostrar y
+editar son estados separados. Filas y columnas actualizan las guías de inmediato,
+pero conservan el resultado visible para poder compararlo. Cada cambio invalida
+`_grid_review_complete`; al confirmar, se ejecuta una nueva detección con las
+divisiones elegidas y se invalida de nuevo `_detection_review_complete`. La
+sustitución queda en el historial de deshacer. Las acciones de espaciado uniforme
+solo se muestran mientras las guías están editables.
+
+`MainWindow.selected_ids` mantiene la selección múltiple compartida por canvas y
+lista. `Shift+click` alterna miembros; el id primario se conserva únicamente para
+el inspector de detalle. Un clic en espacio vacío del canvas conserva la selección.
+`BedCanvas` pinta el propio rectángulo de corte con borde, centro y relleno cian
+cuando está seleccionado, sin añadir geometría visual por fuera. Centrado y
+resolución de solapes limpian la selección antes de modificar geometría.
+
+El historial guarda hasta 50 snapshots de detecciones, mapper, tamaño de corte,
+selección y estado del flujo. `Ctrl+Z` restaura operaciones de geometría y revisión.
+Los arrastres emiten `edit_started` una sola vez, evitando un snapshot por cada
+evento de movimiento.
+
+`Preview Cuts` es exclusivamente visual. `BedCanvas` construye una máscara con
+huecos para las detecciones `exportable` y oscurece el resto de la cama; no cambia
+coordenadas, estados ni contenido SVG.
+
 ## Detector
 
 El detector sigue siendo clásico y reproducible:
 
-- estima el fondo;
-- segmenta diferencias de color;
+- propone primero una cuadrícula a partir de costuras y cambios amplios de tela;
+  los centros candidatos solo validan la propuesta y nunca la crean por sí solos;
+- descarta la ruta de paneles en fondos uniformes aunque los dibujos estén
+  colocados regularmente;
+- en una cuadrícula confirmada analiza cada celda con un fondo local independiente,
+  excluye un margen de costura y devuelve como máximo un candidato por panel;
+- estima un fondo local que sigue los cambios de iluminación;
+- segmenta diferencias de color con una máscara permisiva;
 - aplica limpieza morfológica;
 - filtra por área;
 - agrupa componentes cercanos usando `Merge distance`;
-- devuelve un único centro por grupo.
+- separa primero componentes sustanciales y asigna después los fragmentos al
+  núcleo más cercano, sin permitir que motas del estampado conecten dos dibujos;
+- reincorpora un único detalle pequeño algo más distante cuando existe un solo
+  padre claramente mayor, por ejemplo una cereza o una antena;
+- cuando no hay evidencia visual suficiente de paneles conserva la consolidación
+  compatible anterior o la ruta libre;
+- calcula un centro robusto con los píxeles de mayor confianza y recorta el 10 %
+  de los extremos para que motas o fragmentos débiles no desplacen el marcador;
+- devuelve un único centro robusto por grupo.
 
-Los valores predeterminados se encuentran en `SidePanel` y `DetectorSettings`. El doble clic de cada control de Detection Settings restaura esos valores.
+El centro robusto del detector y el centro del corte tienen responsabilidades
+distintas. `Detection.artwork_center_px()` usa el punto medio del bounding box
+completo para el paso de centrado, incluyendo detalles finos. El resolvedor de
+solapes limita después cada eje al intervalo en el que tanto el corte como ese
+bounding box siguen contenidos. Si el dibujo supera el tamaño de corte, el
+intervalo se colapsa a su punto medio para que el recorte inevitable sea simétrico
+y explícito.
+
+`Detection.artwork_fits_cut()` separa la factibilidad física del estado actual de
+alineación. El resolvedor no descarta un corte solo porque todavía no contiene su
+dibujo. El flujo primero establece una disposición sin solapes y después centra.
+El centrado prueba la solución conjunta contra los vecinos; si la relajación por
+pares entra en ciclo en una cuadrícula densa, restaura la última disposición válida
+y avanza monótonamente hacia cada centro sin permitir una nueva colisión.
+
+La revisión de interfaz sigue un flujo finito: `1` elimina la detección
+seleccionada, `2` resuelve solapes y `3` centra. El estado de centrado impide volver
+a ejecutar el paso 3 después del paso final, salvo que cambie la geometría.
+
+Los valores predeterminados se encuentran en `SidePanel` y `DetectorSettings`.
+`PanelGrid` conserva las líneas en píxeles de imagen. El canvas permite arrastrar
+límites e interiores; `distribute("x")` y `distribute("y")` reparten las líneas
+internas entre los límites exteriores. Cualquier cambio manual vuelve a ejecutar
+la detección por celdas y forma parte del historial de deshacer.
+`test_patterned_quilt_acceptance.py` fija el contrato de una detección por panel
+frente a fondos estampados, piezas separadas, oscuridad, gradiente de luz,
+desenfoque, ruido y compresión JPEG.
 
 ## Exportación
 

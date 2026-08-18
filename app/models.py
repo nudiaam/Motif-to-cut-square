@@ -40,7 +40,7 @@ class Detection:
         square = CutSquare.centered_at(
             *center_inches, cut_width_inches, cut_height_inches
         )
-        return cls(
+        detection = cls(
             id=detection_id,
             center_px=(float(center_px[0]), float(center_px[1])),
             preferred_center_px=(float(center_px[0]), float(center_px[1])),
@@ -53,6 +53,8 @@ class Detection:
             cut_width_inches=cut_width_inches,
             cut_height_inches=cut_height_inches,
         )
+        detection._update_validity(mapper)
+        return detection
 
     @property
     def square_inches(self) -> CutSquare:
@@ -64,6 +66,63 @@ class Detection:
     def exportable(self) -> bool:
         """Whether this cut is enabled, inside the bed, and collision-free."""
         return self.enabled and self.valid_cut and not self.overlaps_cut
+
+    def artwork_center_px(self) -> tuple[float, float]:
+        """Return the centre of the complete detected artwork extent.
+
+        The detector's robust centre is useful for identifying a motif, but it
+        intentionally trims thin extremes.  A cut must instead account for the
+        complete bounding box so details such as flags or antennae are not
+        clipped. Manual detections have no artwork extent and therefore retain
+        their explicitly chosen centre.
+        """
+        if self.bounding_box_px is None:
+            return self.preferred_center_px
+        x, y, width, height = self.bounding_box_px
+        return x + width / 2.0, y + height / 2.0
+
+    def contains_artwork(
+        self, mapper: CoordinateMapper, tolerance: float = 1e-9
+    ) -> bool:
+        """Whether this cut contains the complete detected artwork bounds."""
+        if self.bounding_box_px is None:
+            return True
+        artwork_x, artwork_y, artwork_width, artwork_height = (
+            mapper.pixel_rect_to_inches(self.bounding_box_px)
+        )
+        artwork_right = artwork_x + artwork_width
+        artwork_bottom = artwork_y + artwork_height
+        square = self.square_inches
+        return (
+            square.x <= artwork_x + tolerance
+            and square.y <= artwork_y + tolerance
+            and square.x + square.width >= artwork_right - tolerance
+            and square.y + square.height >= artwork_bottom - tolerance
+        )
+
+    def artwork_fits_cut(
+        self, mapper: CoordinateMapper, tolerance: float = 1e-9
+    ) -> bool:
+        """Whether some placement can contain this artwork at the cut size."""
+        if self.bounding_box_px is None:
+            return True
+        _x, _y, artwork_width, artwork_height = mapper.pixel_rect_to_inches(
+            self.bounding_box_px
+        )
+        return (
+            artwork_width <= self.cut_width_inches + tolerance
+            and artwork_height <= self.cut_height_inches + tolerance
+        )
+
+    def has_feasible_placement(
+        self, mapper: CoordinateMapper, tolerance: float = 1e-9
+    ) -> bool:
+        """Whether both cut and artwork can fit somewhere on the configured bed."""
+        return (
+            self.cut_width_inches <= mapper.bed_width_in + tolerance
+            and self.cut_height_inches <= mapper.bed_height_in + tolerance
+            and self.artwork_fits_cut(mapper, tolerance)
+        )
 
     def set_cut_size(
         self, width_inches: float, height_inches: float, mapper: CoordinateMapper
@@ -104,7 +163,7 @@ class Detection:
     def _update_validity(self, mapper: CoordinateMapper) -> None:
         self.valid_cut = self.square_inches.is_valid(
             mapper.bed_width_in, mapper.bed_height_in
-        )
+        ) and self.contains_artwork(mapper)
 
 
 def recalculate_cut_overlaps(
@@ -134,6 +193,7 @@ def resolve_cut_overlaps(
     detections: list[Detection],
     mapper: CoordinateMapper,
     clearance_inches: float = 0.01,
+    target_centres_inches: dict[int, tuple[float, float]] | None = None,
 ) -> tuple[list[int], list[int]]:
     """Separate collisions while keeping every cut close to its visual centre.
 
@@ -146,28 +206,50 @@ def resolve_cut_overlaps(
     conflicting = [
         detection
         for detection in detections
-        if detection.enabled and detection.valid_cut and detection.overlaps_cut
+        if detection.enabled
+        and detection.has_feasible_placement(mapper)
+        and detection.overlaps_cut
     ]
     if not conflicting:
         return [], []
 
     movable_ids = {detection.id for detection in conflicting}
+    original_centres = {
+        detection.id: detection.center_inches for detection in conflicting
+    }
     preferred_centres: dict[int, tuple[float, float]] = {}
     for detection in conflicting:
-        preferred = mapper.pixel_to_inches(*detection.preferred_center_px)
+        preferred = (
+            target_centres_inches[detection.id]
+            if target_centres_inches is not None
+            and detection.id in target_centres_inches
+            else mapper.pixel_to_inches(*detection.preferred_center_px)
+        )
         preferred = _clamp_center_to_bed(preferred, detection, mapper)
         preferred_centres[detection.id] = preferred
         detection.move_to_inches(
             preferred, mapper, preserve_preferred_center=True
         )
 
-    active = [
-        detection
-        for detection in detections
-        if detection.enabled and detection.valid_cut
-    ]
+    # Invalid or oversized enabled cuts remain fixed obstacles. Feasible cuts
+    # may move around them, and unresolved conflicts stay explicit for review.
+    active = [detection for detection in detections if detection.enabled]
     maximum_passes = max(100, len(active) * len(active) * 20)
+    seen_states: set[tuple[tuple[int, float, float], ...]] = set()
+    best_conflict_count = len(active) + 1
+    passes_without_improvement = 0
     for _pass in range(maximum_passes):
+        state = tuple(
+            (
+                detection.id,
+                round(detection.center_inches[0], 7),
+                round(detection.center_inches[1], 7),
+            )
+            for detection in active
+        )
+        if state in seen_states:
+            break
+        seen_states.add(state)
         changed = False
         for index, first in enumerate(active):
             for second in active[index + 1 :]:
@@ -219,13 +301,24 @@ def resolve_cut_overlaps(
             break
         if not changed:
             break
+        conflict_count = sum(
+            detection.overlaps_cut and detection.id in movable_ids
+            for detection in detections
+        )
+        if conflict_count < best_conflict_count:
+            best_conflict_count = conflict_count
+            passes_without_improvement = 0
+        else:
+            passes_without_improvement += 1
+            if passes_without_improvement >= max(12, len(active) * 2):
+                break
 
     recalculate_cut_overlaps(detections)
     moved_ids = [
         detection.id
         for detection in conflicting
         if _distance_squared(
-            detection.center_inches, preferred_centres[detection.id]
+            detection.center_inches, original_centres[detection.id]
         )
         > 1e-12
     ]
@@ -235,6 +328,149 @@ def resolve_cut_overlaps(
         if detection.enabled and detection.overlaps_cut
     ]
     return moved_ids, unresolved_ids
+
+
+def center_cuts_on_visual_anchors(
+    detections: list[Detection],
+    mapper: CoordinateMapper,
+) -> tuple[list[int], list[int]]:
+    """Place each enabled cut on the complete detected artwork extent.
+
+    Automatic detections use the midpoint of their full bounding box, rather
+    than the detector's trimmed robust centre.  This minimises clipping and
+    balances any unavoidable crop when an artwork is larger than its cut.
+    Manual detections retain their explicitly selected visual anchor.
+    """
+    active = [detection for detection in detections if detection.enabled]
+    original_centers = {
+        detection.id: detection.center_inches for detection in active
+    }
+    visual_centres: dict[int, tuple[float, float]] = {}
+    for detection in active:
+        visual_center = mapper.pixel_to_inches(*detection.artwork_center_px())
+        visual_center = _clamp_center_to_bed(visual_center, detection, mapper)
+        visual_centres[detection.id] = visual_center
+        detection.move_to_inches(
+            visual_center,
+            mapper,
+            preserve_preferred_center=True,
+        )
+
+    recalculate_cut_overlaps(detections)
+    if any(detection.enabled and detection.overlaps_cut for detection in detections):
+        # Exact independent centring can recreate collisions. Resolve those
+        # conflicts toward the artwork centres as a single constrained layout,
+        # so the final result is as centred as possible without undoing step 2.
+        resolve_cut_overlaps(
+            detections,
+            mapper,
+            target_centres_inches=visual_centres,
+        )
+        recalculate_cut_overlaps(detections)
+        if any(
+            detection.enabled and detection.overlaps_cut
+            for detection in detections
+        ):
+            # The generic pairwise solver can reach a local packing dead-end in
+            # a dense grid. The incoming step-2 layout is a known collision-free
+            # fallback; restore it, then move each cut monotonically toward its
+            # artwork target without ever crossing another cut.
+            for detection in active:
+                detection.move_to_inches(
+                    original_centers[detection.id],
+                    mapper,
+                    preserve_preferred_center=True,
+                )
+            recalculate_cut_overlaps(detections)
+            if not any(
+                detection.enabled and detection.overlaps_cut
+                for detection in detections
+            ):
+                _move_toward_targets_without_collisions(
+                    detections, mapper, visual_centres
+                )
+                recalculate_cut_overlaps(detections)
+    moved_ids = [
+        detection.id
+        for detection in active
+        if _distance_squared(
+            detection.center_inches, original_centers[detection.id]
+        )
+        > 1e-12
+    ]
+    problem_ids = [detection.id for detection in active if not detection.exportable]
+    return moved_ids, problem_ids
+
+
+def _move_toward_targets_without_collisions(
+    detections: list[Detection],
+    mapper: CoordinateMapper,
+    targets: dict[int, tuple[float, float]],
+) -> None:
+    """Improve a safe layout monotonically without ever creating a collision."""
+    active = [detection for detection in detections if detection.enabled]
+    for pass_index in range(6):
+        changed = False
+        ordered = sorted(
+            active,
+            key=lambda item: _distance_squared(
+                item.center_inches, targets[item.id]
+            ),
+            reverse=pass_index % 2 == 0,
+        )
+        for detection in ordered:
+            start = detection.center_inches
+            target = _clamp_center_to_bed(
+                targets[detection.id], detection, mapper
+            )
+            if _distance_squared(start, target) <= 1e-12:
+                continue
+            detection.move_to_inches(
+                target, mapper, preserve_preferred_center=True
+            )
+            if not _detection_collides(detection, active):
+                changed = True
+                continue
+            detection.move_to_inches(
+                start, mapper, preserve_preferred_center=True
+            )
+            lower, upper = 0.0, 1.0
+            for _iteration in range(42):
+                fraction = (lower + upper) / 2.0
+                trial = (
+                    start[0] + (target[0] - start[0]) * fraction,
+                    start[1] + (target[1] - start[1]) * fraction,
+                )
+                detection.move_to_inches(
+                    trial, mapper, preserve_preferred_center=True
+                )
+                if _detection_collides(detection, active):
+                    upper = fraction
+                else:
+                    lower = fraction
+            safe_fraction = max(0.0, lower - 1e-8)
+            safe = (
+                start[0] + (target[0] - start[0]) * safe_fraction,
+                start[1] + (target[1] - start[1]) * safe_fraction,
+            )
+            detection.move_to_inches(
+                safe, mapper, preserve_preferred_center=True
+            )
+            changed = changed or safe_fraction > 1e-7
+        if not changed:
+            break
+
+
+def _detection_collides(
+    detection: Detection, active: list[Detection]
+) -> bool:
+    return any(
+        other.id != detection.id
+        and _cut_rectangles_collide(
+            detection.square_inches, other.square_inches
+        )
+        for other in active
+    )
 
 
 def _axis_separation_plan(
@@ -347,17 +583,12 @@ def _available_axis_movement(
     direction: float,
     mapper: CoordinateMapper,
 ) -> float:
-    half_size = (
-        detection.cut_width_inches / 2.0
-        if axis == 0
-        else detection.cut_height_inches / 2.0
-    )
-    bed_size = mapper.bed_width_in if axis == 0 else mapper.bed_height_in
+    lower, upper = _allowed_center_interval(detection, axis, mapper)
     position = detection.center_inches[axis]
     return (
-        max(0.0, bed_size - half_size - position)
+        max(0.0, upper - position)
         if direction > 0.0
-        else max(0.0, position - half_size)
+        else max(0.0, position - lower)
     )
 
 
@@ -366,12 +597,52 @@ def _clamp_center_to_bed(
     detection: Detection,
     mapper: CoordinateMapper,
 ) -> tuple[float, float]:
-    half_width = detection.cut_width_inches / 2.0
-    half_height = detection.cut_height_inches / 2.0
+    x_lower, x_upper = _allowed_center_interval(detection, 0, mapper)
+    y_lower, y_upper = _allowed_center_interval(detection, 1, mapper)
     return (
-        min(max(center[0], half_width), mapper.bed_width_in - half_width),
-        min(max(center[1], half_height), mapper.bed_height_in - half_height),
+        min(max(center[0], x_lower), x_upper),
+        min(max(center[1], y_lower), y_upper),
     )
+
+
+def _allowed_center_interval(
+    detection: Detection,
+    axis: int,
+    mapper: CoordinateMapper,
+) -> tuple[float, float]:
+    """Return cut-centre bounds that keep both cut and artwork contained.
+
+    When the artwork is larger than the configured cut, full containment is
+    impossible.  In that case the interval collapses to the geometric midpoint,
+    producing an even and explicit crop instead of hiding one extreme.
+    """
+    half_size = (
+        detection.cut_width_inches / 2.0
+        if axis == 0
+        else detection.cut_height_inches / 2.0
+    )
+    bed_size = mapper.bed_width_in if axis == 0 else mapper.bed_height_in
+    bed_lower = half_size
+    bed_upper = bed_size - half_size
+    if detection.bounding_box_px is None:
+        return bed_lower, bed_upper
+
+    x, y, width, height = mapper.pixel_rect_to_inches(
+        detection.bounding_box_px
+    )
+    artwork_lower = x if axis == 0 else y
+    artwork_size = width if axis == 0 else height
+    artwork_upper = artwork_lower + artwork_size
+    lower = max(bed_lower, artwork_upper - half_size)
+    upper = min(bed_upper, artwork_lower + half_size)
+    if lower <= upper + 1e-9:
+        midpoint = (lower + upper) / 2.0
+        return min(lower, midpoint), max(upper, midpoint)
+
+    midpoint = min(
+        max(artwork_lower + artwork_size / 2.0, bed_lower), bed_upper
+    )
+    return midpoint, midpoint
 
 
 def _distance_squared(

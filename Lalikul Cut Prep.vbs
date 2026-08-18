@@ -1,16 +1,19 @@
 Option Explicit
 
-Dim shell, fileSystem, projectFolder, pythonExe, pythonwExe, checkCommand, result
+Dim shell, fileSystem, projectFolder, runtimeExe, pythonExe, pythonwExe, checkCommand, result
 
 Set shell = CreateObject("WScript.Shell")
 Set fileSystem = CreateObject("Scripting.FileSystemObject")
 
 projectFolder = fileSystem.GetParentFolderName(WScript.ScriptFullName)
+runtimeExe = fileSystem.BuildPath(projectFolder, ".runtime\python.exe")
 pythonExe = fileSystem.BuildPath(projectFolder, ".venv\Scripts\python.exe")
 pythonwExe = fileSystem.BuildPath(projectFolder, ".venv\Scripts\pythonw.exe")
 
-If Not fileSystem.FileExists(pythonExe) Or Not fileSystem.FileExists(pythonwExe) Then
-    MsgBox "The local environment is missing." & vbCrLf & vbCrLf & _
+If Not fileSystem.FileExists(runtimeExe) Or _
+        Not fileSystem.FileExists(pythonExe) Or _
+        Not fileSystem.FileExists(pythonwExe) Then
+    MsgBox "The local application runtime is missing." & vbCrLf & vbCrLf & _
         "Double-click setup.bat first, then try again.", _
         vbExclamation, "Lalikul Cut Prep"
     WScript.Quit 1
@@ -23,7 +26,7 @@ result = shell.Run(checkCommand, 0, True)
 
 If result <> 0 Then
     MsgBox "The application environment is incomplete or broken." & vbCrLf & vbCrLf & _
-        "Run setup.bat again. If the problem continues, use run_console.bat " & _
+        "Double-click setup.bat to repair it. If the problem continues, use run_console.bat " & _
         "to see the technical error.", _
         vbCritical, "Lalikul Cut Prep"
     WScript.Quit result

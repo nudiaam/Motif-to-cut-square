@@ -3,6 +3,14 @@ setlocal
 cd /d "%~dp0"
 
 echo [1/3] Checking Python...
+if exist ".runtime\python.exe" (
+    ".runtime\python.exe" -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)" >nul 2>nul
+    if not errorlevel 1 (
+        set "PYTHON_BOOTSTRAP=.runtime\python.exe"
+        goto create_environment
+    )
+)
+
 where py >nul 2>nul
 if errorlevel 1 goto try_python_command
 py -3 -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)" >nul 2>nul
@@ -55,6 +63,8 @@ exit /b 0
 :python_missing
 echo.
 echo Python 3 was not found.
+echo This project normally includes its own Python runtime in .runtime.
+echo If that folder was removed, restore the complete project or reinstall Python.
 echo Install Python 3.10 or newer from https://www.python.org/downloads/windows/
 echo During installation, enable "Add python.exe to PATH", then run setup.bat again.
 pause

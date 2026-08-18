@@ -11,6 +11,7 @@ from PySide6.QtGui import (
     QKeyEvent,
     QMouseEvent,
     QPainter,
+    QPainterPath,
     QPen,
     QWheelEvent,
 )
@@ -23,24 +24,36 @@ from app.geometry.coordinate_mapper import (
 )
 from app.models import Detection
 from app.geometry.units import LengthUnit, from_inches
+from app.imaging.panel_grid import PanelGrid
 
 
 class BedCanvas(QWidget):
-    detection_selected = Signal(int)
+    detection_selected = Signal(int, bool)
     empty_selected = Signal()
+    edit_started = Signal(str)
     center_moved = Signal(int, float, float)
     add_center_requested = Signal(float, float)
     image_placement_changed = Signal(float, float, float, float)
+    grid_line_moved = Signal(str, int, float)
+    grid_edit_started = Signal()
+    grid_edit_finished = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._image = QImage()
         self._mapper: CoordinateMapper | None = None
         self._detections: list[Detection] = []
-        self._selected_id: int | None = None
+        self._selected_ids: set[int] = set()
         self._add_mode = False
         self._dragging_id: int | None = None
+        self._drag_edit_announced = False
         self._verification_rectangles: dict[int, tuple[float, float, float, float]] = {}
+        self._cut_preview_active = False
+        self._panel_grid: PanelGrid | None = None
+        self._grid_visible = True
+        self._grid_edit_active = False
+        self._dragging_grid_line: tuple[str, int] | None = None
+        self._grid_edit_announced = False
         self._bed_width_in = BED_WIDTH_IN
         self._bed_height_in = BED_HEIGHT_IN
         self._working_unit = LengthUnit.INCHES
@@ -62,6 +75,10 @@ class BedCanvas(QWidget):
         self.setMinimumSize(560, 380)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setAccessibleName("Laser bed workspace")
+        self.setAccessibleDescription(
+            "Image and cut-area workspace. Use Tab to reach the review list for a textual view."
+        )
 
     def set_scene(
         self,
@@ -115,7 +132,10 @@ class BedCanvas(QWidget):
         self.update()
 
     def set_selected_id(self, detection_id: int | None) -> None:
-        self._selected_id = detection_id
+        self.set_selected_ids({detection_id} if detection_id is not None else set())
+
+    def set_selected_ids(self, detection_ids: set[int]) -> None:
+        self._selected_ids = set(detection_ids)
         self.update()
 
     def set_add_mode(self, active: bool) -> None:
@@ -126,6 +146,37 @@ class BedCanvas(QWidget):
         self, rectangles: dict[int, tuple[float, float, float, float]]
     ) -> None:
         self._verification_rectangles = rectangles
+        self.update()
+
+    def set_panel_grid(self, panel_grid: PanelGrid | None) -> None:
+        self._panel_grid = panel_grid
+        if panel_grid is None:
+            self._dragging_grid_line = None
+            self._grid_edit_active = False
+        self.update()
+
+    def set_grid_edit_active(self, active: bool) -> None:
+        self._grid_edit_active = bool(
+            active and self._grid_visible and self._panel_grid is not None
+        )
+        self._dragging_grid_line = None
+        self._update_interaction_cursor()
+        self.update()
+
+    def set_grid_visible(self, visible: bool) -> None:
+        self._grid_visible = bool(visible)
+        if not self._grid_visible:
+            self._grid_edit_active = False
+            self._dragging_grid_line = None
+        self._update_interaction_cursor()
+        self.update()
+
+    @property
+    def cut_preview_active(self) -> bool:
+        return self._cut_preview_active
+
+    def set_cut_preview(self, active: bool) -> None:
+        self._cut_preview_active = active
         self.update()
 
     def paintEvent(self, event) -> None:  # noqa: N802 - Qt API
@@ -154,7 +205,9 @@ class BedCanvas(QWidget):
         painter.setPen(QPen(QColor("#77818d"), 1))
         painter.drawRect(bed)
 
+        self._paint_cut_preview(painter, bed)
         self._paint_rulers(painter, bed)
+        self._paint_panel_grid(painter)
 
         if self._mapper is not None and self._image_selected and not self._image_locked:
             self._paint_image_selection(painter)
@@ -165,6 +218,23 @@ class BedCanvas(QWidget):
         self._paint_detections(painter)
         self._paint_verification(painter)
         self._paint_view_indicator(painter)
+
+    def _paint_cut_preview(self, painter: QPainter, bed: QRectF) -> None:
+        if not self._cut_preview_active or self._mapper is None:
+            return
+        shaded_area = QPainterPath()
+        shaded_area.setFillRule(Qt.FillRule.OddEvenFill)
+        shaded_area.addRect(bed)
+        for detection in self._detections:
+            if not detection.enabled:
+                continue
+            square_px = self._mapper.inches_rect_to_pixel(
+                detection.square_inches.as_tuple()
+            )
+            square = self._pixel_rect_to_widget(square_px).intersected(bed)
+            if not square.isEmpty():
+                shaded_area.addRect(square)
+        painter.fillPath(shaded_area, QColor(7, 10, 14, 178))
 
     def _paint_view_indicator(self, painter: QPainter) -> None:
         if abs(self._view_scale - 1.0) < 1e-9 and self._view_offset.isNull():
@@ -178,19 +248,50 @@ class BedCanvas(QWidget):
         painter.setPen(QColor("#c8d1d9"))
         painter.drawText(rectangle, Qt.AlignmentFlag.AlignCenter, text)
 
+    def _paint_panel_grid(self, painter: QPainter) -> None:
+        if not self._grid_visible or self._panel_grid is None or self._mapper is None:
+            return
+        color = QColor("#55e6ff")
+        color.setAlpha(225 if self._grid_edit_active else 105)
+        pen = QPen(color, 2 if self._grid_edit_active else 1)
+        pen.setCosmetic(True)
+        pen.setStyle(
+            Qt.PenStyle.SolidLine
+            if self._grid_edit_active
+            else Qt.PenStyle.DashLine
+        )
+        painter.setPen(pen)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        top = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[0]).y()
+        bottom = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[-1]).y()
+        left = self._pixel_to_widget(self._panel_grid.x_lines_px[0], 0.0).x()
+        right = self._pixel_to_widget(self._panel_grid.x_lines_px[-1], 0.0).x()
+        for index, x_px in enumerate(self._panel_grid.x_lines_px):
+            x = self._pixel_to_widget(x_px, 0.0).x()
+            painter.drawLine(QPointF(x, top), QPointF(x, bottom))
+            if self._grid_edit_active:
+                painter.setBrush(QColor("#142b31"))
+                painter.drawEllipse(QPointF(x, top), 4.0, 4.0)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+        for index, y_px in enumerate(self._panel_grid.y_lines_px):
+            y = self._pixel_to_widget(0.0, y_px).y()
+            painter.drawLine(QPointF(left, y), QPointF(right, y))
+            if self._grid_edit_active:
+                painter.setBrush(QColor("#142b31"))
+                painter.drawEllipse(QPointF(left, y), 4.0, 4.0)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+
     def _paint_detections(self, painter: QPainter) -> None:
         assert self._mapper is not None
         label_font = QFont("Segoe UI", 9, QFont.Weight.DemiBold)
         for detection in self._detections:
-            selected = detection.id == self._selected_id
+            selected = detection.id in self._selected_ids
             if not detection.enabled:
                 color = QColor(145, 153, 163, 135)
             elif detection.overlaps_cut:
                 color = QColor("#ff8a3d")
             elif not detection.valid_cut:
                 color = QColor("#ff5364")
-            elif selected:
-                color = QColor("#ffd166")
             else:
                 color = QColor("#39d6a4")
 
@@ -206,25 +307,34 @@ class BedCanvas(QWidget):
                 detection.square_inches.as_tuple()
             )
             square = self._pixel_rect_to_widget(square_px)
-            square_pen = QPen(color, 3 if selected else 2)
+            # Selection owns the cut square itself: a bright cyan edge, center,
+            # label, and translucent interior.  It does not add an outer halo,
+            # so the highlighted geometry is exactly the geometry being edited.
+            square_color = QColor("#55e6ff") if selected else color
+            square_pen = QPen(square_color, 4 if selected else 2)
             square_pen.setCosmetic(True)
             painter.setPen(square_pen)
-            painter.setBrush(QColor(color.red(), color.green(), color.blue(), 18))
+            painter.setBrush(
+                QColor(85, 230, 255, 68)
+                if selected
+                else QColor(color.red(), color.green(), color.blue(), 18)
+            )
             painter.drawRect(square)
 
             center = self._pixel_to_widget(*detection.center_px)
-            painter.setPen(QPen(QColor("#11151a"), 4))
+            painter.setPen(QPen(QColor("#11151a"), 6 if selected else 4))
             painter.drawPoint(center)
-            painter.setPen(QPen(color, 2))
-            painter.setBrush(color)
-            painter.drawEllipse(center, 4.5 if selected else 3.5, 4.5 if selected else 3.5)
+            selection_color = QColor("#55e6ff") if selected else color
+            painter.setPen(QPen(QColor("#ffffff") if selected else color, 2))
+            painter.setBrush(selection_color)
+            painter.drawEllipse(center, 6.0 if selected else 3.5, 6.0 if selected else 3.5)
 
             painter.setFont(label_font)
             label_rect = QRectF(center.x() + 7, center.y() - 19, 42, 18)
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QColor(15, 18, 23, 190))
+            painter.setBrush(selection_color if selected else QColor(15, 18, 23, 190))
             painter.drawRoundedRect(label_rect, 3, 3)
-            painter.setPen(color)
+            painter.setPen(QColor("#071419") if selected else color)
             painter.drawText(
                 label_rect, Qt.AlignmentFlag.AlignCenter, f"#{detection.id:02d}"
             )
@@ -358,10 +468,27 @@ class BedCanvas(QWidget):
         if event.button() != Qt.MouseButton.LeftButton or self._mapper is None:
             return
         if not self._bed_rect().contains(point):
-            self._selected_id = None
-            self.empty_selected.emit()
-            self.update()
+            # Empty-space clicks are easy to make while reviewing a group.
+            # Preserve the current selection until another detection or an
+            # explicit command changes it.
+            event.accept()
             return
+
+        if self._grid_visible and self._grid_edit_active and self._panel_grid is not None:
+            grid_line = self._grid_line_at(point)
+            if grid_line is not None:
+                self._dragging_grid_line = grid_line
+                self._grid_edit_announced = False
+                axis, _index = grid_line
+                self.setCursor(
+                    QCursor(
+                        Qt.CursorShape.SplitHCursor
+                        if axis == "x"
+                        else Qt.CursorShape.SplitVCursor
+                    )
+                )
+                event.accept()
+                return
 
         if not self._image_locked:
             handle = self._image_handle_at(point)
@@ -370,10 +497,12 @@ class BedCanvas(QWidget):
                 self._image_selected = True
                 self._image_drag_mode = "scale"
                 self._image_scale_handle = handle
+                self._drag_edit_announced = False
             elif image_rect.contains(point):
                 self._image_selected = True
                 self._image_drag_mode = "move"
                 self._image_scale_handle = None
+                self._drag_edit_announced = False
             else:
                 self._image_selected = False
                 self._image_drag_mode = None
@@ -391,13 +520,15 @@ class BedCanvas(QWidget):
             return
 
         detection_id = self._hit_test(point)
-        if detection_id is None:
-            self._selected_id = None
-            self.empty_selected.emit()
-        else:
-            self._selected_id = detection_id
-            self._dragging_id = detection_id
-            self.detection_selected.emit(detection_id)
+        if detection_id is not None:
+            additive = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+            self.detection_selected.emit(detection_id, additive)
+            # The selection signal is delivered synchronously. Only start a
+            # drag if this click left the detection selected; clicking an
+            # already-selected square toggles it off instead.
+            if not additive and detection_id in self._selected_ids:
+                self._dragging_id = detection_id
+                self._drag_edit_announced = False
         self.update()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:  # noqa: N802
@@ -417,8 +548,41 @@ class BedCanvas(QWidget):
         ):
             self._update_interaction_cursor()
             return
+        if self._grid_visible and self._grid_edit_active and self._panel_grid is not None:
+            if self._dragging_grid_line is not None:
+                if not self._grid_edit_announced:
+                    self.grid_edit_started.emit()
+                    self._grid_edit_announced = True
+                axis, index = self._dragging_grid_line
+                image_point = self._widget_to_pixel(event.position(), clamp=True)
+                value = image_point.x() if axis == "x" else image_point.y()
+                self.grid_line_moved.emit(axis, index, value)
+                event.accept()
+                return
+            # A visible/editable guide must not disable moving cuts. Only a
+            # guide drag owns the pointer; an active cut drag continues below.
+            if self._dragging_id is None:
+                grid_line = self._grid_line_at(event.position())
+                if grid_line is not None:
+                    axis, _index = grid_line
+                    self.setCursor(
+                        QCursor(
+                            Qt.CursorShape.SplitHCursor
+                            if axis == "x"
+                            else Qt.CursorShape.SplitVCursor
+                        )
+                    )
+                    return
+                self.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         if not self._image_locked and self._mapper is not None:
             if self._image_drag_mode is not None:
+                if not self._drag_edit_announced:
+                    self.edit_started.emit(
+                        "Resize image"
+                        if self._image_drag_mode == "scale"
+                        else "Move image"
+                    )
+                    self._drag_edit_announced = True
                 self._update_image_drag(event.position())
                 return
             handle = self._image_handle_at(event.position())
@@ -433,6 +597,9 @@ class BedCanvas(QWidget):
             return
         if self._dragging_id is None or self._mapper is None:
             return
+        if not self._drag_edit_announced:
+            self.edit_started.emit("Move cut")
+            self._drag_edit_announced = True
         image_point = self._widget_to_pixel(event.position(), clamp=True)
         self.center_moved.emit(self._dragging_id, image_point.x(), image_point.y())
 
@@ -447,11 +614,19 @@ class BedCanvas(QWidget):
             event.accept()
             return
         if event.button() == Qt.MouseButton.LeftButton:
+            grid_was_edited = (
+                self._dragging_grid_line is not None and self._grid_edit_announced
+            )
             self._dragging_id = None
+            self._drag_edit_announced = False
             self._image_drag_mode = None
             self._image_scale_handle = None
             self._image_drag_start_point_in = None
             self._image_drag_start_rect_in = None
+            self._dragging_grid_line = None
+            self._grid_edit_announced = False
+            if grid_was_edited:
+                self.grid_edit_finished.emit()
 
     def wheelEvent(self, event: QWheelEvent) -> None:  # noqa: N802 - Qt API
         delta = event.angleDelta()
@@ -602,6 +777,32 @@ class BedCanvas(QWidget):
             if self._pixel_rect_to_widget(square_px).contains(point):
                 return detection.id
         return None
+
+    def _grid_line_at(self, point: QPointF) -> tuple[str, int] | None:
+        if self._panel_grid is None or self._mapper is None:
+            return None
+        tolerance = 7.0
+        candidates: list[tuple[float, str, int]] = []
+        top = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[0]).y()
+        bottom = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[-1]).y()
+        left = self._pixel_to_widget(self._panel_grid.x_lines_px[0], 0.0).x()
+        right = self._pixel_to_widget(self._panel_grid.x_lines_px[-1], 0.0).x()
+        if top - tolerance <= point.y() <= bottom + tolerance:
+            for index, x_px in enumerate(self._panel_grid.x_lines_px):
+                x = self._pixel_to_widget(x_px, 0.0).x()
+                distance = abs(point.x() - x)
+                if distance <= tolerance:
+                    candidates.append((distance, "x", index))
+        if left - tolerance <= point.x() <= right + tolerance:
+            for index, y_px in enumerate(self._panel_grid.y_lines_px):
+                y = self._pixel_to_widget(0.0, y_px).y()
+                distance = abs(point.y() - y)
+                if distance <= tolerance:
+                    candidates.append((distance, "y", index))
+        if not candidates:
+            return None
+        _distance, axis, index = min(candidates, key=lambda item: item[0])
+        return axis, index
 
     def _fit_bed_rect(self) -> QRectF:
         left_margin, top_margin, right_margin, bottom_margin = 68.0, 48.0, 36.0, 42.0

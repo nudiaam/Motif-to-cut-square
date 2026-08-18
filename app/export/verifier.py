@@ -27,7 +27,7 @@ def verify_export_geometry(
     max_error_x = 0.0
     max_error_y = 0.0
     for detection in detections:
-        if not detection.exportable:
+        if not detection.enabled:
             continue
         square = detection.square_inches
         exported = tuple(from_inches(value, export_unit) for value in square.as_tuple())

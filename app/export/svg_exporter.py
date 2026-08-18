@@ -1,4 +1,4 @@
-"""Export only enabled, valid physical cuts as SVG geometry."""
+"""Export every enabled physical cut as SVG geometry."""
 
 from __future__ import annotations
 
@@ -44,7 +44,7 @@ class SVGExporter:
             },
         )
         for detection in detections:
-            if not detection.exportable:
+            if not detection.enabled:
                 continue
             square = detection.square_inches
             x = from_inches(square.x, unit)
@@ -78,7 +78,7 @@ class SVGExporter:
         tree = self.build_tree(mapper, detections, unit)
         ET.indent(tree, space="  ")
         tree.write(output_path, encoding="utf-8", xml_declaration=True)
-        count = sum(1 for item in detections if item.exportable)
+        count = sum(1 for item in detections if item.enabled)
         return SVGExportResult(output_path, count, unit)
 
 

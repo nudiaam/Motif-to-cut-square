@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+import struct
 import unittest
 
-from PIL import Image
+import cv2
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +23,7 @@ class WindowsLauncherTests(unittest.TestCase):
         diagnostic = (ROOT / "run_console.bat").read_text(encoding="utf-8")
         self.assertIn("wscript.exe", normal.lower())
         self.assertIn("Lalikul Cut Prep.vbs", normal)
-        self.assertIn("python -m app.main", diagnostic)
+        self.assertIn('.venv\\Scripts\\python.exe" -m app.main', diagnostic)
         self.assertIn("pause", diagnostic.lower())
 
     def test_brand_assets_are_transparent_and_multiresolution(self) -> None:
@@ -31,33 +32,44 @@ class WindowsLauncherTests(unittest.TestCase):
         self.assertTrue(png_path.exists())
         self.assertTrue(ico_path.exists())
 
-        with Image.open(png_path) as source:
-            png = source.convert("RGBA")
-        self.assertEqual(png.getpixel((0, 0))[3], 0)
-        raw_pixels = png.tobytes()
-        visible_pixels = [
-            tuple(raw_pixels[index : index + 4])
-            for index in range(0, len(raw_pixels), 4)
-            if raw_pixels[index + 3] > 200
-        ]
+        png = cv2.imread(str(png_path), cv2.IMREAD_UNCHANGED)
+        self.assertIsNotNone(png)
+        assert png is not None
+        self.assertEqual(png.shape[2], 4)
+        self.assertEqual(int(png[0, 0, 3]), 0)
+        visible_pixels = png[png[:, :, 3] > 200]
         self.assertGreater(len(visible_pixels), 1000)
         self.assertFalse(
-            any(red > 200 and blue > 150 and green < 80 for red, green, blue, _ in visible_pixels)
+            bool(
+                (
+                    (visible_pixels[:, 2] > 200)
+                    & (visible_pixels[:, 0] > 150)
+                    & (visible_pixels[:, 1] < 80)
+                ).any()
+            )
         )
 
-        with Image.open(ico_path) as ico:
-            self.assertEqual(
-                ico.ico.sizes(),
-                {
-                    (16, 16),
-                    (24, 24),
-                    (32, 32),
-                    (48, 48),
-                    (64, 64),
-                    (128, 128),
-                    (256, 256),
-                },
+        ico_data = ico_path.read_bytes()
+        reserved, icon_type, count = struct.unpack_from("<HHH", ico_data, 0)
+        self.assertEqual((reserved, icon_type), (0, 1))
+        sizes = set()
+        for index in range(count):
+            width_byte, height_byte = struct.unpack_from(
+                "<BB", ico_data, 6 + index * 16
             )
+            sizes.add((width_byte or 256, height_byte or 256))
+        self.assertEqual(
+            sizes,
+            {
+                (16, 16),
+                (24, 24),
+                (32, 32),
+                (48, 48),
+                (64, 64),
+                (128, 128),
+                (256, 256),
+            },
+        )
 
     def test_setup_creates_branded_shortcut(self) -> None:
         setup = (ROOT / "setup.bat").read_text(encoding="utf-8")
