@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class WindowsLauncherTests(unittest.TestCase):
     def test_hidden_launcher_uses_pythonw_and_validates_environment(self) -> None:
         launcher = (ROOT / "Lalikul Cut Prep.vbs").read_text(encoding="utf-8")
+        self.assertNotIn(".runtime\\python.exe", launcher)
         self.assertIn(".venv\\Scripts\\pythonw.exe", launcher)
         self.assertIn("import PySide6, cv2, numpy, app.main", launcher)
         self.assertIn("shell.Run Quote(pythonwExe)", launcher)
