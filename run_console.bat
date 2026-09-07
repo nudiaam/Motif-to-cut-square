@@ -2,12 +2,6 @@
 setlocal
 cd /d "%~dp0"
 
-if not exist ".runtime\python.exe" (
-    echo The local application runtime is missing. Run setup.bat first.
-    pause
-    exit /b 1
-)
-
 if not exist ".venv\Scripts\python.exe" (
     echo The local application environment is missing. Run setup.bat first.
     pause

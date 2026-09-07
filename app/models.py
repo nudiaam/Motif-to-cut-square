@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.cut_square import CutSquare
+from app.imaging.logical_layout import LogicalLayout
 
 
 @dataclass(slots=True)
@@ -22,6 +23,12 @@ class Detection:
     manual: bool = False
     cut_width_inches: float = 5.0
     cut_height_inches: float = 5.0
+    original_center_px: tuple[float, float] | None = None
+    layout_anchor_px: tuple[float, float] | None = None
+    layout_cell: tuple[int, int] | None = None  # column, row in the fitted grid
+    inferred: bool = False  # Automatic grid cell with no detector evidence
+    artwork_clipped: bool = False
+    layout_observation_px: tuple[float, float] | None = None
 
     @classmethod
     def from_pixel_center(
@@ -35,6 +42,7 @@ class Detection:
         manual: bool = False,
         cut_width_inches: float = 5.0,
         cut_height_inches: float = 5.0,
+        layout_observation_px: tuple[float, float] | None = None,
     ) -> "Detection":
         center_inches = mapper.pixel_to_inches(*center_px)
         square = CutSquare.centered_at(
@@ -52,6 +60,11 @@ class Detection:
             manual=manual,
             cut_width_inches=cut_width_inches,
             cut_height_inches=cut_height_inches,
+            original_center_px=(float(center_px[0]), float(center_px[1])),
+            layout_observation_px=(
+                tuple(float(value) for value in layout_observation_px)
+                if layout_observation_px is not None else None
+            ),
         )
         detection._update_validity(mapper)
         return detection
@@ -73,13 +86,38 @@ class Detection:
         The detector's robust centre is useful for identifying a motif, but it
         intentionally trims thin extremes.  A cut must instead account for the
         complete bounding box so details such as flags or antennae are not
-        clipped. Manual detections have no artwork extent and therefore retain
-        their explicitly chosen centre.
+        clipped. Manually placed or moved cuts retain their explicitly chosen
+        centre; any original artwork extent remains available for validation.
         """
-        if self.bounding_box_px is None:
+        if self.manual or self.bounding_box_px is None:
             return self.preferred_center_px
         x, y, width, height = self.bounding_box_px
         return x + width / 2.0, y + height / 2.0
+
+    def cut_anchor_px(self) -> tuple[float, float]:
+        """Use the exact lattice position when this cut belongs to the grid."""
+        if self.grid_positioned:
+            return self.layout_anchor_px
+        return self.artwork_center_px()
+
+    @property
+    def grid_positioned(self) -> bool:
+        return self.layout_anchor_px is not None and not self.manual
+
+    @property
+    def preserves_layout_position(self) -> bool:
+        """Grid positions and explicit manual overrides never enter packing."""
+        return self.grid_positioned or (self.manual and self.layout_cell is not None)
+
+    def place_on_grid(
+        self, position: tuple[float, float], cell: tuple[int, int], mapper: CoordinateMapper,
+    ) -> None:
+        """Assign the exact shared geometry, retaining all original evidence."""
+        self.layout_anchor_px = position
+        self.layout_cell = cell
+        self.center_px = position
+        self.center_inches = mapper.pixel_to_inches(*position)
+        self._update_validity(mapper)
 
     def contains_artwork(
         self, mapper: CoordinateMapper, tolerance: float = 1e-9
@@ -143,8 +181,9 @@ class Detection:
         self.center_px = clamped_x, clamped_y
         self.preferred_center_px = self.center_px
         self.center_inches = mapper.pixel_to_inches(clamped_x, clamped_y)
-        self._update_validity(mapper)
         self.manual = True
+        self.layout_anchor_px = None
+        self._update_validity(mapper)
 
     def move_to_inches(
         self,
@@ -158,12 +197,14 @@ class Detection:
         if not preserve_preferred_center:
             self.preferred_center_px = self.center_px
             self.manual = True
+            self.layout_anchor_px = None
         self._update_validity(mapper)
 
     def _update_validity(self, mapper: CoordinateMapper) -> None:
+        self.artwork_clipped = not self.contains_artwork(mapper)
         self.valid_cut = self.square_inches.is_valid(
             mapper.bed_width_in, mapper.bed_height_in
-        ) and self.contains_artwork(mapper)
+        ) and (self.preserves_layout_position or not self.artwork_clipped)
 
 
 def recalculate_cut_overlaps(
@@ -209,9 +250,10 @@ def resolve_cut_overlaps(
         if detection.enabled
         and detection.has_feasible_placement(mapper)
         and detection.overlaps_cut
+        and not detection.preserves_layout_position
     ]
     if not conflicting:
-        return [], []
+        return [], [d.id for d in detections if d.enabled and d.overlaps_cut]
 
     movable_ids = {detection.id for detection in conflicting}
     original_centres = {
@@ -223,7 +265,9 @@ def resolve_cut_overlaps(
             target_centres_inches[detection.id]
             if target_centres_inches is not None
             and detection.id in target_centres_inches
-            else mapper.pixel_to_inches(*detection.preferred_center_px)
+            else mapper.pixel_to_inches(
+                *(detection.layout_anchor_px or detection.preferred_center_px)
+            )
         )
         preferred = _clamp_center_to_bed(preferred, detection, mapper)
         preferred_centres[detection.id] = preferred
@@ -334,12 +378,11 @@ def center_cuts_on_visual_anchors(
     detections: list[Detection],
     mapper: CoordinateMapper,
 ) -> tuple[list[int], list[int]]:
-    """Place each enabled cut on the complete detected artwork extent.
+    """Retain exact grid positions and centre remaining individual cuts.
 
-    Automatic detections use the midpoint of their full bounding box, rather
-    than the detector's trimmed robust centre.  This minimises clipping and
-    balances any unavoidable crop when an artwork is larger than its cut.
-    Manual detections retain their explicitly selected visual anchor.
+    Grid centres and their manual overrides never enter containment clamping
+    or the packing solver. Unassigned cuts keep the existing artwork-centred
+    behaviour, with grid cuts acting as fixed obstacles.
     """
     active = [detection for detection in detections if detection.enabled]
     original_centers = {
@@ -347,7 +390,14 @@ def center_cuts_on_visual_anchors(
     }
     visual_centres: dict[int, tuple[float, float]] = {}
     for detection in active:
-        visual_center = mapper.pixel_to_inches(*detection.artwork_center_px())
+        if detection.manual and detection.layout_cell is not None:
+            visual_centres[detection.id] = detection.center_inches
+            continue
+        visual_center = mapper.pixel_to_inches(*detection.cut_anchor_px())
+        if detection.grid_positioned:
+            visual_centres[detection.id] = visual_center
+            detection.place_on_grid(detection.layout_anchor_px, detection.layout_cell, mapper)
+            continue
         visual_center = _clamp_center_to_bed(visual_center, detection, mapper)
         visual_centres[detection.id] = visual_center
         detection.move_to_inches(
@@ -376,6 +426,8 @@ def center_cuts_on_visual_anchors(
             # fallback; restore it, then move each cut monotonically toward its
             # artwork target without ever crossing another cut.
             for detection in active:
+                if detection.preserves_layout_position:
+                    continue
                 detection.move_to_inches(
                     original_centers[detection.id],
                     mapper,
@@ -402,6 +454,34 @@ def center_cuts_on_visual_anchors(
     return moved_ids, problem_ids
 
 
+def apply_logical_layout(
+    detections: list[Detection], mapper: CoordinateMapper, layout: LogicalLayout,
+) -> tuple[list[int], list[int]]:
+    """Use the reliable lattice as the exact centre of each assigned cut.
+
+    Artwork containment, bed edges and collisions never deform the grid.
+    Physical problems are reported after placement. No detections are invented.
+    """
+    if not layout.reliable:
+        return [], []
+    matches = {match.detection_id: match for match in layout.matches}
+    moved = []
+    active = [item for item in detections if item.enabled]
+    for detection in active:
+        match = matches.get(detection.id)
+        if detection.manual or match is None or match.status != "matched":
+            continue
+        if match.column is None or match.row is None:
+            continue
+        original = detection.center_inches
+        detection.place_on_grid(layout.position(match.column, match.row),
+                                (match.column, match.row), mapper)
+        if _distance_squared(original, detection.center_inches) > 1e-12:
+            moved.append(detection.id)
+    recalculate_cut_overlaps(detections)
+    return moved, [d.id for d in active if not d.exportable]
+
+
 def _move_toward_targets_without_collisions(
     detections: list[Detection],
     mapper: CoordinateMapper,
@@ -419,6 +499,8 @@ def _move_toward_targets_without_collisions(
             reverse=pass_index % 2 == 0,
         )
         for detection in ordered:
+            if detection.preserves_layout_position:
+                continue
             start = detection.center_inches
             target = _clamp_center_to_bed(
                 targets[detection.id], detection, mapper

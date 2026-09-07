@@ -21,6 +21,7 @@ The documentation is split so that non-technical users do not have to read devel
   Both editions include detailed instructions, screenshots, states, settings,
   navigation controls, automatic overlap correction, and troubleshooting guidance.
 - The [developer guide](docs/DEVELOPER_GUIDE.md) describes the architecture, virtual environment, tests, and technical decisions.
+- [CHANGELOG.md](CHANGELOG.md) lists the behavior included in each shared update.
 
 ## Quick start for Windows users
 
@@ -50,18 +51,28 @@ Alternative launchers are also available:
 - `run.bat` delegates to the same hidden launcher and closes immediately. Windows may briefly flash a console because `.bat` files run through `cmd`.
 - `run_console.bat` deliberately keeps the terminal open to display technical errors. Use it only for troubleshooting.
 
+### Updating an existing installation
+
+Close the application, download the latest complete ZIP from GitHub, extract it
+to a normal folder, and run `setup.bat` in that new folder. Open the application
+with the newly created `Lalikul Cut Prep.lnk`. Machine profiles and user-provided
+empty-bed references are stored outside the installation and remain available.
+The default Epilog empty-bed reference is already included in the ZIP.
+
 ## Typical workflow
 
-1. In **Prepare image**, select the machine, units, and global cut size.
+1. In **Prepare image**, select the machine, units, global cut size, and empty-bed
+   reference. The supplied Epilog reference is selected automatically.
 2. Load an image using **Paste Image**, `Ctrl+V`, **Open Image**, or **Demo Image**.
 3. If necessary, clear **Lock image placement** to move the image or scale it from
    its corners without distorting it. Lock it again when finished.
-4. Select **Detect figures**. The first pass always uses the image freely, without
-   imposing a panel grid.
-5. Compare every detected cut with the image. The application stays in **Detect and
+4. Select **Detect + check**. The application detects individual artwork and
+   automatically fits a supported panel or geometric grid.
+5. Compare every cut with the image. Reliable grid geometry determines the final
+   aligned centres and creates normal squares for empty detected cells. The application stays in **Detect and
    check** and does not advance automatically. If the result is right, select
    **Detection is correct — continue**.
-6. If the free result misses or merges figures, select **Improve with panel grid**,
+6. If the automatic result needs correction, select **Adjust panel grid**,
    correct the estimated rows, columns, or guides, and choose **Use this grid and
    detect again**. Check the new result and confirm it explicitly as well.
 7. In **Review cuts**, select false positives or use `Shift+click` to select several,
@@ -161,6 +172,15 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 - The image is loaded centred and contained within the bed while preserving its aspect ratio.
 - **Lock image placement** protects the image while cut shapes are being edited.
+- **Load empty-bed photo** stores a camera reference for the selected machine.
+  The built-in Epilog profile includes the supplied empty-bed image by default.
+- When visible bed texture matches the reference, the app identifies the physical
+  fabric, rejects bed artifacts, and extends a reliable grid to every complete row
+  or column contained by that fabric. Nearby fragments assigned to one cell are
+  represented once.
+- **Remove bed reference** disables the stored or bundled reference for the selected
+  machine. Images that do not match the reference continue through the normal
+  detector without reference subtraction.
 - When unlocked, drag inside the image to move it or drag a corner to scale it.
 - **IMAGE SCALE** shows how many pixels represent one physical unit horizontally and vertically.
 - **Preview Cuts** dims everything outside enabled, valid, collision-free cut
@@ -183,11 +203,24 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 ### Panel Grid
 
-- The first detection runs without a grid. The grid is an optional second pass for
-  images where free detection misses, merges, or duplicates figures.
-- Select **Improve with panel grid** after the first result to estimate the panel
-  boundaries. Choose **Use a panel grid** to enter them manually, or **No grid** to
-  return to a free composition.
+- **Detect + check** automatically infers rows, columns and spacing from the image.
+  Reliable grids determine final cut centres immediately, keeping the chosen cut size.
+  Visible panel bands provide additional evidence; continuous backgrounds use the
+  arrangement of individually detected artwork. No row or column count is preset.
+- Empty cells in a reliable grid become ordinary cut squares automatically.
+  Their inferred origin remains internal; delete any square that is not wanted.
+- On continuous backgrounds, detection compares complete foreground regions across
+  several thresholds before accepting a grid. Artwork spanning multiple cells stays
+  a single detection while the regular grid still supplies every cell square.
+- A reliable grid preserves the chosen cut size. If cuts overlap at the current
+  image scale, the overlap remains visible for review without shifting grid centres.
+- For touching panels photographed at an angle, an analysis copy is rectified and
+  the regular grid is projected back to the original photo. Image placement and
+  physical cut dimensions stay unchanged. Faint undetected illustrations receive
+  their grid squares without an additional acceptance step.
+- **Adjust panel grid** opens the existing fallback editor if the automatic
+  result needs correction. Choose **Use a panel grid** to enter boundaries manually,
+  or **No grid** to skip visual panel detection.
 - **Show grid** controls only the guide overlay. **Edit grid lines** unlocks the
   guides for dragging and reveals **Space columns evenly** and **Space rows evenly**.
 - Row and column changes update the guides immediately but preserve the current cut
@@ -272,7 +305,8 @@ Match **Export units** to **Working units** and verify the page size during impo
   component detector. Extremely low
   contrast, severe perspective, occlusion, or multiple intended motifs in one
   panel still require manual review.
-- There is no perspective or homography correction.
+- Camera-panel perspective correction is used only for automatic analysis and is
+  projected back to the unchanged source image.
 - The image-to-bed relationship, origin, and SVG must be physically validated before production use.
 - The default profile is Epilog Fusion Maker 36, but additional machines can be added.
 

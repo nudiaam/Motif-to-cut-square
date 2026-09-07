@@ -25,6 +25,7 @@ from app.geometry.coordinate_mapper import (
 from app.models import Detection
 from app.geometry.units import LengthUnit, from_inches
 from app.imaging.panel_grid import PanelGrid
+from app.imaging.logical_layout import LogicalLayout
 
 
 class BedCanvas(QWidget):
@@ -40,6 +41,10 @@ class BedCanvas(QWidget):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._logical_layout = LogicalLayout()
+        self._layout_cut_size = (5.0, 5.0)
+        self._layout_visible = False
+        self._layout_review_details = False
         self._image = QImage()
         self._mapper: CoordinateMapper | None = None
         self._detections: list[Detection] = []
@@ -262,6 +267,16 @@ class BedCanvas(QWidget):
         )
         painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
+        if self._panel_grid.projection is not None and not self._grid_edit_active:
+            grid = self._panel_grid
+            def position(c, r):
+                x, y, z = (line[0]*c + line[1]*r + line[2] for line in grid.projection)
+                return self._pixel_to_widget(x/z, y/z)
+            for c in range(grid.columns+1):
+                painter.drawLine(position(c-.5, -.5), position(c-.5, grid.rows-.5))
+            for r in range(grid.rows+1):
+                painter.drawLine(position(-.5, r-.5), position(grid.columns-.5, r-.5))
+            return
         top = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[0]).y()
         bottom = self._pixel_to_widget(0.0, self._panel_grid.y_lines_px[-1]).y()
         left = self._pixel_to_widget(self._panel_grid.x_lines_px[0], 0.0).x()
@@ -280,6 +295,57 @@ class BedCanvas(QWidget):
                 painter.setBrush(QColor("#142b31"))
                 painter.drawEllipse(QPointF(left, y), 4.0, 4.0)
                 painter.setBrush(Qt.BrushStyle.NoBrush)
+
+    def set_logical_layout(self, layout: LogicalLayout, cut_size: tuple[float, float] = (5.0, 5.0)) -> None:
+        self._logical_layout = layout
+        self._layout_cut_size = cut_size
+        self.update()
+
+    def set_layout_visible(self, visible: bool) -> None:
+        self._layout_visible = visible
+        self.update()
+
+    def set_layout_review_details(self, visible: bool) -> None:
+        self._layout_review_details = visible
+        self.update()
+
+    def _paint_logical_layout(self, painter: QPainter) -> None:
+        if not self._layout_visible or self._cut_preview_active:
+            return
+        layout = self._logical_layout
+        painter.save()
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        if layout.columns:
+            painter.setPen(QPen(QColor(80, 180, 255, 95), 1, Qt.PenStyle.DotLine))
+            for column in range(layout.columns):
+                painter.drawLine(self._pixel_to_widget(*layout.position(column, 0)),
+                                 self._pixel_to_widget(*layout.position(column, layout.rows - 1)))
+            for row in range(layout.rows):
+                painter.drawLine(self._pixel_to_widget(*layout.position(0, row)),
+                                 self._pixel_to_widget(*layout.position(layout.columns - 1, row)))
+        if not self._layout_review_details:
+            painter.restore()
+            return
+        for match in layout.matches:
+            observed = self._pixel_to_widget(*match.observed_px)
+            painter.setPen(QPen(QColor("#f5bd58" if match.status != "matched" else "#eeeeee"), 1.5))
+            painter.drawEllipse(observed, 3, 3)
+            if match.proposed_px is not None:
+                proposed = self._pixel_to_widget(*match.proposed_px)
+                painter.setPen(QPen(QColor("#60baff"), 1.5))
+                painter.drawLine(observed, proposed)
+                painter.drawLine(proposed + QPointF(-5, 0), proposed + QPointF(5, 0))
+                painter.drawLine(proposed + QPointF(0, -5), proposed + QPointF(0, 5))
+                if match.review_reason:
+                    label = QRectF(proposed.x() - 55, proposed.y() + 10, 110, 19)
+                    painter.fillRect(label, QColor(15, 18, 23, 210))
+                    painter.setPen(QColor("#f5bd58"))
+                    painter.drawText(label, Qt.AlignmentFlag.AlignCenter, "Spans cells")
+        for detection in self._detections:
+            if detection.original_center_px is not None:
+                painter.setPen(QPen(QColor("#ffffff"), 2))
+                painter.drawPoint(self._pixel_to_widget(*detection.original_center_px))
+        painter.restore()
 
     def _paint_detections(self, painter: QPainter) -> None:
         assert self._mapper is not None
@@ -338,6 +404,7 @@ class BedCanvas(QWidget):
             painter.drawText(
                 label_rect, Qt.AlignmentFlag.AlignCenter, f"#{detection.id:02d}"
             )
+        self._paint_logical_layout(painter)
 
     def _paint_verification(self, painter: QPainter) -> None:
         if not self._verification_rectangles:

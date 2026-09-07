@@ -46,6 +46,7 @@ from app.geometry.units import (
     to_inches,
 )
 from app.imaging.detector import DetectorSettings
+from app.imaging.logical_layout import LogicalLayout
 from app.models import Detection
 from app.ui.help_widgets import InfoButton
 
@@ -94,7 +95,7 @@ HELP = {
     "cut_height": "The physical height of every exported cut rectangle, displayed in the current working units.",
     "keep_square": "When enabled, cut height follows cut width so every cut remains square.",
     "settings_section": "Technical detection overrides. Normal grid correction and cut review do not require changing these values.",
-    "layout": "This choice applies only when improving an existing free detection. Automatic estimates repeated panels, Use a panel grid lets you enter boundaries, and No grid keeps a free composition.",
+    "layout": "Automatic detects repeated panels when supported by the image. Use a panel grid enables manual boundaries as a fallback. No grid skips visual panels; repeated artwork can still define a logical layout.",
     "result_style": "Clean result favours fewer false detections on busy fabric. Balanced works for most images. Find faint figures accepts subtler differences and may need more review.",
     "join_parts": "Keeps nearby detached pieces of the same figure together, such as an antenna, branch, or separate appliqué detail.",
     "grid": "Panel guides are independent from detector settings. Show or hide them, unlock them for dragging, or enter rows and columns. Changes preserve the current result until you explicitly detect again.",
@@ -143,6 +144,8 @@ class SidePanel(QWidget):
         self._minimum_area_mode = "px2"
         self._syncing_cut_size = False
         self._grid_available = False
+        self._phase = "setup"
+        self._logical_accepted_count = 0
         self._double_click_resets: dict[QObject, object] = {}
         # Long cut states such as "TOO SMALL" must never resize the
         # inspector or push numerical step buttons outside the viewport.
@@ -233,7 +236,7 @@ class SidePanel(QWidget):
 
         self.debug_json_checkbox = QCheckBox("Write debug JSON beside SVG")
         self.debug_json_checkbox.setChecked(False)
-        self.debug_json_checkbox.setVisible(False)
+        self.debug_json_checkbox.setVisible(True)
         export_options_layout.addWidget(self.debug_json_checkbox)
 
         self.verification_label = QLabel("Round-trip verification not run")
@@ -267,14 +270,14 @@ class SidePanel(QWidget):
             self.detection_confirmation_requested
         )
         layout.addWidget(self.confirm_detection_button)
-        self.review_grid_button = QPushButton("Improve with panel grid")
+        self.review_grid_button = QPushButton("Adjust panel grid")
         self.review_grid_button.setEnabled(False)
         self.review_grid_button.clicked.connect(self.grid_review_requested)
         layout.addWidget(self.review_grid_button)
         return self._section(
             "CHECK THE DETECTION",
             box,
-            "Confirm only after every intended figure has one cut area. Use a panel grid when the free detection misses or merges figures.",
+            "Confirm only after checking every intended figure. Reliable grids are applied automatically; adjust the panel grid if the automatic result needs correction.",
         )
 
     def _build_machine_section(self) -> QFrame:
@@ -342,6 +345,13 @@ class SidePanel(QWidget):
         self.lock_image_checkbox.setEnabled(False)
         self.lock_image_checkbox.toggled.connect(self.image_lock_changed)
         layout.addWidget(self.lock_image_checkbox)
+        self.bed_reference_label = QLabel("No empty-bed reference")
+        self.bed_reference_label.setWordWrap(True)
+        layout.addWidget(self.bed_reference_label)
+        self.load_bed_reference_button = QPushButton("Load empty-bed photo")
+        self.remove_bed_reference_button = QPushButton("Remove bed reference")
+        layout.addWidget(self.load_bed_reference_button)
+        layout.addWidget(self.remove_bed_reference_button)
         return self._section("BED / IMAGE", box, HELP["bed_image_section"])
 
     def _build_cut_section(self) -> QFrame:
@@ -478,6 +488,7 @@ class SidePanel(QWidget):
     def set_phase(self, phase: str) -> None:
         """Expose only controls that belong to the current user goal."""
         phase = phase if phase in {"setup", "grid", "detect", "review", "export"} else "setup"
+        self._phase = phase
         titles = {
             "setup": (
                 "1  PREPARE THE IMAGE",
@@ -523,6 +534,12 @@ class SidePanel(QWidget):
         self.selected_section.setVisible("selected" in visibility)
         self.review_actions.setVisible("actions" in visibility)
         self.export_options.setVisible("export" in visibility)
+        self._render_logical_layout()
+        # Layout assignment and ambiguity details belong to Review cuts.  The
+        # Detect step only reports whether an automatic grid actually governs
+        # the visible cut centres.
+        self.show_layout_checkbox.setVisible(phase == "review")
+        self.set_detections(self._detections, self._selected_ids, self._selected_id)
         self.scroll.verticalScrollBar().setValue(0)
 
     def set_detection_review_state(
@@ -693,6 +710,18 @@ class SidePanel(QWidget):
             stats_layout.addWidget(value, 1, column, Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(stats)
 
+        self._logical_layout = LogicalLayout()
+        self.layout_status_label = QLabel(self._logical_layout.reason)
+        self.layout_status_label.setWordWrap(True)
+        self.layout_status_label.setObjectName("mutedHint")
+        layout.addWidget(self.layout_status_label)
+        self.show_layout_checkbox = QCheckBox("Show grid evidence")
+        self.show_layout_checkbox.setToolTip(
+            "White dots: original detector centres. Blue crosses: proposed layout. "
+            "The dashed boxes remain the original artwork bounds."
+        )
+        layout.addWidget(self.show_layout_checkbox)
+
         self.detection_list = QListWidget()
         self.detection_list.setSelectionMode(
             QAbstractItemView.SelectionMode.ExtendedSelection
@@ -709,6 +738,49 @@ class SidePanel(QWidget):
         self.detection_list.viewport().installEventFilter(self)
         layout.addWidget(self.detection_list)
         return self._section("CUT AREAS", box, HELP["detections_section"])
+
+    def set_logical_layout(self, result: LogicalLayout, accepted_count: int = 0) -> None:
+        self._logical_layout = result
+        self._logical_accepted_count = accepted_count
+        self._render_logical_layout()
+        self.show_layout_checkbox.setEnabled(bool(result.columns))
+
+    def _render_logical_layout(self) -> None:
+        """Render phase-appropriate layout status without changing geometry."""
+        result = self._logical_layout
+        if not result.columns:
+            self.layout_status_label.setText(
+                "No automatic grid applied." if self._phase == "detect"
+                else "Logical layout: " + result.reason
+            )
+        else:
+            outliers = sum(match.status != "matched" for match in result.matches)
+            source = ('Automatic artwork grid' if result.source == 'pattern'
+                      else 'Automatic visual grid' if result.source in {'visual', 'camera'}
+                      else 'Automatic geometric grid')
+            if self._phase == "detect":
+                applied = (f"{self._logical_accepted_count} cuts centred on this grid."
+                           if result.reliable else "Grid confidence is too low; individual centres remain in use.")
+                self.layout_status_label.setText(
+                    f"{source}: {result.columns} columns × {result.rows} rows · "
+                    f"confidence {result.confidence:.0%}\n{applied}"
+                )
+            else:
+                self.layout_status_label.setText(
+                    f"{source}: {result.columns} columns × {result.rows} rows · "
+                    f"confidence {result.confidence:.0%}\n"
+                    f"{outliers} outliers/duplicates\n"
+                    + (f"{self._logical_accepted_count} cuts centred automatically on grid." if result.reliable
+                       else result.reason)
+                    + (f"\n{sum(bool(m.review_reason) for m in result.matches)} artwork spans multiple cells."
+                       if any(m.review_reason for m in result.matches) else "")
+                )
+        self.layout_status_label.setToolTip(
+            f"Mean residual: {result.mean_residual_px:.2f} px; "
+            f"occupancy: {result.occupancy:.0%}. Confidence is a geometric score, "
+            "not a probability. "
+            "Manual movements never change the original observations used for fitting."
+        )
 
     def _build_selected_section(self) -> QFrame:
         box = QWidget()
@@ -839,7 +911,7 @@ class SidePanel(QWidget):
         self.grid_columns_spin.setValue(int(columns))
         self.grid_rows_spin.setValue(int(rows))
         del column_blocker, row_blocker
-        if source == "automatic":
+        if source in {"automatic", "visual", "pattern", "camera"}:
             status = (
                 f"Detected {columns} columns × {rows} rows · "
                 f"{confidence:.0%} confidence"
@@ -939,12 +1011,23 @@ class SidePanel(QWidget):
                     "TOO SMALL"
                     if self._mapper is not None
                     and not detection.contains_artwork(self._mapper)
+                    and not detection.preserves_layout_position
                     else "OUTSIDE"
                 )
             else:
                 state = "READY"
-            source = "manual" if detection.manual else f"{detection.score:.0%}"
+            source = ("manual" if detection.manual else "automatic") if detection.inferred else (
+                "manual" if detection.manual else f"{detection.score:.0%}"
+            )
             item = QListWidgetItem(f"#{detection.id:02d}   {state:<9}   {source}")
+            match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
+            if match is not None:
+                item.setToolTip(f"Layout: {match.status}; residual {match.residual_px:.2f} px")
+                if self._phase == "review" and match.status != "matched":
+                    item.setText(item.text() + f" · {match.status}")
+                if self._phase == "review" and match.review_reason:
+                    item.setText(item.text() + " · spans cells")
+                    item.setToolTip(item.toolTip() + "\n" + match.review_reason)
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(
@@ -1073,10 +1156,31 @@ class SidePanel(QWidget):
                 "Cut is too small for the drawing - not exported"
                 if self._mapper is not None
                 and not detection.contains_artwork(self._mapper)
+                and not detection.preserves_layout_position
                 else "Outside bed - not exported"
             )
         else:
             status = "Ready for export"
+        if detection.grid_positioned and detection.artwork_clipped:
+            status += "\nArtwork extends beyond cut; grid centre retained"
+        match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
+        layout_detail = "Manual position retained" if detection.manual else "No layout assignment"
+        if match is not None:
+            layout_detail = f"{match.status} · deviation {match.residual_px:.2f} px"
+            if match.review_reason:
+                layout_detail += "\n" + match.review_reason
+            if match.proposed_px is not None:
+                layout_detail += f"\nProposed: {match.proposed_px[0]:.1f}, {match.proposed_px[1]:.1f} px"
+        if detection.layout_anchor_px is not None:
+            layout_detail += "\nCentre determined by fitted grid"
+        if detection.layout_cell is not None:
+            column, row = detection.layout_cell
+            layout_detail += f"\nRow {row + 1}, column {column + 1}"
+        if detection.manual and detection.layout_cell is not None:
+            layout_detail += "\nManual override of grid position"
+        original = detection.original_center_px
+        original_detail = (f"{original[0]:.1f}, {original[1]:.1f} px"
+                           if original is not None else "unavailable")
         self.detail_label.setText(
             f"CUT #{detection.id:02d}\n"
             f"STATUS\n{status}\n\n"
@@ -1086,7 +1190,9 @@ class SidePanel(QWidget):
             f"SIZE ({unit.value})\n"
             f"width:   {width:.3f}\n"
             f"height:  {height:.3f}\n\n"
-            f"Top-left: {x:.3f}, {y:.3f} {unit.value}"
+            f"Top-left: {x:.3f}, {y:.3f} {unit.value}\n\n"
+            f"LAYOUT\n{layout_detail}\n"
+            f"Original detector centre:\n{original_detail}"
         )
         del blocker
 

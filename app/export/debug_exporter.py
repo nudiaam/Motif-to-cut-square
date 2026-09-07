@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+from dataclasses import asdict
 from pathlib import Path
 
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.units import LengthUnit, from_inches
 from app.models import Detection, recalculate_cut_overlaps
+from app.imaging.logical_layout import LogicalLayout
 
 
 def export_debug_json(
@@ -17,6 +19,7 @@ def export_debug_json(
     working_unit: LengthUnit = LengthUnit.INCHES,
     export_unit: LengthUnit = LengthUnit.INCHES,
     machine_name: str = "Epilog Fusion Maker 36",
+    logical_layout: LogicalLayout | None = None,
 ) -> Path:
     output_path = Path(path)
     recalculate_cut_overlaps(detections)
@@ -36,6 +39,7 @@ def export_debug_json(
         "machine_name": machine_name,
         "working_unit": working_unit.value,
         "export_unit": export_unit.value,
+        "logical_layout": asdict(logical_layout) if logical_layout is not None else None,
         "bed_in_working_units": {
             "width": from_inches(mapper.bed_width_in, working_unit),
             "height": from_inches(mapper.bed_height_in, working_unit),
@@ -44,6 +48,16 @@ def export_debug_json(
         "detections": [
             {
                 "id": detection.id,
+                "original_center_px": detection.original_center_px,
+                "bounding_box_px": detection.bounding_box_px,
+                "preferred_center_px": detection.preferred_center_px,
+                "layout_anchor_px": detection.layout_anchor_px,
+                "layout_cell": detection.layout_cell,
+                "position_source": ("manual" if detection.manual else "grid" if detection.grid_positioned else "individual"),
+                "inferred": detection.inferred,
+                "artwork_clipped": detection.artwork_clipped,
+                "manual": detection.manual,
+                "score": detection.score,
                 "center_px": {
                     "x": detection.center_px[0],
                     "y": detection.center_px[1],

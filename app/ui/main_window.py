@@ -36,6 +36,7 @@ from app.config.machines import (
     MachineRepository,
 )
 from app.demo.demo_image import create_demo_image
+from app.config.bed_references import BedReferences
 from app.export.debug_exporter import export_debug_json
 from app.export.svg_exporter import SVGExporter
 from app.export.verifier import verify_export_geometry
@@ -43,8 +44,10 @@ from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.units import LengthUnit
 from app.imaging.detector import MotifDetector, infer_panel_grid
 from app.imaging.panel_grid import PanelGrid
+from app.imaging.logical_layout import LogicalLayout, LayoutObservation, fit_logical_layout, layout_from_panel_grid
 from app.models import (
     Detection,
+    apply_logical_layout,
     center_cuts_on_visual_anchors,
     recalculate_cut_overlaps,
     resolve_cut_overlaps,
@@ -66,8 +69,8 @@ TOOLBAR_HELP = {
     ),
     "open": "Open a full-bed PNG, JPG, JPEG, or BMP image from this computer.",
     "detect": (
-        "Detect figures without imposing a grid, then check the result explicitly. "
-        "A panel grid can be added afterwards when the free result needs improvement."
+        "Detect figures and infer the repeated layout automatically. Reliable grids "
+        "determine cut centres. Review the result; manual grid editing is a fallback."
     ),
     "undo": "Undo the last edit, deletion, centering, or overlap fix. Shortcut: Ctrl+Z.",
     "fix": (
@@ -75,8 +78,8 @@ TOOLBAR_HELP = {
         "shapes to the nearest feasible positions. Cut sizes are preserved."
     ),
     "center": (
-        "Centre every cut on its detected artwork while "
-        "preserving the collision-free layout whenever geometry allows it."
+        "Keep grid-assigned cuts at their exact cell centres. Centre remaining "
+        "individual cuts on their artwork while respecting existing grid positions."
     ),
     "preview": (
         "Preview the exported cut areas at normal brightness while dimming the "
@@ -110,8 +113,10 @@ class _HistorySnapshot:
     cut_height_inches: float
     centering_complete: bool
     panel_grid: PanelGrid | None
+    detection_panel_grid: PanelGrid | None
     grid_review_complete: bool
     detection_review_complete: bool
+    suppressed_grid_cells: set[tuple[int, int]]
 
 
 class MainWindow(QMainWindow):
@@ -125,11 +130,16 @@ class MainWindow(QMainWindow):
         self.mapper: CoordinateMapper | None = None
         self.detections: list[Detection] = []
         self.panel_grid: PanelGrid | None = None
+        self.detection_panel_grid: PanelGrid | None = None
+        self.logical_layout = LogicalLayout()
+        self._layout_signature: tuple | None = None
+        self._suppressed_grid_cells: set[tuple[int, int]] = set()
         self.selected_id: int | None = None
         self.selected_ids: set[int] = set()
         self.detector = MotifDetector()
         self.svg_exporter = SVGExporter()
         self.machine_repository = MachineRepository()
+        self.bed_references = BedReferences(self.machine_repository.path.parent / "bed_references")
         self.machine_profiles = self.machine_repository.all_profiles()
         self.current_machine = EPILOG_FUSION_MAKER_36
         self.working_unit = LengthUnit.INCHES
@@ -156,8 +166,42 @@ class MainWindow(QMainWindow):
         self._build_central_widget()
         self._build_review_shortcuts()
         self._connect_signals()
+        self.panel.load_bed_reference_button.clicked.connect(self.load_bed_reference)
+        self.panel.remove_bed_reference_button.clicked.connect(self.remove_bed_reference)
+        self._load_machine_reference()
         self._update_review_controls()
         self.statusBar().showMessage("Ready — choose Demo Image to start")
+
+    def _load_machine_reference(self):
+        self.detector.bed_reference = self.bed_references.load(self.current_machine.id)
+        available = self.detector.bed_reference is not None
+        self.panel.bed_reference_label.setText(
+            "Empty-bed reference loaded" if available else "No empty-bed reference")
+        self.panel.remove_bed_reference_button.setEnabled(available)
+
+    def load_bed_reference(self):
+        path, _ = QFileDialog.getOpenFileName(self, "Empty-bed photo", "", "Images (*.png *.jpg *.jpeg *.bmp)")
+        if not path:
+            return
+        try:
+            image = cv2.imdecode(np.frombuffer(Path(path).read_bytes(), np.uint8), cv2.IMREAD_COLOR)
+            if image is None or min(image.shape[:2]) < 100:
+                raise ValueError("Choose a valid full-bed photo")
+            self.bed_references.save(self.current_machine.id, image)
+        except (OSError, ValueError, cv2.error) as exc:
+            QMessageBox.warning(self, "Bed reference", str(exc))
+            return
+        self._load_machine_reference()
+        self.mark_detection_settings_dirty()
+
+    def remove_bed_reference(self):
+        try:
+            self.bed_references.disable(self.current_machine.id)
+        except OSError as exc:
+            QMessageBox.warning(self, "Bed reference", str(exc))
+            return
+        self._load_machine_reference()
+        self.mark_detection_settings_dirty()
 
     def _build_toolbar(self) -> None:
         toolbar = DelayedHelpToolBar("Main tools")
@@ -418,7 +462,21 @@ class MainWindow(QMainWindow):
         self._workflow_phase = phase
         panel_phase = "export" if phase in {"preflight", "export"} else phase
         self.panel.set_phase(panel_phase)
+        self._sync_layout_display()
         self._update_review_controls()
+
+    def _sync_layout_display(self) -> None:
+        """Show the effective grid during detection and evidence during review."""
+        if self._workflow_phase == "detect":
+            self.canvas.set_layout_visible(self.logical_layout.reliable)
+            self.canvas.set_layout_review_details(False)
+        elif self._workflow_phase == "review":
+            visible = self.panel.show_layout_checkbox.isChecked()
+            self.canvas.set_layout_visible(visible)
+            self.canvas.set_layout_review_details(visible)
+        else:
+            self.canvas.set_layout_visible(False)
+            self.canvas.set_layout_review_details(False)
 
     def show_preflight(self) -> None:
         """Present an explicit export summary instead of silently dropping cuts."""
@@ -443,6 +501,8 @@ class MainWindow(QMainWindow):
             item.enabled and not item.valid_cut for item in self.detections
         )
         skipped = sum(not item.enabled for item in self.detections)
+        grid_crop = sum(d.enabled and d.grid_positioned and d.artwork_clipped for d in self.detections)
+        spanning = sum(bool(m.review_reason) for m in self.logical_layout.matches)
         warnings = sum(
             item.enabled and not item.exportable for item in self.detections
         )
@@ -460,6 +520,8 @@ class MainWindow(QMainWindow):
             f"{headline}\n"
             f"Collisions: {collisions} · Clipped/outside: {clipped} · "
             f"Skipped (unchecked): {skipped}\n"
+            f"Artwork spanning cells: {spanning} (review assignment)\n"
+            f"Artwork beyond grid cuts: {grid_crop} (centres retained)\n"
             f"Geometry check: maximum error "
             f"{max(result.maximum_error_x_px, result.maximum_error_y_px):.6g} px"
         )
@@ -500,6 +562,9 @@ class MainWindow(QMainWindow):
             lambda _active: self._update_review_controls()
         )
         self.panel.grid_visibility_changed.connect(self.canvas.set_grid_visible)
+        self.panel.show_layout_checkbox.toggled.connect(
+            lambda _visible: self._sync_layout_display()
+        )
         self.panel.layout_mode_changed.connect(
             self.change_layout_mode
         )
@@ -563,8 +628,10 @@ class MainWindow(QMainWindow):
                 cut_height_inches=self.cut_height_inches,
                 centering_complete=self._review_centering_complete,
                 panel_grid=copy.deepcopy(self.panel_grid),
+                detection_panel_grid=self.detection_panel_grid,
                 grid_review_complete=self._grid_review_complete,
                 detection_review_complete=self._detection_review_complete,
+                suppressed_grid_cells=set(self._suppressed_grid_cells),
             )
         )
         if len(self._undo_stack) > 50:
@@ -589,8 +656,10 @@ class MainWindow(QMainWindow):
             self.cut_height_inches = snapshot.cut_height_inches
             self._review_centering_complete = snapshot.centering_complete
             self.panel_grid = snapshot.panel_grid
+            self.detection_panel_grid = snapshot.detection_panel_grid
             self._grid_review_complete = snapshot.grid_review_complete
             self._detection_review_complete = snapshot.detection_review_complete
+            self._suppressed_grid_cells = set(snapshot.suppressed_grid_cells)
             self.panel.set_cut_size_inches(
                 self.cut_width_inches, self.cut_height_inches
             )
@@ -684,7 +753,9 @@ class MainWindow(QMainWindow):
             self.current_machine.bed_height_in,
         )
         self.detections = []
+        self._suppressed_grid_cells.clear()
         self.panel_grid = None
+        self.detection_panel_grid = None
         self.selected_id = None
         self.selected_ids = set()
         self._review_centering_complete = False
@@ -707,6 +778,7 @@ class MainWindow(QMainWindow):
         self._sync_panel_grid_ui()
         self._set_workflow_phase("detect")
         self.panel.verification_label.setText("Round-trip verification not run")
+        self._update_logical_layout()
         self.statusBar().showMessage(f"{message} — {width} × {height} px", 6000)
 
     def detect_motifs(self, replace_confirmed: bool = False) -> None:
@@ -726,13 +798,12 @@ class MainWindow(QMainWindow):
             return
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            settings = replace(
-                self.panel.detector_settings(self.mapper), layout_mode="free"
-            )
+            settings = self.panel.detector_settings(self.mapper)
             result = self.detector.detect_with_layout(
                 self.image_bgr, settings
             )
             candidates = list(result.candidates)
+            self.panel.bed_reference_label.setText(self.detector.reference_status)
         except Exception as exc:  # present processing failures as UI errors
             QMessageBox.critical(self, "Detection failed", str(exc))
             return
@@ -740,6 +811,7 @@ class MainWindow(QMainWindow):
             QApplication.restoreOverrideCursor()
         self._push_history("Detect motifs")
         self.panel_grid = result.panel_grid
+        self.detection_panel_grid = result.panel_grid
         self.detections = [
             Detection.from_pixel_center(
                 index,
@@ -749,9 +821,12 @@ class MainWindow(QMainWindow):
                 candidate.score,
                 cut_width_inches=self.cut_width_inches,
                 cut_height_inches=self.cut_height_inches,
+                layout_observation_px=candidate.layout_center_px,
             )
             for index, candidate in enumerate(candidates, start=1)
         ]
+        self._suppressed_grid_cells.clear()
+        self._layout_signature = None
         self._review_centering_complete = False
         self._detection_review_complete = False
         self._preflight_complete = False
@@ -776,7 +851,7 @@ class MainWindow(QMainWindow):
         )
 
     def activate_grid_step(self) -> None:
-        """Offer panel boundaries only after a free detection has been reviewed."""
+        """Open fallback grid editing while preserving the current cut result."""
         if self.image_bgr is None:
             self._set_workflow_phase("setup")
             self._request_image()
@@ -812,16 +887,17 @@ class MainWindow(QMainWindow):
             return
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            settings = replace(
-                self.panel.detector_settings(self.mapper), layout_mode="free"
-            )
-            primary = self.detector.detect(self.image_bgr, settings)
-            self.panel_grid = infer_panel_grid(self.image_bgr, primary)
+            self.panel_grid = self._infer_review_grid()
         finally:
             QApplication.restoreOverrideCursor()
         self._grid_review_complete = False
         self._sync_panel_grid_ui()
         self._update_review_controls()
+
+    def _infer_review_grid(self) -> PanelGrid | None:
+        settings = replace(self.panel.detector_settings(self.mapper), layout_mode="auto")
+        result = self.detector.detect_with_layout(self.image_bgr, settings)
+        return result.panel_grid or infer_panel_grid(self.image_bgr, list(result.candidates))
 
     def confirm_grid(self) -> None:
         """Apply the chosen layout and re-detect without advancing the workflow."""
@@ -906,13 +982,18 @@ class MainWindow(QMainWindow):
             return
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            candidates = self.detector.detect_in_grid(
-                self.image_bgr,
-                self.panel.detector_settings(self.mapper),
-                self.panel_grid,
-            )
+            if self.panel_grid.source in {"pattern", "camera", "reference"}:
+                settings = replace(self.panel.detector_settings(self.mapper), layout_mode="auto")
+                candidates = self.detector.detect_with_layout(self.image_bgr, settings).candidates
+            else:
+                candidates = self.detector.detect_in_grid(
+                    self.image_bgr,
+                    self.panel.detector_settings(self.mapper),
+                    self.panel_grid,
+                )
         finally:
             QApplication.restoreOverrideCursor()
+        self.detection_panel_grid = self.panel_grid
         self.detections = [
             Detection.from_pixel_center(
                 index,
@@ -922,9 +1003,12 @@ class MainWindow(QMainWindow):
                 candidate.score,
                 cut_width_inches=self.cut_width_inches,
                 cut_height_inches=self.cut_height_inches,
+                layout_observation_px=candidate.layout_center_px,
             )
             for index, candidate in enumerate(candidates, start=1)
         ]
+        self._suppressed_grid_cells.clear()
+        self._layout_signature = None
         self.selected_id = None
         self.selected_ids = set()
         self._review_centering_complete = False
@@ -980,11 +1064,7 @@ class MainWindow(QMainWindow):
         if self.image_bgr is None or self.mapper is None:
             return
         if action == "redetect":
-            settings = replace(
-                self.panel.detector_settings(self.mapper), layout_mode="free"
-            )
-            primary = self.detector.detect(self.image_bgr, settings)
-            detected = infer_panel_grid(self.image_bgr, primary)
+            detected = self._infer_review_grid()
             if detected is None:
                 self.statusBar().showMessage(
                     "No reliable panel grid found · enter rows and columns to create one",
@@ -1137,6 +1217,10 @@ class MainWindow(QMainWindow):
         self._push_history(
             "Delete detection" if len(deleted_ids) == 1 else f"Delete {len(deleted_ids)} detections"
         )
+        self._suppressed_grid_cells.update(
+            item.layout_cell for item in self.detections
+            if item.id in deleted_ids and item.layout_cell is not None
+        )
         self.detections = [item for item in self.detections if item.id not in deleted_ids]
         self.selected_id = None
         self.selected_ids = set()
@@ -1154,6 +1238,7 @@ class MainWindow(QMainWindow):
             return
         self._push_history("Clear all detections")
         self.detections = []
+        self.detection_panel_grid = None
         self.selected_id = None
         self.selected_ids = set()
         self._review_centering_complete = False
@@ -1202,7 +1287,7 @@ class MainWindow(QMainWindow):
             return
         if self._review_centering_complete:
             self.statusBar().showMessage(
-                "The drawings are already centered; preview or export",
+                "Cuts are already centred; grid positions are preserved",
                 5000,
             )
             return
@@ -1244,7 +1329,7 @@ class MainWindow(QMainWindow):
             )
         elif moved_ids:
             self.statusBar().showMessage(
-                f"Centered {len(moved_ids)} cuts on their complete drawing bounds — "
+                f"Centered {len(moved_ids)} cuts using drawing bounds and accepted layout — "
                 "review complete",
                 7000,
             )
@@ -1345,6 +1430,7 @@ class MainWindow(QMainWindow):
                     self.working_unit,
                     export_unit,
                     self.current_machine.name,
+                    logical_layout=self.logical_layout,
                 )
         except OSError as exc:
             QMessageBox.critical(self, "Export failed", str(exc))
@@ -1446,6 +1532,7 @@ class MainWindow(QMainWindow):
         self, profile: MachineProfile, select_in_panel: bool = False
     ) -> None:
         self.current_machine = profile
+        self._load_machine_reference()
         if select_in_panel:
             self.panel.select_machine_id(profile.id)
         self.panel.set_machine(profile)
@@ -1470,8 +1557,93 @@ class MainWindow(QMainWindow):
         self.panel.set_image_info(self.mapper)
         self._refresh()
 
+    def _update_logical_layout(self) -> None:
+        # Manual movement changes the cut, never the original observation.
+        # Inferred cuts cannot contribute evidence to their own grid.
+        evidence = [item for item in self.detections
+                    if item.bounding_box_px is not None and not item.inferred]
+        signature = (self.detection_panel_grid,
+                     tuple((item.id, item.bounding_box_px, item.layout_observation_px,
+                            item.enabled) for item in evidence))
+        if signature != self._layout_signature:
+            observations = []
+            for item in evidence:
+                if item.enabled:
+                    x, y, width, height = item.bounding_box_px
+                    observations.append(LayoutObservation(
+                        item.id,
+                        (x + width / 2, y + height / 2),
+                        item.bounding_box_px,
+                        item.layout_observation_px,
+                    ))
+            grid = self.detection_panel_grid
+            self.logical_layout = (layout_from_panel_grid(observations, grid)
+                                   if grid is not None and (grid.confidence >= .78 or grid.source == "manual")
+                                   else fit_logical_layout(observations))
+            self._layout_signature = signature
+            if not self._restoring_history:
+                for item in self.detections:
+                    if item.enabled and not item.manual and not item.inferred:
+                        item.layout_anchor_px = None
+                        item.layout_cell = None
+                        if self.mapper is not None:
+                            item.recalculate_for_mapper(self.mapper)
+                if self.mapper is not None:
+                    apply_logical_layout(self.detections, self.mapper, self.logical_layout)
+            if self.logical_layout.columns:
+                self.panel.show_layout_checkbox.setChecked(True)
+        self._sync_automatic_grid_cuts()
+        represented = {item.layout_cell for item in self.detections if item.layout_cell is not None}
+        displayed = replace(self.logical_layout, missing=tuple(
+            p for p in self.logical_layout.missing if (p.column, p.row) not in represented
+        ))
+        self.canvas.set_logical_layout(displayed, (self.cut_width_inches, self.cut_height_inches))
+        self.panel.set_logical_layout(
+            displayed, sum(item.grid_positioned for item in self.detections),
+        )
+        self._sync_layout_display()
+
+    def _sync_automatic_grid_cuts(self) -> None:
+        """Materialize reliable empty cells without exposing an acceptance step."""
+        if self.mapper is None:
+            return
+        desired = ({(gap.column, gap.row) for gap in self.logical_layout.missing}
+                   if self.logical_layout.reliable else set())
+        # A moved inferred square becomes an explicit manual choice and is no
+        # longer managed by the automatic grid synchronizer.
+        managed = [item for item in self.detections if item.inferred and not item.manual]
+        for item in managed:
+            if item.layout_cell in desired:
+                item.place_on_grid(
+                    self.logical_layout.position(*item.layout_cell),
+                    item.layout_cell,
+                    self.mapper,
+                )
+        stale_ids = {item.id for item in managed if item.layout_cell not in desired}
+        if stale_ids:
+            self.detections = [item for item in self.detections if item.id not in stale_ids]
+        existing = {item.layout_cell for item in self.detections if item.layout_cell is not None}
+        next_id = max((item.id for item in self.detections), default=0) + 1
+        for cell in sorted(desired - existing - self._suppressed_grid_cells,
+                           key=lambda value: (value[1], value[0])):
+            position = self.logical_layout.position(*cell)
+            detection = Detection.from_pixel_center(
+                next_id, position, self.mapper, score=0.0,
+                cut_width_inches=self.cut_width_inches,
+                cut_height_inches=self.cut_height_inches,
+            )
+            detection.inferred = True
+            detection.original_center_px = None
+            detection.place_on_grid(position, cell, self.mapper)
+            self.detections.append(detection)
+            next_id += 1
+
     def _refresh(self) -> None:
         self._preflight_complete = False
+        self._update_logical_layout()
+        active = [d for d in self.detections if d.enabled]
+        if any(d.grid_positioned for d in active) and all(d.preserves_layout_position for d in active):
+            self._review_centering_complete = True
         recalculate_cut_overlaps(self.detections)
         existing_ids = {detection.id for detection in self.detections}
         self.selected_ids.intersection_update(existing_ids)
@@ -1527,11 +1699,11 @@ class MainWindow(QMainWindow):
             else "Select cuts to delete"
         )
         self.fix_overlaps_button.setEnabled(
-            has_enabled_detections and collision_count > 0
+            any(d.enabled and d.overlaps_cut and not d.preserves_layout_position for d in self.detections)
         )
         self.fix_overlaps_button.setText(
-            f"Fix overlaps ({collision_count})"
-            if collision_count
+            (f"Fix overlaps ({collision_count})" if self.fix_overlaps_button.isEnabled()
+             else f"Grid overlaps ({collision_count}) — review scale") if collision_count
             else "✓ No overlaps"
         )
         self.center_cuts_button.setEnabled(
@@ -1540,7 +1712,8 @@ class MainWindow(QMainWindow):
             and not self._review_centering_complete
         )
         self.center_cuts_button.setText(
-            "✓ Drawings centered"
+            ("✓ Cuts centered on grid" if any(d.grid_positioned for d in self.detections)
+             else "✓ Drawings centered")
             if self._review_centering_complete
             else "Center drawings"
         )

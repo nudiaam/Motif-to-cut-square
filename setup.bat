@@ -63,8 +63,6 @@ exit /b 0
 :python_missing
 echo.
 echo Python 3 was not found.
-echo This project normally includes its own Python runtime in .runtime.
-echo If that folder was removed, restore the complete project or reinstall Python.
 echo Install Python 3.10 or newer from https://www.python.org/downloads/windows/
 echo During installation, enable "Add python.exe to PATH", then run setup.bat again.
 pause

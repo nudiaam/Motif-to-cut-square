@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import cv2
 import numpy as np
 
 from .panel_grid import PanelGrid
+from .visual_grid import infer_printed_panel_grid
+from .pattern_grid import infer_repeated_artwork
+from .camera_panel import infer_camera_panel, source_grid, project_points
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,12 +29,96 @@ class MotifCandidate:
     bounding_box_px: tuple[int, int, int, int]
     score: float
     area_px: int
+    layout_center_px: tuple[float, float] | None = None
 
 
 @dataclass(frozen=True, slots=True)
 class DetectionResult:
     candidates: tuple[MotifCandidate, ...]
     panel_grid: PanelGrid | None = None
+
+
+def _consolidate_grid_candidates(
+    candidates: tuple[MotifCandidate, ...], panel_grid: PanelGrid,
+) -> tuple[MotifCandidate, ...]:
+    """Return at most one artwork observation for each trusted fabric cell.
+
+    Reference, visual and camera grids are established independently from the
+    candidate count.  They can therefore reject bed artifacts outside the
+    fabric and resolve duplicated fragments without hiding evidence that was
+    needed to infer a pattern-only grid.
+    """
+    if panel_grid.confidence < .78 or panel_grid.source not in {
+        "reference", "visual", "camera",
+    }:
+        return candidates
+    from .logical_layout import LayoutObservation, layout_from_panel_grid
+
+    observations = [
+        LayoutObservation(
+            index,
+            (x + width / 2., y + height / 2.),
+            candidate.bounding_box_px,
+            candidate.layout_center_px,
+        )
+        for index, candidate in enumerate(candidates)
+        for x, y, width, height in [candidate.bounding_box_px]
+    ]
+    layout = layout_from_panel_grid(observations, panel_grid)
+    matches = {match.detection_id: match for match in layout.matches}
+    grouped: dict[tuple[int, int], list[int]] = {}
+    for index in range(len(candidates)):
+        match = matches[index]
+        if match.column is None or match.row is None or match.status == "outlier":
+            continue
+        grouped.setdefault((match.column, match.row), []).append(index)
+
+    spacing = min(
+        np.linalg.norm(layout.column_vector_px),
+        np.linalg.norm(layout.row_vector_px),
+    )
+    consolidated = []
+    for cell, indexes in grouped.items():
+        primary_index = next(
+            (index for index in indexes if matches[index].status == "matched"),
+            min(indexes, key=lambda index: matches[index].residual_px or float("inf")),
+        )
+        primary = candidates[primary_index]
+        merged = [primary]
+        for index in indexes:
+            if index == primary_index:
+                continue
+            candidate = candidates[index]
+            distance = np.linalg.norm(
+                np.asarray(candidate.center_px) - primary.center_px
+            )
+            ax, ay, aw, ah = primary.bounding_box_px
+            bx, by, bw, bh = candidate.bounding_box_px
+            overlaps = (
+                min(ax + aw, bx + bw) >= max(ax, bx)
+                and min(ay + ah, by + bh) >= max(ay, by)
+            )
+            if overlaps or distance <= spacing * .24:
+                merged.append(candidate)
+        left = min(item.bounding_box_px[0] for item in merged)
+        top = min(item.bounding_box_px[1] for item in merged)
+        right = max(item.bounding_box_px[0] + item.bounding_box_px[2] for item in merged)
+        bottom = max(item.bounding_box_px[1] + item.bounding_box_px[3] for item in merged)
+        # A distant mark in the same cell must not enlarge the artwork extent.
+        if right - left > spacing * 1.15 or bottom - top > spacing * 1.15:
+            merged = [primary]
+            left, top, width, height = primary.bounding_box_px
+            right, bottom = left + width, top + height
+        consolidated.append(MotifCandidate(
+            ((left + right) / 2., (top + bottom) / 2.),
+            (left, top, right - left, bottom - top),
+            max(item.score for item in merged),
+            sum(item.area_px for item in merged),
+            primary.layout_center_px,
+        ))
+    return tuple(sorted(consolidated, key=lambda item: (
+        item.center_px[1], item.center_px[0],
+    )))
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,12 +132,48 @@ class _RawComponent:
 class MotifDetector:
     """Locate visually distinct connected regions without classifying them."""
 
+    def __init__(self):
+        self.bed_reference = None
+        self.reference_status = "No empty-bed reference"
+
+    def detect_with_layout(self, image_bgr, settings):
+        from .bed_reference import locate_fabric, extend_to_fabric
+        from .logical_layout import LayoutObservation, fit_logical_layout, layout_from_panel_grid
+        self._validate_image(image_bgr)
+        evidence = (locate_fabric(image_bgr, self.bed_reference)
+                    if self.bed_reference is not None else None)
+        self.reference_status = evidence.reason if evidence else "No empty-bed reference"
+        if evidence is None or evidence.mask is None:
+            return self._detect_layout(image_bgr, settings)
+        mask = evidence.mask
+        if not np.any(mask):
+            return DetectionResult(())
+        analysis = image_bgr.copy()
+        analysis[mask == 0] = np.median(image_bgr[mask > 0], axis=0)
+        result = self._detect_layout(analysis, settings)
+        h, w = mask.shape
+        candidates = tuple(c for c in result.candidates
+                           if 0 <= c.center_px[0] < w and 0 <= c.center_px[1] < h
+                           and mask[int(c.center_px[1]), int(c.center_px[0])])
+        observations = [LayoutObservation(i, (x+bw/2, y+bh/2), c.bounding_box_px,
+                                          c.layout_center_px)
+                        for i, c in enumerate(candidates)
+                        for x, y, bw, bh in [c.bounding_box_px]]
+        grid = result.panel_grid
+        layout = (layout_from_panel_grid(observations, grid) if grid and grid.confidence >= .78
+                  else fit_logical_layout(observations))
+        extended = extend_to_fabric(layout, mask) if settings.layout_mode == "auto" else None
+        final_grid = extended or grid
+        if final_grid is not None:
+            candidates = _consolidate_grid_candidates(candidates, final_grid)
+        return DetectionResult(candidates, final_grid)
+
     def detect(
         self, image_bgr: np.ndarray, settings: DetectorSettings
     ) -> list[MotifCandidate]:
         return list(self.detect_with_layout(image_bgr, settings).candidates)
 
-    def detect_with_layout(
+    def _detect_layout(
         self, image_bgr: np.ndarray, settings: DetectorSettings
     ) -> DetectionResult:
         self._validate_image(image_bgr)
@@ -64,15 +187,55 @@ class MotifDetector:
         } else "auto"
         if layout_mode != "free":
             panel_grid = infer_panel_grid(image_bgr, primary)
-            if panel_grid is not None:
+            if panel_grid is not None and (panel_grid.confidence >= 0.78 or layout_mode == "panels"):
                 panel_candidates = self.detect_in_grid(
                     image_bgr, settings, panel_grid
                 )
                 coverage = len(panel_candidates) / max(
                     1, panel_grid.columns * panel_grid.rows
                 )
-                if layout_mode == "panels" or coverage >= 0.35:
+                if layout_mode == "panels" or panel_grid.source == "visual" or coverage >= 0.35:
                     return DetectionResult(tuple(panel_candidates), panel_grid)
+
+        if layout_mode == "auto":
+            pattern = infer_repeated_artwork(image_bgr, settings.sensitivity, settings.minimum_area_px)
+            if pattern is not None:
+                # Keep complete regions, including artwork crossing a cell boundary.
+                # Detecting independently in each cell here would split such artwork.
+                candidates = tuple(MotifCandidate((x + w / 2., y + h / 2.),
+                                                   region.bounding_box_px,
+                                                   region.score, region.area_px,
+                                                   region.center_px)
+                                   for region in pattern.regions
+                                   for x, y, w, h in [region.bounding_box_px])
+                return DetectionResult(tuple(sorted(candidates, key=lambda c: (c.center_px[1], c.center_px[0]))),
+                                       pattern.grid)
+
+        if layout_mode == "auto" and _infer_regular_tile_grid(primary, width, height) is None:
+            panel = infer_camera_panel(image_bgr)
+            if panel is not None:
+                # Normalize the photographed fabric for analysis, not the displayed
+                # image or calibration. Weak ink is separated by a local colour
+                # model rather than a fixed global contrast threshold.
+                corners = project_points([(0,0), (panel.image.shape[1],0),
+                                          (panel.image.shape[1],panel.image.shape[0]),
+                                          (0,panel.image.shape[0])], panel.to_source)
+                area_scale = panel.image.shape[0]*panel.image.shape[1] / cv2.contourArea(corners.astype(np.float32))
+                local_settings = replace(settings, minimum_area_px=max(1, int(settings.minimum_area_px*area_scale)))
+                local = self.detect_in_grid(panel.image, local_settings, panel.grid, region_segmentation=True)
+                if len(local) >= panel.grid.columns * panel.grid.rows * .70:
+                    mapped = []
+                    for item in local:
+                        x, y, w, h = item.bounding_box_px
+                        bounds = project_points([(x,y),(x+w,y),(x+w,y+h),(x,y+h)], panel.to_source)
+                        left, top = np.floor(bounds.min(axis=0)).astype(int)
+                        right, bottom = np.ceil(bounds.max(axis=0)).astype(int)
+                        center = project_points([item.center_px], panel.to_source)[0]
+                        mapped.append(MotifCandidate(tuple(float(v) for v in center),
+                                                     (int(left),int(top),int(right-left),int(bottom-top)),
+                                                     item.score, int(item.area_px/area_scale)))
+                    return DetectionResult(tuple(sorted(mapped, key=lambda c: (c.center_px[1],c.center_px[0]))),
+                                           source_grid(panel))
 
         regular_grid = _infer_regular_tile_grid(primary, width, height)
         if regular_grid is None:
@@ -199,6 +362,8 @@ class MotifDetector:
         image_bgr: np.ndarray,
         settings: DetectorSettings,
         panel_grid: PanelGrid,
+        *,
+        region_segmentation: bool = False,
     ) -> list[MotifCandidate]:
         """Detect at most one locally separated motif inside each panel."""
 
@@ -229,6 +394,14 @@ class MotifDetector:
             crop = image_bgr[crop_top:crop_bottom, crop_left:crop_right]
             if crop.shape[0] < 8 or crop.shape[1] < 8:
                 continue
+
+            if region_segmentation:
+                region = self._local_colour_region(crop, settings.minimum_area_px)
+                if region is not None:
+                    x, y, w, h = region.bounding_box_px
+                    results.append(MotifCandidate((region.center_px[0]+crop_left, region.center_px[1]+crop_top),
+                                                   (x+crop_left,y+crop_top,w,h), region.score, region.area_px))
+                    continue
 
             options: list[tuple[float, int, MotifCandidate]] = []
             for pass_sensitivity in sensitivities:
@@ -269,6 +442,26 @@ class MotifDetector:
                 results.append(max(options, key=lambda item: (item[0], item[1]))[2])
 
         return sorted(results, key=lambda item: (item.center_px[1], item.center_px[0]))
+
+    @staticmethod
+    def _local_colour_region(image: np.ndarray, minimum_area: int) -> MotifCandidate | None:
+        """Separate coherent artwork from the cell border; never seed fixed foreground."""
+        h, w = image.shape[:2]
+        mask = np.zeros((h,w), np.uint8)
+        background, foreground = np.zeros((1,65), np.float64), np.zeros((1,65), np.float64)
+        rect = (int(w*.10), int(h*.07), int(w*.80), int(h*.86))
+        cv2.setRNGSeed(0)
+        cv2.grabCut(image, mask, rect, background, foreground, 4, cv2.GC_INIT_WITH_RECT)
+        selected = np.isin(mask, [cv2.GC_FGD, cv2.GC_PR_FGD])
+        ys, xs = np.nonzero(selected)
+        area = len(xs)
+        if area < minimum_area or area > w*h*.60:
+            return None
+        x, y, right, bottom = int(xs.min()), int(ys.min()), int(xs.max()+1), int(ys.max()+1)
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB).astype(np.float32)
+        contrast = float(np.linalg.norm(lab[selected].mean(axis=0)-lab[~selected].mean(axis=0)))
+        score = float(.72*np.clip(contrast/80, 0, 1) + .28*min(1,area/max(1,minimum_area*8)))
+        return MotifCandidate(((x+right)/2,(y+bottom)/2),(x,y,right-x,bottom-y),score,area)
 
     def _detect_once(
         self, image_bgr: np.ndarray, settings: DetectorSettings
@@ -538,6 +731,9 @@ def infer_panel_grid(
     proposal. This keeps the panel structure independent from motif detection.
     """
 
+    printed = infer_printed_panel_grid(image_bgr)
+    if printed is not None:
+        return printed
     height, width = image_bgr.shape[:2]
     if width < 80 or height < 80:
         return None

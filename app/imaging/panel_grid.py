@@ -13,6 +13,8 @@ class PanelGrid:
     y_lines_px: tuple[float, ...]
     confidence: float = 0.0
     source: str = "automatic"
+    lattice: tuple[tuple[float, float], tuple[float, float], tuple[float, float]] | None = None
+    projection: tuple[tuple[float, float, float], ...] | None = None
 
     def __post_init__(self) -> None:
         if len(self.x_lines_px) < 3 or len(self.y_lines_px) < 3:
@@ -100,12 +102,16 @@ class PanelGrid:
             return replace(
                 self,
                 x_lines_px=tuple(lines),
+                lattice=None,
+                projection=None,
                 confidence=0.0,
                 source="manual",
             )
         return replace(
             self,
             y_lines_px=tuple(lines),
+            lattice=None,
+            projection=None,
             confidence=0.0,
             source="manual",
         )
@@ -121,12 +127,16 @@ class PanelGrid:
             return replace(
                 self,
                 x_lines_px=distributed,
+                lattice=None,
+                projection=None,
                 confidence=0.0,
                 source="manual",
             )
         return replace(
             self,
             y_lines_px=distributed,
+            lattice=None,
+            projection=None,
             confidence=0.0,
             source="manual",
         )

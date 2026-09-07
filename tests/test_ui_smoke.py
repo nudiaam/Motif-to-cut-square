@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QStyle, QStyleOptionSpinBox 
 from app.ui.help_widgets import DelayedHelpToolBar, InfoButton  # noqa: E402
 from app.ui.main_window import MainWindow  # noqa: E402
 from app.imaging.panel_grid import PanelGrid  # noqa: E402
+from tests.test_logical_layout import cut_fixture  # noqa: E402
 
 
 class UISmokeTests(unittest.TestCase):
@@ -53,6 +54,338 @@ class UISmokeTests(unittest.TestCase):
         window.delete_selected()
         self.assertEqual(len(window.detections), previous_count)
         window.close()
+
+    def test_camera_patchwork_materializes_missing_grid_cells_without_extra_ui(self) -> None:
+        import cv2
+        from tests.test_camera_panel import PATCHWORK_FIXTURE
+        window = MainWindow()
+        try:
+            image = cv2.imread(str(PATCHWORK_FIXTURE))
+            window._load_image(image,'patchwork regression')
+            mapper = window.mapper
+            window.change_cut_size(4,4)
+            window.detect_motifs()
+            self.assertIs(window.mapper,mapper)
+            np.testing.assert_array_equal(window.image_bgr,image)
+            self.assertEqual((window.logical_layout.columns,window.logical_layout.rows),(6,4))
+            self.assertEqual(len(window.detections),24)
+            self.assertEqual(sum(d.inferred for d in window.detections),2)
+            self.assertEqual(window._workflow_phase,'detect')
+            self.assertTrue(all(d.grid_positioned and d.cut_width_inches == 4 for d in window.detections))
+            positions = {d.id:d.center_px for d in window.detections}
+            self.assertFalse(hasattr(window.panel, 'inferred_positions_list'))
+            self.assertFalse(hasattr(window.panel, 'inferred_positions_label'))
+            self.assertFalse(window.canvas._layout_review_details)
+            window.confirm_detection()
+            self.assertTrue(window.canvas._layout_review_details)
+            inferred = next(d for d in window.detections if d.inferred)
+            window.selected_ids = {inferred.id}
+            window.selected_id = inferred.id
+            window.delete_selected()
+            self.assertEqual(len(window.detections),23)
+            self.assertIn(inferred.layout_cell, window._suppressed_grid_cells)
+            window._refresh()
+            self.assertEqual(len(window.detections),23)
+            window.undo()
+            self.assertEqual(len(window.detections),24)
+            window.center_cuts()
+            self.assertEqual({d.id:d.center_px for d in window.detections},positions)
+            window.change_cut_size(3.9,3.9)
+            self.assertFalse(any(d.overlaps_cut for d in window.detections))
+            window.undo()
+            self.assertEqual({d.id:d.center_px for d in window.detections},positions)
+            self.assertTrue(all(d.cut_width_inches == 4 for d in window.detections))
+        finally:
+            window.close()
+
+    def test_transport_image_has_grid_before_review_and_keeps_spanning_artwork(self) -> None:
+        import cv2
+        from tests.test_pattern_grid import TRANSPORT_FIXTURE
+        window = MainWindow()
+        try:
+            window._load_image(cv2.imread(str(TRANSPORT_FIXTURE)), 'transport regression')
+            window.detect_motifs()  # Default 5-inch cuts, no dimensions entered.
+            self.assertEqual(window._workflow_phase, 'detect')
+            self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (5, 4))
+            self.assertEqual(len(window.detections), 20)
+            self.assertEqual(sum(d.inferred for d in window.detections), 1)
+            self.assertTrue(all(d.grid_positioned for d in window.detections))
+            self.assertTrue(all(d.cut_width_inches == 5 for d in window.detections))
+            self.assertGreater(sum(d.overlaps_cut for d in window.detections), 0)
+            positions = {d.id: d.center_px for d in window.detections}
+            for d in window.detections:
+                self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
+            self.assertNotIn('spans multiple cells', window.panel.layout_status_label.text())
+            self.assertFalse(hasattr(window.panel, 'inferred_positions_list'))
+            window.confirm_detection()
+            self.assertIn('spans multiple cells', window.panel.layout_status_label.text())
+            window.fix_overlaps()
+            self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
+            window.change_cut_size(4, 4)
+            self.assertFalse(any(d.overlaps_cut for d in window.detections))
+            window.undo()
+            self.assertTrue(all(d.cut_width_inches == 5 for d in window.detections))
+            window.handle_grid_action('redetect')
+            self.assertEqual(window.panel_grid.source, 'pattern')
+            window.confirm_grid()
+            self.assertEqual(len(window.detections), 20)
+            self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
+        finally:
+            window.close()
+
+    def test_single_outer_anchor_completes_grid_and_squares_without_user_step(self) -> None:
+        import cv2
+        from tests.test_visual_grid import printed_fabric
+        missing = tuple((column, 3) for column in range(6) if column != 2)
+        image = printed_fabric(6, 4, panels=False, missing=missing)
+        cv2.line(image, (325, 435), (385, 435), (55, 87, 120), 6)
+        window = MainWindow()
+        try:
+            window._load_image(image, "outer row regression")
+            window.detect_motifs()
+
+            self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
+            self.assertTrue(window.logical_layout.reliable)
+            self.assertEqual(len(window.detections), 24)
+            self.assertEqual(sum(item.inferred for item in window.detections), 5)
+            self.assertFalse(hasattr(window.panel, "inferred_positions_list"))
+            for item in window.detections:
+                self.assertEqual(item.center_px, window.logical_layout.position(*item.layout_cell))
+        finally:
+            window.close()
+
+    def test_vehicle_panels_keep_the_full_six_by_four_grid(self) -> None:
+        """A strong panel style must not regress when robust anchors are used."""
+        import cv2
+        from tests.test_camera_panel import PATCHWORK_FIXTURE
+
+        image = cv2.imread(str(PATCHWORK_FIXTURE.parent / "vehicles_panels.png"))
+        window = MainWindow()
+        try:
+            window._load_image(image, "vehicle panels regression")
+            window.detect_motifs()
+
+            self.assertTrue(window.logical_layout.reliable, window.logical_layout)
+            self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
+            self.assertEqual(len(window.detections), 24)
+            self.assertEqual(sum(item.inferred for item in window.detections), 0)
+            self.assertTrue(all(item.grid_positioned for item in window.detections))
+            for item in window.detections:
+                self.assertEqual(
+                    item.center_px,
+                    window.logical_layout.position(*item.layout_cell),
+                )
+        finally:
+            window.close()
+
+    def test_bed_reference_completes_missing_row_in_detection(self):
+        import cv2
+        from tests.test_bed_reference import REFERENCE
+        reference=cv2.imread(str(REFERENCE))
+        image=reference.copy()
+        image[65:420,90:630]=225
+        for r in range(3):
+            for c in range(6):
+                cv2.ellipse(image,(135+c*90,110+r*88),(20,26),0,0,360,(65,90,130),-1)
+        window=MainWindow()
+        try:
+            window.detector.bed_reference=reference
+            window._load_image(image,'reference integration')
+            window.detect_motifs()
+            self.assertEqual((window.logical_layout.columns,window.logical_layout.rows),(6,4))
+            self.assertEqual(len(window.detections),24)
+            self.assertEqual(sum(d.inferred for d in window.detections),6)
+            self.assertTrue(all(d.grid_positioned for d in window.detections))
+            self.assertEqual(window._workflow_phase,'detect')
+            self.assertIsNotNone(window.panel.load_bed_reference_button)
+            np.testing.assert_array_equal(window.image_bgr,image)
+        finally:
+            window.close()
+
+    def test_camera_grid_controls_cuts_through_review_resize_and_undo(self) -> None:
+        import cv2
+        from tests.test_visual_grid import CAMERA_FIXTURE
+        window = MainWindow()
+        try:
+            window._load_image(cv2.imread(str(CAMERA_FIXTURE)), "camera regression")
+            window.change_cut_size(4., 4.)
+            window.detect_motifs()
+            self.assertEqual(window._workflow_phase, "detect")
+            self.assertEqual(window.logical_layout.source, "visual")
+            self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
+            self.assertEqual(len(window.detections), 24)
+            self.assertTrue(all(d.grid_positioned and d.valid_cut and not d.overlaps_cut
+                                for d in window.detections))
+            positions = {d.id: d.center_px for d in window.detections}
+            boxes = {d.id: d.bounding_box_px for d in window.detections}
+            for d in window.detections:
+                self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
+            self.assertTrue(any(d.center_px != d.original_center_px for d in window.detections))
+            window.confirm_detection()
+            self.assertEqual(window._workflow_phase, "review")
+            window.center_cuts()
+            window.change_cut_size(3.5, 3.5)
+            window.undo()
+            self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
+            self.assertEqual({d.id: d.bounding_box_px for d in window.detections}, boxes)
+            # Editing fallback guides must not silently change the reviewed cuts.
+            committed_grid = window.detection_panel_grid
+            window.change_grid_dimensions(5, 3)
+            window._refresh()
+            self.assertEqual(window.detection_panel_grid, committed_grid)
+            self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
+            window.undo()
+            self.assertEqual(window.detection_panel_grid, committed_grid)
+            self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
+        finally:
+            window.close()
+
+    def test_logical_layout_is_automatic_and_manual_override_does_not_deform_it(self) -> None:
+        window = MainWindow()
+        try:
+            window._load_image(np.full((650, 900, 3), 245, dtype=np.uint8), "layout test")
+            window.mapper, window.detections, _ = cut_fixture(missing=((2, 2),))
+            window._refresh()
+            self.assertTrue(window.logical_layout.reliable)
+            self.assertEqual(len(window.logical_layout.missing), 1)
+            self.assertFalse(hasattr(window, "apply_layout_button"))
+            target = next(d for d in window.detections if d.id == 8)
+            original = target.original_center_px
+            adjusted = target.center_px
+            self.assertNotEqual(adjusted, original)
+            self.assertEqual(adjusted, window.logical_layout.position(2, 1))
+            self.assertEqual(window._workflow_phase, "detect")
+            window.confirm_detection()
+            self.assertEqual(target.center_px, adjusted)
+            self.assertIsNotNone(target.layout_anchor_px)
+            self.assertTrue(window.canvas._layout_visible)
+            self.assertEqual(len(window.detections), 20)
+            positions = {d.id: d.center_px for d in window.detections}
+            window.move_detection(8, 444., 263.)
+            self.assertTrue(target.manual)
+            self.assertIsNone(target.layout_anchor_px)
+            self.assertEqual({d.id: d.center_px for d in window.detections if d.id != 8},
+                             {i: p for i, p in positions.items() if i != 8})
+            self.assertTrue(all(d.grid_positioned for d in window.detections if d.id != 8))
+            window._review_centering_complete = False
+            window.center_cuts()
+            self.assertEqual(target.center_px, (444., 263.))
+            window.undo()  # centring
+            window.undo()
+            target = next(d for d in window.detections if d.id == 8)
+            self.assertFalse(target.manual)
+            self.assertEqual(target.center_px, adjusted)
+            self.assertIsNotNone(target.layout_anchor_px)
+            window.center_cuts()
+            np.testing.assert_allclose(target.center_px, adjusted)
+            window.selected_ids = {8}
+            window.selected_id = 8
+            window.delete_selected()
+            self.assertTrue(all(d.grid_positioned for d in window.detections))
+            for d in window.detections:
+                self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
+            window.undo()
+            self.assertEqual(len(window.detections), 20)
+            self.assertIsNotNone(next(d for d in window.detections if d.id == 8).layout_anchor_px)
+            window._load_image(np.full((600, 800, 3), 240, dtype=np.uint8), "replacement")
+            self.assertEqual(window.logical_layout.matches, ())
+            self.assertEqual(window.canvas._logical_layout.missing, ())
+        finally:
+            window.close()
+
+    def test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected(self) -> None:
+        from app.export.svg_exporter import SVG_NAMESPACE
+        window = MainWindow()
+        try:
+            window._load_image(np.full((650, 900, 3), 240, dtype=np.uint8), "gap test")
+            window.mapper, window.detections, _ = cut_fixture(missing=((2, 2),))
+            window._refresh()
+            initial_layout = window.logical_layout
+            self.assertEqual(len(window.detections), 20)
+            self.assertFalse(hasattr(window.panel, "inferred_positions_list"))
+            inferred = next(d for d in window.detections if d.inferred)
+            self.assertIsNone(inferred.bounding_box_px)
+            self.assertIsNone(inferred.original_center_px)
+            self.assertEqual(inferred.center_px, initial_layout.position(2, 2))
+            self.assertEqual(window.logical_layout, initial_layout)
+            self.assertEqual(len(window.svg_exporter.build_tree(window.mapper, window.detections).findall(
+                f"{{{SVG_NAMESPACE}}}rect")), 20)
+            window.confirm_detection()
+            window.selected_ids = {inferred.id}
+            window.selected_id = inferred.id
+            window.delete_selected()
+            self.assertEqual(len(window.detections), 19)
+            self.assertIn((2, 2), window._suppressed_grid_cells)
+            window._refresh()
+            self.assertEqual(len(window.detections), 19)
+            self.assertEqual(len(window.svg_exporter.build_tree(window.mapper, window.detections).findall(
+                f"{{{SVG_NAMESPACE}}}rect")), 19)
+            window.undo()
+            self.assertEqual(len(window.detections), 20)
+            inferred = next(d for d in window.detections if d.inferred)
+            self.assertEqual(inferred.center_px, window.logical_layout.position(*inferred.layout_cell))
+            window.selected_ids = {1}
+            window.selected_id = 1
+            window.delete_selected()
+            self.assertEqual(len(window.logical_layout.matches), 18)  # inferred cut is not evidence
+            inferred = next(d for d in window.detections if d.inferred)
+            self.assertEqual(inferred.center_px, window.logical_layout.position(*inferred.layout_cell))
+            window.undo()  # deletion
+            self.assertEqual(len(window.detections), 20)
+        finally:
+            window.close()
+
+    def test_low_confidence_holes_are_pending_without_cut_proposals(self) -> None:
+        window = MainWindow()
+        try:
+            window._load_image(np.full((650, 900, 3), 240, dtype=np.uint8), "pending test")
+            window.mapper, window.detections, _ = cut_fixture(
+                missing=((1, 1), (2, 2), (3, 1), (3, 3), (0, 2), (4, 0), (0, 0)))
+            original = [d.center_px for d in window.detections]
+            window._refresh()
+            self.assertFalse(window.logical_layout.reliable)
+            self.assertEqual([d.center_px for d in window.detections], original)
+            self.assertFalse(any(d.inferred for d in window.detections))
+            self.assertFalse(hasattr(window.panel, "inferred_positions_list"))
+            self.assertEqual(len(window.detections), len(original))
+        finally:
+            window.close()
+
+    def test_detect_and_redetect_show_grid_centres_before_confirmation(self) -> None:
+        import cv2
+        from tests.test_logical_layout import observations
+        image = np.full((650, 900, 3), (232, 240, 241), dtype=np.uint8)
+        for p in observations(missing=((2, 2),)):
+            center = tuple(int(v) for v in p.center_px)
+            if p.detection_id == 8:
+                center = center[0] + 10, center[1] - 3
+            cv2.ellipse(image, center, (44 if p.detection_id % 2 else 27, 27), 0, 0, 360, (77, 125, 202), -1)
+        window = MainWindow()
+        try:
+            window._load_image(image, "real detection test")
+            for _ in range(2):
+                window.detect_motifs(replace_confirmed=True)
+                self.assertTrue(window.logical_layout.reliable)
+                self.assertFalse(window._detection_review_complete)
+                self.assertEqual(window._workflow_phase, "detect")
+                self.assertEqual(len(window.detections), 20)
+                for d in window.detections:
+                    self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
+                self.assertTrue(any(np.linalg.norm(np.array(d.center_px) - d.original_center_px) > 5
+                                    for d in window.detections if d.original_center_px is not None))
+            positions = [d.center_px for d in window.detections]
+            window.change_cut_size(5.5, 5.5)
+            self.assertEqual([d.center_px for d in window.detections], positions)
+            window.confirm_detection()
+            self.assertFalse(window.center_cuts_button.isEnabled())
+            window.undo()  # size
+            self.assertEqual([d.center_px for d in window.detections], positions)
+            window.undo()  # re-detection
+            self.assertEqual([d.center_px for d in window.detections], positions)
+            window.undo()  # first detection
+            self.assertEqual(window.detections, [])
+        finally:
+            window.close()
 
     def test_contextual_help_is_registered(self) -> None:
         window = MainWindow()
@@ -606,14 +939,18 @@ class UISmokeTests(unittest.TestCase):
         self.assertFalse(window._detection_review_complete)
         self.assertFalse(window.workflow_review_button.isEnabled())
         self.assertTrue(window.panel.confirm_detection_button.isEnabled())
+        self.assertEqual(window.panel.review_grid_button.text(), "Adjust panel grid")
+        self.assertTrue(window.panel.show_layout_checkbox.isHidden())
+        self.assertFalse(window.canvas._layout_review_details)
 
         window.confirm_detection()
         self.assertTrue(window._detection_review_complete)
         self.assertEqual(window._workflow_phase, "review")
         self.assertTrue(window.workflow_review_button.isEnabled())
+        self.assertFalse(window.panel.show_layout_checkbox.isHidden())
         window.close()
 
-    def test_grid_is_optional_and_off_for_first_detection(self) -> None:
+    def test_reliable_grid_is_used_in_first_detection_without_manual_step(self) -> None:
         window = MainWindow()
         window.load_demo_image()
 
@@ -622,7 +959,9 @@ class UISmokeTests(unittest.TestCase):
         window.detect_motifs()
 
         self.assertGreater(len(window.detections), 0)
-        self.assertIsNone(window.panel_grid)
+        self.assertIsNotNone(window.panel_grid)
+        self.assertTrue(window.logical_layout.reliable)
+        self.assertTrue(all(d.grid_positioned for d in window.detections))
         self.assertEqual(window._workflow_phase, "detect")
         self.assertTrue(window.panel.review_grid_button.isEnabled())
         window.close()
