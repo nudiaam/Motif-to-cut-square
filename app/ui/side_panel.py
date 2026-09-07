@@ -82,7 +82,7 @@ class MinimalArrowDoubleSpinBox(QDoubleSpinBox):
 
 
 HELP = {
-    "machine_section": "Select the laser model that defines the physical work area, or add a named custom machine profile.",
+    "machine_section": "Select the laser profile. Its work area and empty-bed photograph are kept together for that machine.",
     "machine": "The active machine profile. Its stored bed width and height define the physical coordinate system.",
     "work_area": "The usable physical bed size of the selected machine, displayed in the current working units.",
     "working_units": "The unit used for all visible physical positions, dimensions, rulers, cut sizes, and margins.",
@@ -285,6 +285,12 @@ class SidePanel(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
+
+        profile_box = QFrame()
+        profile_box.setObjectName("machineProfileBlock")
+        profile_layout = QVBoxLayout(profile_box)
+        profile_layout.setContentsMargins(8, 8, 8, 8)
+        profile_layout.setSpacing(6)
         self.machine_combo = QComboBox()
         self.machine_combo.setSizeAdjustPolicy(
             QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
@@ -301,16 +307,51 @@ class SidePanel(QWidget):
             InfoButton(HELP["machine"]), 0, Qt.AlignmentFlag.AlignTop
         )
         machine_header.addStretch(1)
-        layout.addLayout(machine_header)
-        layout.addWidget(self.machine_combo)
-        layout.addWidget(add_button, 0, Qt.AlignmentFlag.AlignRight)
+        profile_layout.addLayout(machine_header)
+        profile_layout.addWidget(self.machine_combo)
+        profile_layout.addWidget(add_button, 0, Qt.AlignmentFlag.AlignRight)
 
         self.work_area_value_label = QLabel("36.000 × 24.000 in")
-        layout.addWidget(
+        profile_layout.addWidget(
             self._parameter_readout(
                 "WORK AREA", self.work_area_value_label, HELP["work_area"]
             )
         )
+
+        self.machine_reference_row = QFrame()
+        self.machine_reference_row.setObjectName("machineReferenceRow")
+        reference_layout = QHBoxLayout(self.machine_reference_row)
+        reference_layout.setContentsMargins(0, 8, 0, 0)
+        reference_layout.setSpacing(7)
+        reference_badge = QLabel("BED")
+        reference_badge.setObjectName("machineReferenceBadge")
+        reference_badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        reference_layout.addWidget(reference_badge, 0, Qt.AlignmentFlag.AlignTop)
+
+        reference_copy = QWidget()
+        reference_copy_layout = QVBoxLayout(reference_copy)
+        reference_copy_layout.setContentsMargins(0, 0, 0, 0)
+        reference_copy_layout.setSpacing(1)
+        self.bed_reference_label = QLabel("Empty-bed photo")
+        self.bed_reference_label.setObjectName("machineReferenceName")
+        self.bed_reference_status_label = QLabel("Not set")
+        self.bed_reference_status_label.setObjectName("machineReferenceStatus")
+        reference_copy_layout.addWidget(self.bed_reference_label)
+        reference_copy_layout.addWidget(self.bed_reference_status_label)
+        reference_layout.addWidget(reference_copy, 1)
+
+        reference_actions = QVBoxLayout()
+        reference_actions.setContentsMargins(0, 0, 0, 0)
+        reference_actions.setSpacing(4)
+        self.load_bed_reference_button = QPushButton("Add photo")
+        self.load_bed_reference_button.setObjectName("machineReferenceAction")
+        self.remove_bed_reference_button = QPushButton("Remove")
+        self.remove_bed_reference_button.setObjectName("machineReferenceAction")
+        reference_actions.addWidget(self.load_bed_reference_button)
+        reference_actions.addWidget(self.remove_bed_reference_button)
+        reference_layout.addLayout(reference_actions)
+        profile_layout.addWidget(self.machine_reference_row)
+        layout.addWidget(profile_box)
 
         self.working_unit_combo = QComboBox()
         for unit in LengthUnit:
@@ -345,13 +386,6 @@ class SidePanel(QWidget):
         self.lock_image_checkbox.setEnabled(False)
         self.lock_image_checkbox.toggled.connect(self.image_lock_changed)
         layout.addWidget(self.lock_image_checkbox)
-        self.bed_reference_label = QLabel("No empty-bed reference")
-        self.bed_reference_label.setWordWrap(True)
-        layout.addWidget(self.bed_reference_label)
-        self.load_bed_reference_button = QPushButton("Load empty-bed photo")
-        self.remove_bed_reference_button = QPushButton("Remove bed reference")
-        layout.addWidget(self.load_bed_reference_button)
-        layout.addWidget(self.remove_bed_reference_button)
         return self._section("BED / IMAGE", box, HELP["bed_image_section"])
 
     def _build_cut_section(self) -> QFrame:
@@ -822,6 +856,17 @@ class SidePanel(QWidget):
     def set_machine(self, profile: MachineProfile) -> None:
         self._machine = profile
         self._update_physical_readouts()
+
+    def set_bed_reference_source(self, source: str | None) -> None:
+        labels = {"built-in": "Built-in", "custom": "Custom"}
+        available = source in labels
+        self.bed_reference_status_label.setText(labels.get(source, "Not set"))
+        self.bed_reference_status_label.setProperty("referenceAvailable", available)
+        self.bed_reference_status_label.style().unpolish(self.bed_reference_status_label)
+        self.bed_reference_status_label.style().polish(self.bed_reference_status_label)
+        self.load_bed_reference_button.setText("Change" if available else "Add photo")
+        self.remove_bed_reference_button.setVisible(available)
+        self.remove_bed_reference_button.setEnabled(available)
 
     def working_unit(self) -> LengthUnit:
         return self._working_unit

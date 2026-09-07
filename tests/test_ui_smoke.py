@@ -198,6 +198,19 @@ class UISmokeTests(unittest.TestCase):
             self.assertTrue(all(d.grid_positioned for d in window.detections))
             self.assertEqual(window._workflow_phase,'detect')
             self.assertIsNotNone(window.panel.load_bed_reference_button)
+            self.assertTrue(
+                window.panel.machine_section.isAncestorOf(
+                    window.panel.machine_reference_row
+                )
+            )
+            self.assertFalse(
+                window.panel.bed_image_section.isAncestorOf(
+                    window.panel.machine_reference_row
+                )
+            )
+            window.panel.set_bed_reference_source("built-in")
+            self.assertEqual(window.panel.bed_reference_status_label.text(), "Built-in")
+            self.assertEqual(window.panel.load_bed_reference_button.text(), "Change")
             np.testing.assert_array_equal(window.image_bgr,image)
         finally:
             window.close()

@@ -15,6 +15,17 @@ class BedReferences:
     def path(self, machine_id):
         return self.directory / (sha256(machine_id.encode()).hexdigest() + '.png')
 
+    def source(self, machine_id):
+        path = self.path(machine_id)
+        if path.with_suffix('.disabled').exists():
+            return None
+        if path.exists():
+            return "custom"
+        bundled = Path(__file__).resolve().parents[2] / 'assets/references/epilog/empty_bed.png'
+        if machine_id == EPILOG_FUSION_MAKER_36.id and bundled.exists():
+            return "built-in"
+        return None
+
     def load(self, machine_id):
         path = self.path(machine_id)
         if path.with_suffix('.disabled').exists():

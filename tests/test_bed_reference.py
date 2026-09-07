@@ -138,10 +138,12 @@ class BedReferenceTests(unittest.TestCase):
     def test_reference_persistence_is_per_machine_and_removable(self):
         with tempfile.TemporaryDirectory() as directory:
             store=BedReferences(directory)
+            self.assertIsNone(store.source('one'))
             store.save('one',self.reference)
+            self.assertEqual(store.source('one'),'custom')
             np.testing.assert_array_equal(BedReferences(directory).load('one'),self.reference)
             self.assertIsNone(store.load('two'))
-            store.disable('one'); self.assertIsNone(store.load('one'))
+            store.disable('one'); self.assertIsNone(store.load('one')); self.assertIsNone(store.source('one'))
             store.save('one',self.reference); self.assertIsNotNone(store.load('one'))
 
     def test_real_detector_completes_row_without_foreground_detections(self):

@@ -174,10 +174,9 @@ class MainWindow(QMainWindow):
 
     def _load_machine_reference(self):
         self.detector.bed_reference = self.bed_references.load(self.current_machine.id)
-        available = self.detector.bed_reference is not None
-        self.panel.bed_reference_label.setText(
-            "Empty-bed reference loaded" if available else "No empty-bed reference")
-        self.panel.remove_bed_reference_button.setEnabled(available)
+        self.panel.set_bed_reference_source(
+            self.bed_references.source(self.current_machine.id)
+        )
 
     def load_bed_reference(self):
         path, _ = QFileDialog.getOpenFileName(self, "Empty-bed photo", "", "Images (*.png *.jpg *.jpeg *.bmp)")
@@ -803,7 +802,6 @@ class MainWindow(QMainWindow):
                 self.image_bgr, settings
             )
             candidates = list(result.candidates)
-            self.panel.bed_reference_label.setText(self.detector.reference_status)
         except Exception as exc:  # present processing failures as UI errors
             QMessageBox.critical(self, "Detection failed", str(exc))
             return

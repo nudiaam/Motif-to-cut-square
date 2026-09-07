@@ -192,6 +192,36 @@ QFrame#panelSection {
     border: 1px solid #39424c;
     border-radius: 5px;
 }
+QFrame#machineProfileBlock {
+    background: #222930;
+    border: 1px solid #46515e;
+    border-radius: 4px;
+}
+QFrame#machineReferenceRow {
+    background: transparent;
+    border: none;
+    border-top: 1px solid #39424c;
+}
+QLabel#machineReferenceBadge {
+    min-width: 28px;
+    min-height: 22px;
+    background: #1d2228;
+    border: 1px solid #46515e;
+    border-radius: 3px;
+    color: #55e6ff;
+    font-size: 7pt;
+    font-weight: bold;
+}
+QLabel#machineReferenceName {
+    color: #e1e8ed;
+    font-weight: bold;
+}
+QLabel#machineReferenceStatus {
+    color: #8996a1;
+    font-size: 8pt;
+}
+QLabel#machineReferenceStatus[referenceAvailable="true"] { color: #55d6aa; }
+QPushButton#machineReferenceAction { padding: 3px 7px; }
 QFrame#panelGridSection {
     background: #282e36;
     border: 1px solid #39424c;

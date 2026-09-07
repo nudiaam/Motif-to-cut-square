@@ -3,6 +3,7 @@
 ## 2026-09-07 — Automatic fabric extent and grid cleanup
 
 - Added an empty-bed camera reference for each machine in **Prepare image**.
+- Grouped each machine's dimensions and empty-bed photograph in one visual profile.
 - Included the supplied Epilog empty-bed image as the default reference for the
   Epilog Fusion Maker 36 profile.
 - Detects the physical fabric by comparing colour and bed texture while tolerating

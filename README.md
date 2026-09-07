@@ -165,6 +165,13 @@ The top toolbar contains only image loading and the global **Undo** command.
   maximum engraving area of **36 x 24 in** (approximately 915 x 610 mm), as listed
   in the [official Epilog 17000 Series manual](https://www.epiloglaser.com/es/assets/downloads/manuals/17000-series_manual.pdf).
 - **Add machine...** saves custom profiles with a name, width, height, and unit.
+- The same machine block shows its **Empty-bed photo** as **Built-in**, **Custom**,
+  or **Not set**. Use **Add photo** or **Change** there; the reference changes
+  automatically with the selected machine.
+- When visible bed texture matches that photo, the app identifies the physical
+  fabric, rejects bed artifacts, and extends a reliable grid to every complete row
+  or column contained by that fabric. Nearby fragments assigned to one cell are
+  represented once.
 - **Working units** changes visible measurements between inches, centimetres, and millimetres.
 - The origin is at the top-left corner. X increases to the right and Y increases downwards.
 
@@ -172,15 +179,6 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 - The image is loaded centred and contained within the bed while preserving its aspect ratio.
 - **Lock image placement** protects the image while cut shapes are being edited.
-- **Load empty-bed photo** stores a camera reference for the selected machine.
-  The built-in Epilog profile includes the supplied empty-bed image by default.
-- When visible bed texture matches the reference, the app identifies the physical
-  fabric, rejects bed artifacts, and extends a reliable grid to every complete row
-  or column contained by that fabric. Nearby fragments assigned to one cell are
-  represented once.
-- **Remove bed reference** disables the stored or bundled reference for the selected
-  machine. Images that do not match the reference continue through the normal
-  detector without reference subtraction.
 - When unlocked, drag inside the image to move it or drag a corner to scale it.
 - **IMAGE SCALE** shows how many pixels represent one physical unit horizontally and vertically.
 - **Preview Cuts** dims everything outside enabled, valid, collision-free cut
