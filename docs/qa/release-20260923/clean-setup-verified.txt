@@ -1,0 +1,39 @@
+[1/4] Checking Python...
+[2/4] Creating local environment if needed...
+[3/4] Installing required packages...
+Requirement already satisfied: pip in c:\users\daman\appdata\local\temp\lcp-check-�-23\lalikul-cut-prep\.venv\lib\site-packages (25.0.1)
+Collecting pip
+  Using cached pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+Using cached pip-26.2.1-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 25.0.1
+    Uninstalling pip-25.0.1:
+      Successfully uninstalled pip-25.0.1
+Successfully installed pip-26.2.1
+Ignoring numpy: markers 'python_version < "3.12"' don't match your environment
+Collecting PySide6-Essentials==6.11.2 (from -r requirements.txt (line 2))
+  Using cached pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl.metadata (3.8 kB)
+Collecting numpy==2.5.3 (from -r requirements.txt (line 3))
+  Using cached numpy-2.5.3-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Collecting opencv-python-headless==4.14.0.94 (from -r requirements.txt (line 5))
+  Using cached opencv_python_headless-4.14.0.94-cp37-abi3-win_amd64.whl.metadata (20 kB)
+Collecting shiboken6==6.11.2 (from PySide6-Essentials==6.11.2->-r requirements.txt (line 2))
+  Using cached shiboken6-6.11.2-cp310-abi3-win_amd64.whl.metadata (2.5 kB)
+Using cached pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl (76.9 MB)
+Using cached numpy-2.5.3-cp312-cp312-win_amd64.whl (12.6 MB)
+Using cached opencv_python_headless-4.14.0.94-cp37-abi3-win_amd64.whl (41.0 MB)
+Using cached shiboken6-6.11.2-cp310-abi3-win_amd64.whl (1.2 MB)
+Installing collected packages: shiboken6, numpy, PySide6-Essentials, opencv-python-headless
+
+Successfully installed PySide6-Essentials-6.11.2 numpy-2.5.3 opencv-python-headless-4.14.0.94 shiboken6-6.11.2
+[4/4] Verifying the installed application and bundled files...
+No broken requirements found.
+Application imports and bundled files verified: {'python': '3.12.10', 'PySide6': '6.11.2', 'opencv': '4.14.0', 'numpy': '2.5.3'}
+Shortcut created: C:\Users\daman\AppData\Local\Temp\lcp-check-�-23\Lalikul-Cut-Prep\Lalikul Cut Prep.lnk
+
+Setup complete.
+Double-click "Lalikul Cut Prep.lnk" to start with the app icon and no terminal.
+If the shortcut is unavailable, use "Lalikul Cut Prep.vbs".
+Use run_console.bat only if you need to diagnose an error.
+Presione una tecla para continuar . . .

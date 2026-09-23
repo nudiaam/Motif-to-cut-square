@@ -1,0 +1,998 @@
+[
+  {
+    "file": "generated/folk_floral_6x4.png",
+    "count": 24,
+    "review_count": 2,
+    "seconds": 1.7491480000317097,
+    "grid": {
+      "x_lines_px": [
+        69.25963636363608,
+        299.65963636363614,
+        530.0596363636362,
+        760.4596363636362,
+        990.8596363636364,
+        1221.2596363636364,
+        1451.6596363636365
+      ],
+      "y_lines_px": [
+        72.36218181818187,
+        278.3956363636364,
+        484.429090909091,
+        690.4625454545455,
+        896.4960000000001
+      ],
+      "confidence": 0.9246709486368023,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        6,
+        1536,
+        998
+      ],
+      "grid": {
+        "x_lines_px": [
+          69.25963636363608,
+          299.65963636363614,
+          530.0596363636362,
+          760.4596363636362,
+          990.8596363636364,
+          1221.2596363636364,
+          1451.6596363636365
+        ],
+        "y_lines_px": [
+          72.36218181818187,
+          278.3956363636364,
+          484.429090909091,
+          690.4625454545455,
+          896.4960000000001
+        ],
+        "confidence": 0.9246709486368023,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [
+        "Extended 5x4 visual grid to 6x4: multiple stable outer motifs."
+      ],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 2
+    }
+  },
+  {
+    "file": "generated/pastel_animals_6x4.png",
+    "count": 24,
+    "review_count": 14,
+    "seconds": 1.7095466000027955,
+    "grid": {
+      "x_lines_px": [
+        64.87771428571445,
+        301.5015064935066,
+        538.1252987012988,
+        774.7490909090909,
+        1011.372883116883,
+        1247.9966753246752,
+        1484.6204675324675
+      ],
+      "y_lines_px": [
+        77.74545454545459,
+        299.0690909090909,
+        520.3927272727271,
+        741.7163636363634,
+        963.0399999999997
+      ],
+      "confidence": 0.9424958107538779,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        12,
+        1536,
+        1015
+      ],
+      "grid": {
+        "x_lines_px": [
+          64.87771428571445,
+          301.5015064935066,
+          538.1252987012988,
+          774.7490909090909,
+          1011.372883116883,
+          1247.9966753246752,
+          1484.6204675324675
+        ],
+        "y_lines_px": [
+          77.74545454545459,
+          299.0690909090909,
+          520.3927272727271,
+          741.7163636363634,
+          963.0399999999997
+        ],
+        "confidence": 0.9424958107538779,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [
+        "Extended 6x3 visual grid to 6x4: multiple stable outer motifs."
+      ],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 14
+    }
+  },
+  {
+    "file": "generated/straight/dogs_6x4.png",
+    "count": 24,
+    "review_count": 15,
+    "seconds": 2.031455999996979,
+    "grid": {
+      "x_lines_px": [
+        79.85724401142676,
+        310.05697191620595,
+        540.2566998209851,
+        770.4564277257642,
+        1000.6561556305434,
+        1230.8558835353224,
+        1461.0556114401015
+      ],
+      "y_lines_px": [
+        56.75402398798026,
+        281.3736278344755,
+        505.9932316809708,
+        730.6128355274661,
+        955.2324393739614
+      ],
+      "confidence": 0.9122836255838921,
+      "source": "camera",
+      "lattice": [
+        [
+          196.01919929675532,
+          169.06549564833358
+        ],
+        [
+          230.19972790477914,
+          -0.000667894842275943
+        ],
+        [
+          -0.7080608886259935,
+          224.61960384649527
+        ]
+      ],
+      "projection": [
+        [
+          229.52019292120312,
+          -1.2131658418614086,
+          196.84368712103657
+        ],
+        [
+          -0.17082723115877904,
+          223.87681175237208,
+          169.49663067800086
+        ],
+        [
+          -0.00033616738822811264,
+          -0.000657077777049179,
+          1.0
+        ]
+      ],
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        20,
+        3,
+        1517,
+        1012
+      ],
+      "grid": {
+        "x_lines_px": [
+          79.85724401142676,
+          310.05697191620595,
+          540.2566998209851,
+          770.4564277257642,
+          1000.6561556305434,
+          1230.8558835353224,
+          1461.0556114401015
+        ],
+        "y_lines_px": [
+          56.75402398798026,
+          281.3736278344755,
+          505.9932316809708,
+          730.6128355274661,
+          955.2324393739614
+        ],
+        "confidence": 0.9122836255838921,
+        "source": "camera",
+        "lattice": [
+          [
+            196.01919929675532,
+            169.06549564833358
+          ],
+          [
+            230.19972790477914,
+            -0.000667894842275943
+          ],
+          [
+            -0.7080608886259935,
+            224.61960384649527
+          ]
+        ],
+        "projection": [
+          [
+            229.52019292120312,
+            -1.2131658418614086,
+            196.84368712103657
+          ],
+          [
+            -0.17082723115877904,
+            223.87681175237208,
+            169.49663067800086
+          ],
+          [
+            -0.00033616738822811264,
+            -0.000657077777049179,
+            1.0
+          ]
+        ],
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 15
+    }
+  },
+  {
+    "file": "generated/straight/hearts_6x4.png",
+    "count": 24,
+    "review_count": 9,
+    "seconds": 1.547857900033705,
+    "grid": {
+      "x_lines_px": [
+        66.45162554112575,
+        300.8880281385283,
+        535.3244307359308,
+        769.7608333333334,
+        1004.197235930736,
+        1238.6336385281386,
+        1473.0700411255411
+      ],
+      "y_lines_px": [
+        59.627909090909135,
+        278.73781818181817,
+        497.84772727272724,
+        716.9576363636362,
+        936.0675454545454
+      ],
+      "confidence": 0.9686332815051181,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        12,
+        13,
+        1525,
+        1002
+      ],
+      "grid": {
+        "x_lines_px": [
+          66.45162554112575,
+          300.8880281385283,
+          535.3244307359308,
+          769.7608333333334,
+          1004.197235930736,
+          1238.6336385281386,
+          1473.0700411255411
+        ],
+        "y_lines_px": [
+          59.627909090909135,
+          278.73781818181817,
+          497.84772727272724,
+          716.9576363636362,
+          936.0675454545454
+        ],
+        "confidence": 0.9686332815051181,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 9
+    }
+  },
+  {
+    "file": "generated/straight/pastel_6x4.png",
+    "count": 24,
+    "review_count": 5,
+    "seconds": 0.7502442999975756,
+    "grid": {
+      "x_lines_px": [
+        81.69212755836568,
+        310.61792534107695,
+        539.5437231237881,
+        768.4695209064994,
+        997.3953186892106,
+        1226.3211164719219,
+        1455.2469142546333
+      ],
+      "y_lines_px": [
+        104.28738059585825,
+        321.98753277763035,
+        539.6876849594024,
+        757.3878371411745,
+        975.0879893229466
+      ],
+      "confidence": 0.8,
+      "source": "pattern",
+      "lattice": [
+        [
+          197.80503635815916,
+          210.71788827010678
+        ],
+        [
+          228.92579778271124,
+          0.9678273666550048
+        ],
+        [
+          -1.1000066056252342,
+          217.7001521817721
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        25,
+        24,
+        1512,
+        1005
+      ],
+      "grid": {
+        "x_lines_px": [
+          81.69212755836568,
+          310.61792534107695,
+          539.5437231237881,
+          768.4695209064994,
+          997.3953186892106,
+          1226.3211164719219,
+          1455.2469142546333
+        ],
+        "y_lines_px": [
+          104.28738059585825,
+          321.98753277763035,
+          539.6876849594024,
+          757.3878371411745,
+          975.0879893229466
+        ],
+        "confidence": 0.8,
+        "source": "pattern",
+        "lattice": [
+          [
+            197.80503635815916,
+            210.71788827010678
+          ],
+          [
+            228.92579778271124,
+            0.9678273666550048
+          ],
+          [
+            -1.1000066056252342,
+            217.7001521817721
+          ]
+        ],
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 25,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 5
+    }
+  },
+  {
+    "file": "generated/transport_spanning_5x4.png",
+    "count": 19,
+    "review_count": 6,
+    "seconds": 1.7858700000215322,
+    "grid": {
+      "x_lines_px": [
+        126.23127272727231,
+        384.83781818181785,
+        643.4443636363634,
+        902.0509090909089,
+        1160.6574545454546,
+        1419.2640000000001
+      ],
+      "y_lines_px": [
+        64.77018181818188,
+        285.6050909090909,
+        506.44,
+        727.274909090909,
+        948.109818181818
+      ],
+      "confidence": 0.9089751267695242,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        13,
+        1536,
+        1015
+      ],
+      "grid": {
+        "x_lines_px": [
+          126.23127272727231,
+          384.83781818181785,
+          643.4443636363634,
+          902.0509090909089,
+          1160.6574545454546,
+          1419.2640000000001
+        ],
+        "y_lines_px": [
+          64.77018181818188,
+          285.6050909090909,
+          506.44,
+          727.274909090909,
+          948.109818181818
+        ],
+        "confidence": 0.9089751267695242,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [
+        "Preserved whole artwork spanning adjacent cells."
+      ],
+      "candidates_before_cleanup": 19,
+      "candidates_after_cleanup": 19,
+      "compositions_needing_extent_review": 6
+    }
+  },
+  {
+    "file": "pastel_panels_camera.png",
+    "count": 24,
+    "review_count": 19,
+    "seconds": 1.4065520000294782,
+    "grid": {
+      "x_lines_px": [
+        123.92176623376642,
+        324.0314805194807,
+        524.1411948051948,
+        724.2509090909091,
+        924.3606233766234,
+        1124.4703376623377,
+        1324.5800519480517
+      ],
+      "y_lines_px": [
+        129.6378181818182,
+        342.2298181818183,
+        554.8218181818183,
+        767.4138181818184,
+        980.0058181818184
+      ],
+      "confidence": 0.9406354406973775,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1448,
+        1086
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        35,
+        69,
+        1411,
+        1044
+      ],
+      "grid": {
+        "x_lines_px": [
+          123.92176623376642,
+          324.0314805194807,
+          524.1411948051948,
+          724.2509090909091,
+          924.3606233766234,
+          1124.4703376623377,
+          1324.5800519480517
+        ],
+        "y_lines_px": [
+          129.6378181818182,
+          342.2298181818183,
+          554.8218181818183,
+          767.4138181818184,
+          980.0058181818184
+        ],
+        "confidence": 0.9406354406973775,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 19
+    }
+  },
+  {
+    "file": "patchwork_camera.png",
+    "count": 22,
+    "review_count": 13,
+    "seconds": 2.4177963999682106,
+    "grid": {
+      "x_lines_px": [
+        180.94840838379406,
+        369.69407494622425,
+        558.4397415086544,
+        747.1854080710846,
+        935.9310746335148,
+        1124.676741195945,
+        1313.4224077583751
+      ],
+      "y_lines_px": [
+        128.93702288477039,
+        334.0276039064671,
+        539.1181849281638,
+        744.2087659498607,
+        949.2993469715573
+      ],
+      "confidence": 0.9323203396439468,
+      "source": "camera",
+      "lattice": [
+        [
+          275.28506963039484,
+          231.59271186567616
+        ],
+        [
+          188.7456665624302,
+          -0.04415938802296234
+        ],
+        [
+          0.02411468974286891,
+          205.09058102169672
+        ]
+      ],
+      "projection": [
+        [
+          175.94749485503283,
+          -18.808886348366524,
+          296.42488521519914
+        ],
+        [
+          -2.5148429838846704,
+          181.37959983973818,
+          240.48210196736363
+        ],
+        [
+          -0.004529951336251065,
+          -0.025115407501275226,
+          1.0
+        ]
+      ],
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1448,
+        1086
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        105,
+        86,
+        1379,
+        1046
+      ],
+      "grid": {
+        "x_lines_px": [
+          180.94840838379406,
+          369.69407494622425,
+          558.4397415086544,
+          747.1854080710846,
+          935.9310746335148,
+          1124.676741195945,
+          1313.4224077583751
+        ],
+        "y_lines_px": [
+          128.93702288477039,
+          334.0276039064671,
+          539.1181849281638,
+          744.2087659498607,
+          949.2993469715573
+        ],
+        "confidence": 0.9323203396439468,
+        "source": "camera",
+        "lattice": [
+          [
+            275.28506963039484,
+            231.59271186567616
+          ],
+          [
+            188.7456665624302,
+            -0.04415938802296234
+          ],
+          [
+            0.02411468974286891,
+            205.09058102169672
+          ]
+        ],
+        "projection": [
+          [
+            175.94749485503283,
+            -18.808886348366524,
+            296.42488521519914
+          ],
+          [
+            -2.5148429838846704,
+            181.37959983973818,
+            240.48210196736363
+          ],
+          [
+            -0.004529951336251065,
+            -0.025115407501275226,
+            1.0
+          ]
+        ],
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 22,
+      "candidates_after_cleanup": 22,
+      "compositions_needing_extent_review": 13
+    }
+  },
+  {
+    "file": "transport_camera.png",
+    "count": 19,
+    "review_count": 2,
+    "seconds": 0.6310770999989472,
+    "grid": {
+      "x_lines_px": [
+        169.40323594179193,
+        407.2881433842726,
+        645.1730508267533,
+        883.0579582692341,
+        1120.9428657117148,
+        1358.8277731541955
+      ],
+      "y_lines_px": [
+        151.20280817472826,
+        349.87504037168304,
+        548.5472725686378,
+        747.2195047655927,
+        945.8917369625473
+      ],
+      "confidence": 0.9,
+      "source": "pattern",
+      "lattice": [
+        [
+          292.942382894878,
+          253.69811357492944
+        ],
+        [
+          237.88490744248068,
+          -1.5795946508618848
+        ],
+        [
+          -3.064462154563809,
+          198.67223219695478
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1448,
+        1086
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        46,
+        60,
+        1448,
+        1015
+      ],
+      "grid": {
+        "x_lines_px": [
+          169.40323594179193,
+          407.2881433842726,
+          645.1730508267533,
+          883.0579582692341,
+          1120.9428657117148,
+          1358.8277731541955
+        ],
+        "y_lines_px": [
+          151.20280817472826,
+          349.87504037168304,
+          548.5472725686378,
+          747.2195047655927,
+          945.8917369625473
+        ],
+        "confidence": 0.9,
+        "source": "pattern",
+        "lattice": [
+          [
+            292.942382894878,
+            253.69811357492944
+          ],
+          [
+            237.88490744248068,
+            -1.5795946508618848
+          ],
+          [
+            -3.064462154563809,
+            198.67223219695478
+          ]
+        ],
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 19,
+      "candidates_after_cleanup": 19,
+      "compositions_needing_extent_review": 2
+    }
+  },
+  {
+    "file": "vehicles_panels.png",
+    "count": 24,
+    "review_count": 2,
+    "seconds": 3.2451019000145607,
+    "grid": {
+      "x_lines_px": [
+        46.54805444897504,
+        274.10898860356133,
+        501.6699227581476,
+        729.2308569127338,
+        956.7917910673202,
+        1184.3527252219064,
+        1411.9136593764927
+      ],
+      "y_lines_px": [
+        63.415884005790026,
+        301.15554851178655,
+        538.8952130177831,
+        776.6348775237798,
+        1014.3745420297762
+      ],
+      "confidence": 0.9923576706951909,
+      "source": "fabric",
+      "lattice": [
+        [
+          163.83232213330058,
+          181.0867297339998
+        ],
+        [
+          227.56093415458628,
+          0.47959460991540603
+        ],
+        [
+          -2.3358670713549334,
+          237.73966450599656
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1448,
+        1086
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        0,
+        1448,
+        1086
+      ],
+      "grid": {
+        "x_lines_px": [
+          46.54805444897504,
+          274.10898860356133,
+          501.6699227581476,
+          729.2308569127338,
+          956.7917910673202,
+          1184.3527252219064,
+          1411.9136593764927
+        ],
+        "y_lines_px": [
+          63.415884005790026,
+          301.15554851178655,
+          538.8952130177831,
+          776.6348775237798,
+          1014.3745420297762
+        ],
+        "confidence": 0.9923576706951909,
+        "source": "fabric",
+        "lattice": [
+          [
+            163.83232213330058,
+            181.0867297339998
+          ],
+          [
+            227.56093415458628,
+            0.47959460991540603
+          ],
+          [
+            -2.3358670713549334,
+            237.73966450599656
+          ]
+        ],
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 2
+    }
+  }
+]

@@ -1,0 +1,25 @@
+test_resized_shadowed_original_keeps_geometry_and_extent (tests.test_irregular_shadows.IrregularShadowTests.test_resized_shadowed_original_keeps_geometry_and_extent) ... ok
+test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) ...
+  test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) (collection='dogs', shadow='patches') ... FAIL
+  test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) (collection='hearts', shadow='patches') ... FAIL
+
+======================================================================
+FAIL: test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) (collection='dogs', shadow='patches')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_irregular_shadows.py", line 81, in test_shadow_fields_across_three_collections
+    self.assertEqual(len(result.candidates),24)
+AssertionError: 23 != 24
+
+======================================================================
+FAIL: test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) (collection='hearts', shadow='patches')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_irregular_shadows.py", line 81, in test_shadow_fields_across_three_collections
+    self.assertEqual(len(result.candidates),24)
+AssertionError: 23 != 24
+
+----------------------------------------------------------------------
+Ran 2 tests in 84.367s
+
+FAILED (failures=2)

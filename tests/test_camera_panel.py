@@ -58,8 +58,8 @@ class CameraPanelTests(unittest.TestCase):
         layout = layout_from_panel_grid([],grid)
         for row in range(grid.rows):
             for col in range(grid.columns):
-                rectified_center = ((col+.5)*panel.image.shape[1]/grid.columns,
-                                    (row+.5)*panel.image.shape[0]/grid.rows)
+                rectified_center = ((panel.grid.x_lines_px[col]+panel.grid.x_lines_px[col+1])/2,
+                                    (panel.grid.y_lines_px[row]+panel.grid.y_lines_px[row+1])/2)
                 expected = project_points([rectified_center],panel.to_source)[0]
                 np.testing.assert_allclose(layout.position(col,row),expected,atol=1e-8)
             points = np.array([layout.position(c,row) for c in range(grid.columns)])

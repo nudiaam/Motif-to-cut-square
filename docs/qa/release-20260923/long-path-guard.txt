@@ -1,0 +1,6 @@
+[1/4] Checking Python...
+
+This folder path is too long for a reliable Windows installation.
+Extract the complete ZIP into a shorter folder, such as Desktop\Lalikul.
+Then run setup.bat from that new folder. Do not copy an old .venv folder.
+Presione una tecla para continuar . . .

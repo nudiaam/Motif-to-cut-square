@@ -26,6 +26,7 @@ from app.models import Detection
 from app.geometry.units import LengthUnit, from_inches
 from app.imaging.panel_grid import PanelGrid
 from app.imaging.logical_layout import LogicalLayout
+from app.ui.cut_status import cut_status_color
 
 
 class BedCanvas(QWidget):
@@ -350,16 +351,13 @@ class BedCanvas(QWidget):
     def _paint_detections(self, painter: QPainter) -> None:
         assert self._mapper is not None
         label_font = QFont("Segoe UI", 9, QFont.Weight.DemiBold)
+        assignment_warnings = {m.detection_id for m in self._logical_layout.matches
+                               if m.status != "matched" or m.review_reason}
         for detection in self._detections:
             selected = detection.id in self._selected_ids
+            color = QColor(cut_status_color(detection, detection.id in assignment_warnings))
             if not detection.enabled:
-                color = QColor(145, 153, 163, 135)
-            elif detection.overlaps_cut:
-                color = QColor("#ff8a3d")
-            elif not detection.valid_cut:
-                color = QColor("#ff5364")
-            else:
-                color = QColor("#39d6a4")
+                color.setAlpha(135)
 
             if detection.bounding_box_px is not None:
                 bbox = self._pixel_rect_to_widget(detection.bounding_box_px)

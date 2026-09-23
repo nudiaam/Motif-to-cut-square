@@ -1,0 +1,39 @@
+{
+  "chosen": "compositions",
+  "measurements": [
+    {
+      "route": "decorative",
+      "columns": 4,
+      "rows": 3,
+      "eligible": false,
+      "seam_support": 1.0,
+      "occupied_fraction": 1.0,
+      "aligned_fraction": 0.3333333333333333,
+      "outside_fraction": 0.0,
+      "score": 0.8333333333333334,
+      "unique_assignment_fraction": 0.5,
+      "rejection_reason": "Groups distinct stable artwork centres; contradicted by compositions"
+    },
+    {
+      "route": "compositions",
+      "columns": 6,
+      "rows": 4,
+      "eligible": true,
+      "seam_support": 0.125,
+      "occupied_fraction": 1.0,
+      "aligned_fraction": 1.0,
+      "outside_fraction": 0.0,
+      "score": 0.6499999999999999,
+      "unique_assignment_fraction": 1.0
+    }
+  ],
+  "known_composition_grid": [
+    6,
+    4
+  ],
+  "decorative_grid": [
+    4,
+    3
+  ],
+  "scope": "grid ranking only, exact centres supplied as a diagnostic oracle"
+}

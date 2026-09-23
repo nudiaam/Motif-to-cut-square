@@ -1,0 +1,1904 @@
+{
+  "bed_width_inches": 36.0,
+  "bed_height_inches": 24.0,
+  "image_width_px": 1536,
+  "image_height_px": 1024,
+  "px_per_inch_x": 42.666666666666664,
+  "px_per_inch_y": 42.666666666666664,
+  "image_placement_inches": {
+    "x": 0.0,
+    "y": 0.0,
+    "width": 36.0,
+    "height": 24.0
+  },
+  "machine_name": "Epilog Fusion Maker 36",
+  "working_unit": "in",
+  "export_unit": "in",
+  "logical_layout": {
+    "columns": 6,
+    "rows": 4,
+    "origin_px": [
+      180.78440181398696,
+      199.00739325670793
+    ],
+    "column_vector_px": [
+      231.64521542818323,
+      -0.5911885263140566
+    ],
+    "row_vector_px": [
+      2.49812048808996,
+      217.12613016887565
+    ],
+    "confidence": 0.9914233916852881,
+    "mean_residual_px": 9.777440400103702,
+    "occupancy": 1.0,
+    "matches": [
+      {
+        "detection_id": 1,
+        "observed_px": [
+          868.0,
+          193.5
+        ],
+        "proposed_px": [
+          875.7200480985366,
+          197.23382767776576
+        ],
+        "column": 3,
+        "row": 0,
+        "residual_px": 8.575582299235915,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 2,
+        "observed_px": [
+          646.0,
+          186.5
+        ],
+        "proposed_px": [
+          644.0748326703534,
+          197.82501620407982
+        ],
+        "column": 2,
+        "row": 0,
+        "residual_px": 11.487482808248677,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 3,
+        "observed_px": [
+          1114.5,
+          202.0
+        ],
+        "proposed_px": [
+          1107.36526352672,
+          196.6426391514517
+        ],
+        "column": 4,
+        "row": 0,
+        "residual_px": 8.922207115098342,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 4,
+        "observed_px": [
+          173.0,
+          198.0
+        ],
+        "proposed_px": [
+          180.78440181398696,
+          199.00739325670793
+        ],
+        "column": 0,
+        "row": 0,
+        "residual_px": 7.849315433543494,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 5,
+        "observed_px": [
+          1345.0,
+          211.5
+        ],
+        "proposed_px": [
+          1339.0104789549032,
+          196.05145062513765
+        ],
+        "column": 5,
+        "row": 0,
+        "residual_px": 16.569008423475967,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 6,
+        "observed_px": [
+          423.0,
+          193.5
+        ],
+        "proposed_px": [
+          412.4296172421702,
+          198.41620473039387
+        ],
+        "column": 1,
+        "row": 0,
+        "residual_px": 11.657703916216636,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 7,
+        "observed_px": [
+          1117.0,
+          402.5
+        ],
+        "proposed_px": [
+          1109.8633840148098,
+          413.76876932032735
+        ],
+        "column": 4,
+        "row": 1,
+        "residual_px": 13.338532517290794,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 8,
+        "observed_px": [
+          1346.5,
+          402.5
+        ],
+        "proposed_px": [
+          1341.508599442993,
+          413.1775807940133
+        ],
+        "column": 5,
+        "row": 1,
+        "residual_px": 11.786636972994923,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 9,
+        "observed_px": [
+          417.0,
+          416.5
+        ],
+        "proposed_px": [
+          414.92773773026016,
+          415.5423348992695
+        ],
+        "column": 1,
+        "row": 1,
+        "residual_px": 2.282847642692001,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 10,
+        "observed_px": [
+          178.0,
+          402.5
+        ],
+        "proposed_px": [
+          183.28252230207693,
+          416.1335234255836
+        ],
+        "column": 0,
+        "row": 1,
+        "residual_px": 14.621149163724315,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 11,
+        "observed_px": [
+          888.0,
+          409.0
+        ],
+        "proposed_px": [
+          878.2181685866266,
+          414.3599578466414
+        ],
+        "column": 3,
+        "row": 1,
+        "residual_px": 11.154074319163914,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 12,
+        "observed_px": [
+          654.0,
+          413.5
+        ],
+        "proposed_px": [
+          646.5729531584434,
+          414.95114637295546
+        ],
+        "column": 2,
+        "row": 1,
+        "residual_px": 7.567486411115497,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 13,
+        "observed_px": [
+          1336.0,
+          622.0
+        ],
+        "proposed_px": [
+          1344.0067199310831,
+          630.303710962889
+        ],
+        "column": 5,
+        "row": 2,
+        "residual_px": 11.535128079479946,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 14,
+        "observed_px": [
+          421.0,
+          630.0
+        ],
+        "proposed_px": [
+          417.42585821835013,
+          632.6684650681452
+        ],
+        "column": 1,
+        "row": 2,
+        "residual_px": 4.460403041794161,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 15,
+        "observed_px": [
+          653.5,
+          625.0
+        ],
+        "proposed_px": [
+          649.0710736465334,
+          632.0772765418311
+        ],
+        "column": 2,
+        "row": 2,
+        "residual_px": 8.348846141472738,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 16,
+        "observed_px": [
+          884.0,
+          625.5
+        ],
+        "proposed_px": [
+          880.7162890747165,
+          631.486088015517
+        ],
+        "column": 3,
+        "row": 2,
+        "residual_px": 6.827591608344934,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 17,
+        "observed_px": [
+          184.0,
+          634.0
+        ],
+        "proposed_px": [
+          185.7806427901669,
+          633.2596535944592
+        ],
+        "column": 0,
+        "row": 2,
+        "residual_px": 1.9284194425410903,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 18,
+        "observed_px": [
+          1117.0,
+          626.0
+        ],
+        "proposed_px": [
+          1112.3615045028998,
+          630.894899489203
+        ],
+        "column": 4,
+        "row": 2,
+        "residual_px": 6.74356593250324,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 19,
+        "observed_px": [
+          647.5,
+          833.5
+        ],
+        "proposed_px": [
+          651.5691941346233,
+          849.2034067107068
+        ],
+        "column": 2,
+        "row": 3,
+        "residual_px": 16.22206285363002,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 20,
+        "observed_px": [
+          411.5,
+          847.5
+        ],
+        "proposed_px": [
+          419.9239787064401,
+          849.7945952370208
+        ],
+        "column": 1,
+        "row": 3,
+        "residual_px": 8.730898266977716,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 21,
+        "observed_px": [
+          1344.5,
+          838.0
+        ],
+        "proposed_px": [
+          1346.504840419173,
+          847.4298411317645
+        ],
+        "column": 5,
+        "row": 3,
+        "residual_px": 9.640606250473457,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 22,
+        "observed_px": [
+          183.5,
+          836.5
+        ],
+        "proposed_px": [
+          188.27876327825683,
+          850.3857837633349
+        ],
+        "column": 0,
+        "row": 3,
+        "residual_px": 14.68507981563976,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 23,
+        "observed_px": [
+          1118.5,
+          837.0
+        ],
+        "proposed_px": [
+          1114.8596249909897,
+          848.0210296580786
+        ],
+        "column": 4,
+        "row": 3,
+        "residual_px": 11.606697417029357,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 24,
+        "observed_px": [
+          883.5,
+          840.5
+        ],
+        "proposed_px": [
+          883.2144095628065,
+          848.6122181843928
+        ],
+        "column": 3,
+        "row": 3,
+        "residual_px": 8.11724372980194,
+        "status": "matched",
+        "review_reason": ""
+      }
+    ],
+    "missing": [],
+    "reason": "Cut centres follow the panel grid; artwork is assigned to its cells.",
+    "source": "observations",
+    "projection": null
+  },
+  "detection_run": {
+    "detector_revision": "2026-09-22-stable-artwork-grid",
+    "image_size_px": [
+      1536,
+      1024
+    ],
+    "settings": {
+      "sensitivity": 65,
+      "minimum_area_px": 500,
+      "morphological_cleanup": 0.25,
+      "merge_distance_px_x": 14.933333333333332,
+      "merge_distance_px_y": 14.933333333333332,
+      "layout_mode": "auto",
+      "adaptive_planning": true
+    },
+    "reference_status": "Reference could not be matched to the visible bed",
+    "reference_applied": false,
+    "fabric_status": "Visible fabric boundary applied (without bed matching)",
+    "analysis_bounds_px": [
+      0,
+      0,
+      1536,
+      1024
+    ],
+    "grid": {
+      "x_lines_px": [
+        68.70897483203028,
+        300.35419026021356,
+        531.9994056883967,
+        763.64462111658,
+        995.2898365447631,
+        1226.9350519729464,
+        1458.5802674011297
+      ],
+      "y_lines_px": [
+        88.96635685648496,
+        306.0924870253606,
+        523.2186171942363,
+        740.3447473631119,
+        957.4708775319876
+      ],
+      "confidence": 0.9914233916852881,
+      "source": "observations",
+      "lattice": [
+        [
+          180.78440181398696,
+          199.00739325670793
+        ],
+        [
+          231.64521542818323,
+          -0.5911885263140566
+        ],
+        [
+          2.49812048808996,
+          217.12613016887565
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "grid_notes": [
+      "Artwork spacing and phase agree across three thresholds; retained complete compositions"
+    ],
+    "scene_profile": {
+      "analysis_size_px": [
+        960,
+        640
+      ],
+      "source_scale": 0.625,
+      "luminance_percentiles": [
+        104.0,
+        205.0,
+        222.0
+      ],
+      "fine_detail_fraction": 0.3930029296875,
+      "original_preserved": true
+    },
+    "illumination": null,
+    "analysis_policy": {
+      "max_scene_side": 960,
+      "context_fraction": 0.15,
+      "sample_inset": 0.035,
+      "sample_band": 0.06,
+      "palette_radius": 16.0,
+      "max_background_colours": 4,
+      "max_region_side": 320,
+      "max_shadow_gain": 1.6
+    },
+    "detection_plans": [
+      {
+        "stage": "grid",
+        "selected_route": "observations",
+        "hypotheses": [
+          {
+            "route": "observations",
+            "columns": 6,
+            "rows": 4,
+            "eligible": true,
+            "seam_support": 0.9718081355275827,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 1.0,
+            "outside_fraction": 0.0,
+            "score": 0.9887232542110331,
+            "unique_assignment_fraction": 1.0
+          },
+          {
+            "route": "camera",
+            "columns": 4,
+            "rows": 3,
+            "eligible": false,
+            "seam_support": 0.6285379405329562,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 0.20833333333333334,
+            "outside_fraction": 0.0,
+            "score": 0.6534985095465159,
+            "unique_assignment_fraction": 0.5,
+            "rejection_reason": "Groups distinct stable artwork centres; contradicted by observations"
+          }
+        ]
+      }
+    ],
+    "candidates_before_cleanup": 24,
+    "candidates_after_cleanup": 24,
+    "compositions_needing_extent_review": 1
+  },
+  "bed_in_working_units": {
+    "width": 36.0,
+    "height": 24.0,
+    "unit": "in"
+  },
+  "detections": [
+    {
+      "id": 1,
+      "original_center_px": [
+        870.0,
+        191.0
+      ],
+      "bounding_box_px": [
+        790,
+        117,
+        156,
+        153
+      ],
+      "preferred_center_px": [
+        870.0,
+        191.0
+      ],
+      "layout_anchor_px": [
+        875.7200480985366,
+        197.23382767776576
+      ],
+      "layout_cell": [
+        3,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.696277652476766,
+      "center_px": {
+        "x": 875.7200480985366,
+        "y": 197.23382767776576
+      },
+      "center_inches": {
+        "x": 20.52468862730945,
+        "y": 4.622667836197635
+      },
+      "square_inches": {
+        "x": 18.02468862730945,
+        "y": 2.1226678361976354,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 18.02468862730945,
+        "y": 2.1226678361976354,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 2,
+      "original_center_px": [
+        648.5,
+        197.0
+      ],
+      "bounding_box_px": [
+        563,
+        112,
+        166,
+        149
+      ],
+      "preferred_center_px": [
+        648.5,
+        197.0
+      ],
+      "layout_anchor_px": [
+        644.0748326703534,
+        197.82501620407982
+      ],
+      "layout_cell": [
+        2,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "manual": false,
+      "score": 0.6070820472279972,
+      "center_px": {
+        "x": 644.0748326703534,
+        "y": 197.82501620407982
+      },
+      "center_inches": {
+        "x": 15.095503890711408,
+        "y": 4.636523817283121
+      },
+      "square_inches": {
+        "x": 12.595503890711408,
+        "y": 2.1365238172831207,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 12.595503890711408,
+        "y": 2.1365238172831207,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 3,
+      "original_center_px": [
+        1104.5,
+        197.5
+      ],
+      "bounding_box_px": [
+        1013,
+        130,
+        203,
+        144
+      ],
+      "preferred_center_px": [
+        1104.5,
+        197.5
+      ],
+      "layout_anchor_px": [
+        1107.36526352672,
+        196.6426391514517
+      ],
+      "layout_cell": [
+        4,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": true,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5665239528153969,
+      "center_px": {
+        "x": 1107.36526352672,
+        "y": 196.6426391514517
+      },
+      "center_inches": {
+        "x": 25.953873363907498,
+        "y": 4.608811855112149
+      },
+      "square_inches": {
+        "x": 23.453873363907498,
+        "y": 2.1088118551121493,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 23.453873363907498,
+        "y": 2.1088118551121493,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 4,
+      "original_center_px": [
+        162.0,
+        202.0
+      ],
+      "bounding_box_px": [
+        106,
+        128,
+        134,
+        140
+      ],
+      "preferred_center_px": [
+        162.0,
+        202.0
+      ],
+      "layout_anchor_px": [
+        180.78440181398696,
+        199.00739325670793
+      ],
+      "layout_cell": [
+        0,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5413348770141602,
+      "center_px": {
+        "x": 180.78440181398696,
+        "y": 199.00739325670793
+      },
+      "center_inches": {
+        "x": 4.237134417515319,
+        "y": 4.664235779454092
+      },
+      "square_inches": {
+        "x": 1.7371344175153194,
+        "y": 2.164235779454092,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 1.7371344175153194,
+        "y": 2.164235779454092,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 5,
+      "original_center_px": [
+        1337.0,
+        204.5
+      ],
+      "bounding_box_px": [
+        1249,
+        149,
+        192,
+        125
+      ],
+      "preferred_center_px": [
+        1337.0,
+        204.5
+      ],
+      "layout_anchor_px": [
+        1339.0104789549032,
+        196.05145062513765
+      ],
+      "layout_cell": [
+        5,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6840369626731735,
+      "center_px": {
+        "x": 1339.0104789549032,
+        "y": 196.05145062513765
+      },
+      "center_inches": {
+        "x": 31.383058100505544,
+        "y": 4.594955874026663
+      },
+      "square_inches": {
+        "x": 28.883058100505544,
+        "y": 2.094955874026663,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 28.883058100505544,
+        "y": 2.094955874026663,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 6,
+      "original_center_px": [
+        424.0,
+        211.40000000000055
+      ],
+      "bounding_box_px": [
+        338,
+        117,
+        170,
+        153
+      ],
+      "preferred_center_px": [
+        424.0,
+        211.40000000000055
+      ],
+      "layout_anchor_px": [
+        412.4296172421702,
+        198.41620473039387
+      ],
+      "layout_cell": [
+        1,
+        0
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6831096649169922,
+      "center_px": {
+        "x": 412.4296172421702,
+        "y": 198.41620473039387
+      },
+      "center_inches": {
+        "x": 9.666319154113364,
+        "y": 4.650379798368606
+      },
+      "square_inches": {
+        "x": 7.1663191541133635,
+        "y": 2.150379798368606,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 7.1663191541133635,
+        "y": 2.150379798368606,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 7,
+      "original_center_px": [
+        1109.0,
+        404.5
+      ],
+      "bounding_box_px": [
+        1027,
+        317,
+        180,
+        171
+      ],
+      "preferred_center_px": [
+        1109.0,
+        404.5
+      ],
+      "layout_anchor_px": [
+        1109.8633840148098,
+        413.76876932032735
+      ],
+      "layout_cell": [
+        4,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6067280745584118,
+      "center_px": {
+        "x": 1109.8633840148098,
+        "y": 413.76876932032735
+      },
+      "center_inches": {
+        "x": 26.012423062847105,
+        "y": 9.697705530945171
+      },
+      "square_inches": {
+        "x": 23.512423062847105,
+        "y": 7.197705530945171,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 23.512423062847105,
+        "y": 7.197705530945171,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 8,
+      "original_center_px": [
+        1348.5,
+        406.5
+      ],
+      "bounding_box_px": [
+        1252,
+        326,
+        189,
+        153
+      ],
+      "preferred_center_px": [
+        1348.5,
+        406.5
+      ],
+      "layout_anchor_px": [
+        1341.508599442993,
+        413.1775807940133
+      ],
+      "layout_cell": [
+        5,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5960738878961871,
+      "center_px": {
+        "x": 1341.508599442993,
+        "y": 413.1775807940133
+      },
+      "center_inches": {
+        "x": 31.44160779944515,
+        "y": 9.683849549859687
+      },
+      "square_inches": {
+        "x": 28.94160779944515,
+        "y": 7.183849549859687,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 28.94160779944515,
+        "y": 7.183849549859687,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 9,
+      "original_center_px": [
+        419.5,
+        409.0
+      ],
+      "bounding_box_px": [
+        334,
+        357,
+        166,
+        119
+      ],
+      "preferred_center_px": [
+        419.5,
+        409.0
+      ],
+      "layout_anchor_px": [
+        414.92773773026016,
+        415.5423348992695
+      ],
+      "layout_cell": [
+        1,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6400501251220703,
+      "center_px": {
+        "x": 414.92773773026016,
+        "y": 415.5423348992695
+      },
+      "center_inches": {
+        "x": 9.724868853052973,
+        "y": 9.73927347420163
+      },
+      "square_inches": {
+        "x": 7.224868853052973,
+        "y": 7.23927347420163,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 7.224868853052973,
+        "y": 7.23927347420163,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 10,
+      "original_center_px": [
+        177.5,
+        411.5
+      ],
+      "bounding_box_px": [
+        85,
+        338,
+        186,
+        129
+      ],
+      "preferred_center_px": [
+        177.5,
+        411.5
+      ],
+      "layout_anchor_px": [
+        183.28252230207693,
+        416.1335234255836
+      ],
+      "layout_cell": [
+        0,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.655951796548947,
+      "center_px": {
+        "x": 183.28252230207693,
+        "y": 416.1335234255836
+      },
+      "center_inches": {
+        "x": 4.295684116454928,
+        "y": 9.753129455287116
+      },
+      "square_inches": {
+        "x": 1.795684116454928,
+        "y": 7.253129455287116,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 1.795684116454928,
+        "y": 7.253129455287116,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 11,
+      "original_center_px": [
+        882.0,
+        419.5
+      ],
+      "bounding_box_px": [
+        799,
+        340,
+        178,
+        138
+      ],
+      "preferred_center_px": [
+        882.0,
+        419.5
+      ],
+      "layout_anchor_px": [
+        878.2181685866266,
+        414.3599578466414
+      ],
+      "layout_cell": [
+        3,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5443192236854193,
+      "center_px": {
+        "x": 878.2181685866266,
+        "y": 414.3599578466414
+      },
+      "center_inches": {
+        "x": 20.58323832624906,
+        "y": 9.711561512030658
+      },
+      "square_inches": {
+        "x": 18.08323832624906,
+        "y": 7.2115615120306575,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 18.08323832624906,
+        "y": 7.2115615120306575,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 12,
+      "original_center_px": [
+        657.5,
+        421.0
+      ],
+      "bounding_box_px": [
+        572,
+        349,
+        164,
+        129
+      ],
+      "preferred_center_px": [
+        657.5,
+        421.0
+      ],
+      "layout_anchor_px": [
+        646.5729531584434,
+        414.95114637295546
+      ],
+      "layout_cell": [
+        2,
+        1
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.650105473039237,
+      "center_px": {
+        "x": 646.5729531584434,
+        "y": 414.95114637295546
+      },
+      "center_inches": {
+        "x": 15.154053589651017,
+        "y": 9.725417493116144
+      },
+      "square_inches": {
+        "x": 12.654053589651017,
+        "y": 7.225417493116144,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 12.654053589651017,
+        "y": 7.225417493116144,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 13,
+      "original_center_px": [
+        1342.5,
+        617.5
+      ],
+      "bounding_box_px": [
+        1243,
+        546,
+        186,
+        152
+      ],
+      "preferred_center_px": [
+        1342.5,
+        617.5
+      ],
+      "layout_anchor_px": [
+        1344.0067199310831,
+        630.303710962889
+      ],
+      "layout_cell": [
+        5,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5892645589559489,
+      "center_px": {
+        "x": 1344.0067199310831,
+        "y": 630.303710962889
+      },
+      "center_inches": {
+        "x": 31.500157498384763,
+        "y": 14.772743225692711
+      },
+      "square_inches": {
+        "x": 29.000157498384763,
+        "y": 12.272743225692711,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 29.000157498384763,
+        "y": 12.272743225692711,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 14,
+      "original_center_px": [
+        424.0,
+        627.0
+      ],
+      "bounding_box_px": [
+        342,
+        560,
+        158,
+        140
+      ],
+      "preferred_center_px": [
+        424.0,
+        627.0
+      ],
+      "layout_anchor_px": [
+        417.42585821835013,
+        632.6684650681452
+      ],
+      "layout_cell": [
+        1,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6914993057250978,
+      "center_px": {
+        "x": 417.42585821835013,
+        "y": 632.6684650681452
+      },
+      "center_inches": {
+        "x": 9.78341855199258,
+        "y": 14.828167150034654
+      },
+      "square_inches": {
+        "x": 7.283418551992581,
+        "y": 12.328167150034654,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 7.283418551992581,
+        "y": 12.328167150034654,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 15,
+      "original_center_px": [
+        652.0,
+        631.0
+      ],
+      "bounding_box_px": [
+        570,
+        544,
+        167,
+        162
+      ],
+      "preferred_center_px": [
+        652.0,
+        631.0
+      ],
+      "layout_anchor_px": [
+        649.0710736465334,
+        632.0772765418311
+      ],
+      "layout_cell": [
+        2,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5940802137433505,
+      "center_px": {
+        "x": 649.0710736465334,
+        "y": 632.0772765418311
+      },
+      "center_inches": {
+        "x": 15.212603288590627,
+        "y": 14.814311168949168
+      },
+      "square_inches": {
+        "x": 12.712603288590627,
+        "y": 12.314311168949168,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 12.712603288590627,
+        "y": 12.314311168949168,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 16,
+      "original_center_px": [
+        876.0,
+        632.5
+      ],
+      "bounding_box_px": [
+        789,
+        540,
+        190,
+        171
+      ],
+      "preferred_center_px": [
+        876.0,
+        632.5
+      ],
+      "layout_anchor_px": [
+        880.7162890747165,
+        631.486088015517
+      ],
+      "layout_cell": [
+        3,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6224856976831469,
+      "center_px": {
+        "x": 880.7162890747165,
+        "y": 631.486088015517
+      },
+      "center_inches": {
+        "x": 20.64178802518867,
+        "y": 14.80045518786368
+      },
+      "square_inches": {
+        "x": 18.14178802518867,
+        "y": 12.30045518786368,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 18.14178802518867,
+        "y": 12.30045518786368,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 17,
+      "original_center_px": [
+        180.0,
+        634.0
+      ],
+      "bounding_box_px": [
+        97,
+        578,
+        174,
+        112
+      ],
+      "preferred_center_px": [
+        180.0,
+        634.0
+      ],
+      "layout_anchor_px": [
+        185.7806427901669,
+        633.2596535944592
+      ],
+      "layout_cell": [
+        0,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6561516189575196,
+      "center_px": {
+        "x": 185.7806427901669,
+        "y": 633.2596535944592
+      },
+      "center_inches": {
+        "x": 4.354233815394537,
+        "y": 14.842023131120138
+      },
+      "square_inches": {
+        "x": 1.8542338153945366,
+        "y": 12.342023131120138,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 1.8542338153945366,
+        "y": 12.342023131120138,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 18,
+      "original_center_px": [
+        1111.5,
+        635.5
+      ],
+      "bounding_box_px": [
+        1023,
+        561,
+        188,
+        130
+      ],
+      "preferred_center_px": [
+        1111.5,
+        635.5
+      ],
+      "layout_anchor_px": [
+        1112.3615045028998,
+        630.894899489203
+      ],
+      "layout_cell": [
+        4,
+        2
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6153752955535844,
+      "center_px": {
+        "x": 1112.3615045028998,
+        "y": 630.894899489203
+      },
+      "center_inches": {
+        "x": 26.070972761786717,
+        "y": 14.786599206778195
+      },
+      "square_inches": {
+        "x": 23.570972761786717,
+        "y": 12.286599206778195,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 23.570972761786717,
+        "y": 12.286599206778195,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 19,
+      "original_center_px": [
+        652.5,
+        846.0
+      ],
+      "bounding_box_px": [
+        567,
+        758,
+        161,
+        151
+      ],
+      "preferred_center_px": [
+        652.5,
+        846.0
+      ],
+      "layout_anchor_px": [
+        651.5691941346233,
+        849.2034067107068
+      ],
+      "layout_cell": [
+        2,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5762039250609046,
+      "center_px": {
+        "x": 651.5691941346233,
+        "y": 849.2034067107068
+      },
+      "center_inches": {
+        "x": 15.271152987530234,
+        "y": 19.903204844782188
+      },
+      "square_inches": {
+        "x": 12.771152987530234,
+        "y": 17.403204844782188,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 12.771152987530234,
+        "y": 17.403204844782188,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 20,
+      "original_center_px": [
+        427.5,
+        847.5
+      ],
+      "bounding_box_px": [
+        325,
+        762,
+        173,
+        171
+      ],
+      "preferred_center_px": [
+        427.5,
+        847.5
+      ],
+      "layout_anchor_px": [
+        419.9239787064401,
+        849.7945952370208
+      ],
+      "layout_cell": [
+        1,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6769844712254278,
+      "center_px": {
+        "x": 419.9239787064401,
+        "y": 849.7945952370208
+      },
+      "center_inches": {
+        "x": 9.84196825093219,
+        "y": 19.917060825867672
+      },
+      "square_inches": {
+        "x": 7.34196825093219,
+        "y": 17.417060825867672,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 7.34196825093219,
+        "y": 17.417060825867672,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 21,
+      "original_center_px": [
+        1345.0,
+        852.0
+      ],
+      "bounding_box_px": [
+        1256,
+        762,
+        177,
+        152
+      ],
+      "preferred_center_px": [
+        1345.0,
+        852.0
+      ],
+      "layout_anchor_px": [
+        1346.504840419173,
+        847.4298411317645
+      ],
+      "layout_cell": [
+        5,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6573463576029228,
+      "center_px": {
+        "x": 1346.504840419173,
+        "y": 847.4298411317645
+      },
+      "center_inches": {
+        "x": 31.558707197324367,
+        "y": 19.86163690152573
+      },
+      "square_inches": {
+        "x": 29.058707197324367,
+        "y": 17.36163690152573,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 29.058707197324367,
+        "y": 17.36163690152573,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 22,
+      "original_center_px": [
+        187.5,
+        852.5
+      ],
+      "bounding_box_px": [
+        93,
+        763,
+        181,
+        147
+      ],
+      "preferred_center_px": [
+        187.5,
+        852.5
+      ],
+      "layout_anchor_px": [
+        188.27876327825683,
+        850.3857837633349
+      ],
+      "layout_cell": [
+        0,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.5468888982678586,
+      "center_px": {
+        "x": 188.27876327825683,
+        "y": 850.3857837633349
+      },
+      "center_inches": {
+        "x": 4.412783514334144,
+        "y": 19.93091680695316
+      },
+      "square_inches": {
+        "x": 1.9127835143341443,
+        "y": 17.43091680695316,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 1.9127835143341443,
+        "y": 17.43091680695316,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 23,
+      "original_center_px": [
+        1110.0,
+        853.0
+      ],
+      "bounding_box_px": [
+        1033,
+        762,
+        171,
+        150
+      ],
+      "preferred_center_px": [
+        1110.0,
+        853.0
+      ],
+      "layout_anchor_px": [
+        1114.8596249909897,
+        848.0210296580786
+      ],
+      "layout_cell": [
+        4,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6621113341212873,
+      "center_px": {
+        "x": 1114.8596249909897,
+        "y": 848.0210296580786
+      },
+      "center_inches": {
+        "x": 26.12952246072632,
+        "y": 19.87549288261122
+      },
+      "square_inches": {
+        "x": 23.62952246072632,
+        "y": 17.37549288261122,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 23.62952246072632,
+        "y": 17.37549288261122,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    },
+    {
+      "id": 24,
+      "original_center_px": [
+        878.25,
+        855.0
+      ],
+      "bounding_box_px": [
+        798,
+        768,
+        171,
+        145
+      ],
+      "preferred_center_px": [
+        878.25,
+        855.0
+      ],
+      "layout_anchor_px": [
+        883.2144095628065,
+        848.6122181843928
+      ],
+      "layout_cell": [
+        3,
+        3
+      ],
+      "position_source": "grid",
+      "inferred": false,
+      "artwork_clipped": false,
+      "review_reasons": [],
+      "manual": false,
+      "score": 0.6255023317630615,
+      "center_px": {
+        "x": 883.2144095628065,
+        "y": 848.6122181843928
+      },
+      "center_inches": {
+        "x": 20.70033772412828,
+        "y": 19.889348863696704
+      },
+      "square_inches": {
+        "x": 18.20033772412828,
+        "y": 17.389348863696704,
+        "width": 5.0,
+        "height": 5.0
+      },
+      "square_export_units": {
+        "x": 18.20033772412828,
+        "y": 17.389348863696704,
+        "width": 5.0,
+        "height": 5.0,
+        "unit": "in"
+      },
+      "valid": true,
+      "overlaps_cut": false,
+      "exportable": true,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{'file': 'tests\\fixtures\\generated\\folk_floral_6x4.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\generated\\pastel_animals_6x4.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\generated\\straight\\dogs_6x4.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\generated\\straight\\hearts_6x4.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\generated\\straight\\pastel_6x4.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\generated\\transport_spanning_5x4.png', 'previous_count': 19, 'count': 19, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\pastel_panels_camera.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\patchwork_camera.png', 'previous_count': 22, 'count': 22, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\transport_camera.png', 'previous_count': 19, 'count': 19, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\vehicles_panels.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\floral_patchwork_recovered.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\transport_irregular_shadows.png', 'previous_count': 24, 'count': 24, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\groups_4x3.png', 'previous_count': 12, 'count': 12, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\pastel_4x4.png', 'previous_count': 16, 'count': 16, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\patchwork_animals_5x4.png', 'previous_count': 20, 'count': 20, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\space_dark_3x5.png', 'previous_count': 15, 'count': 15, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\spanning_5x4.png', 'previous_count': 19, 'count': 19, 'same_boxes_and_centres': True}
+{'file': 'tests\\fixtures\\acceptance\\thin_7x3.png', 'previous_count': 21, 'count': 21, 'same_boxes_and_centres': True}
+{'count': 15, 'grid': [5, 3], 'cut_inches': [5.0, 5.0], 'overlaps': 0, 'artwork_clipped': 15, 'extent_reviews': 0, 'inferred': 0}

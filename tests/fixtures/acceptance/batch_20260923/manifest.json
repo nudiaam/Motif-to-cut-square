@@ -1,0 +1,62 @@
+[
+  {
+    "case": 1,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_03-1.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_01.png",
+    "sha256": "ebeb68fa56f970f491a2a4b2088677261b72da1088b0b1c9b3bfa6a61f9c7130"
+  },
+  {
+    "case": 2,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_05-2.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_02.png",
+    "sha256": "3dde9288db884f4fe46020b7932b776f74fa76431243587f136c464e8fdeb1a0"
+  },
+  {
+    "case": 3,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_07-3.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_03.png",
+    "sha256": "9003146c02750b60900eff913f4715a52c86d1c5b9be0a95057c174854d3895e"
+  },
+  {
+    "case": 4,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_09-4.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_04.png",
+    "sha256": "7c518547e3384f9247278bfaf4926b5c5574ceb09cfc72deddc9f299e9f4ed72"
+  },
+  {
+    "case": 5,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_10-5.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_05.png",
+    "sha256": "e6f37843986fe4c956abb4276398b430590cc3c495f5f76099462de72793676f"
+  },
+  {
+    "case": 6,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_12-6.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_06.png",
+    "sha256": "5c98753e8cebf360fd58a56d4da93f14cb7425fa8bb488720c8ca85e4b64d832"
+  },
+  {
+    "case": 7,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_14-7.png",
+    "fixture": "tests\\fixtures\\acceptance\\animal_accessories_4x3.png",
+    "sha256": "76dcfa75b4116e2a8f0a96e3c7822cf00273aa762b1973c265bccb8191c8eab1"
+  },
+  {
+    "case": 8,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_16-8.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_08.png",
+    "sha256": "968f2c804bdf5a250bb6feb1b33e05333c08686eefaabbbc2f2e33bd22ae6499"
+  },
+  {
+    "case": 9,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_18-9.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_09.png",
+    "sha256": "06297eb5a312fdb3cbc4bc60feea032ce4439adb98d016bc8d5a905c68ab94b8"
+  },
+  {
+    "case": 10,
+    "source": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_19-10.png",
+    "fixture": "tests\\fixtures\\acceptance\\batch_20260923\\case_10.png",
+    "sha256": "67e068e71b52b5d36a6c499020fc09d9f6e3a9c4f2ecb372d2c6f7e21a7fbdfa"
+  }
+]

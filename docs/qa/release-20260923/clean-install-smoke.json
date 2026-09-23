@@ -1,0 +1,12 @@
+{
+  "versions": {
+    "python": "3.12.10",
+    "PySide6": "6.11.2",
+    "opencv": "4.14.0",
+    "numpy": "2.5.3"
+  },
+  "app_path": "C:\\Users\\daman\\AppData\\Local\\Temp\\lcp-check-\u00f1-23\\Lalikul-Cut-Prep\\app\\__init__.py",
+  "reference_applied": true,
+  "empty_detection_grid_recovery": true,
+  "shortcut_exists": true
+}

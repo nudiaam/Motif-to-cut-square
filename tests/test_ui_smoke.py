@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -14,10 +15,35 @@ from PySide6.QtWidgets import QApplication, QLabel, QStyle, QStyleOptionSpinBox 
 from app.ui.help_widgets import DelayedHelpToolBar, InfoButton  # noqa: E402
 from app.ui.main_window import MainWindow  # noqa: E402
 from app.imaging.panel_grid import PanelGrid  # noqa: E402
+from app.imaging.detector import DetectionResult  # noqa: E402
 from tests.test_logical_layout import cut_fixture  # noqa: E402
 
 
 class UISmokeTests(unittest.TestCase):
+    def test_empty_detection_can_open_create_and_retry_a_grid(self) -> None:
+        window=MainWindow()
+        self.addCleanup(window.close)
+        window.load_demo_image()
+        with patch.object(window.detector,'detect_with_layout',return_value=DetectionResult(())), \
+             patch.object(window,'_infer_review_grid',return_value=None):
+            window.detect_motifs()
+            self.assertEqual(window.detections,[])
+            self.assertFalse(window.panel.confirm_detection_button.isEnabled())
+            self.assertTrue(window.panel.review_grid_button.isEnabled())
+            window.panel.review_grid_button.click()
+            self.assertEqual(window._workflow_phase,'grid')
+            self.assertIsNone(window.panel_grid)
+            self.assertTrue(window.panel.redetect_grid_button.isEnabled())
+            window.panel.redetect_grid_button.click()
+            self.assertEqual(window._workflow_phase,'grid')
+        window.change_grid_dimensions(3,2)
+        self.assertEqual((window.panel_grid.columns,window.panel_grid.rows),(3,2))
+        self.assertTrue(window.panel.confirm_grid_button.isEnabled())
+        window.panel.confirm_grid_button.click()
+        self.assertEqual(window._workflow_phase,'detect')
+        self.assertGreater(len(window.detections),0)
+        self.assertTrue(window.panel.review_grid_button.isEnabled())
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
@@ -70,6 +96,7 @@ class UISmokeTests(unittest.TestCase):
             self.assertEqual((window.logical_layout.columns,window.logical_layout.rows),(6,4))
             self.assertEqual(len(window.detections),24)
             self.assertEqual(sum(d.inferred for d in window.detections),2)
+            self.assertTrue(all(d.review_reasons for d in window.detections if d.inferred))
             self.assertEqual(window._workflow_phase,'detect')
             self.assertTrue(all(d.grid_positioned and d.cut_width_inches == 4 for d in window.detections))
             positions = {d.id:d.center_px for d in window.detections}
@@ -107,15 +134,16 @@ class UISmokeTests(unittest.TestCase):
             window.detect_motifs()  # Default 5-inch cuts, no dimensions entered.
             self.assertEqual(window._workflow_phase, 'detect')
             self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (5, 4))
-            self.assertEqual(len(window.detections), 20)
-            self.assertEqual(sum(d.inferred for d in window.detections), 1)
+            self.assertEqual(len(window.detections), 19)
+            self.assertEqual(sum(d.inferred for d in window.detections), 0)
+            self.assertTrue(any(gap.covered_by_artwork for gap in window.logical_layout.missing))
             self.assertTrue(all(d.grid_positioned for d in window.detections))
             self.assertTrue(all(d.cut_width_inches == 5 for d in window.detections))
             self.assertGreater(sum(d.overlaps_cut for d in window.detections), 0)
             positions = {d.id: d.center_px for d in window.detections}
             for d in window.detections:
                 self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
-            self.assertNotIn('spans multiple cells', window.panel.layout_status_label.text())
+            self.assertIn('spans multiple cells', window.panel.layout_status_label.text())
             self.assertFalse(hasattr(window.panel, 'inferred_positions_list'))
             window.confirm_detection()
             self.assertIn('spans multiple cells', window.panel.layout_status_label.text())
@@ -128,7 +156,7 @@ class UISmokeTests(unittest.TestCase):
             window.handle_grid_action('redetect')
             self.assertEqual(window.panel_grid.source, 'pattern')
             window.confirm_grid()
-            self.assertEqual(len(window.detections), 20)
+            self.assertEqual(len(window.detections), 19)
             self.assertEqual({d.id: d.center_px for d in window.detections}, positions)
         finally:
             window.close()

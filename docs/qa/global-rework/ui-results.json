@@ -1,0 +1,23 @@
+[
+  {
+    "file": "pastel_6x4.png",
+    "total": 24,
+    "ready": 17,
+    "problems": 7,
+    "inferred": 0
+  },
+  {
+    "file": "dogs_6x4.png",
+    "total": 24,
+    "ready": 4,
+    "problems": 20,
+    "inferred": 0
+  },
+  {
+    "file": "hearts_6x4.png",
+    "total": 24,
+    "ready": 6,
+    "problems": 18,
+    "inferred": 0
+  }
+]

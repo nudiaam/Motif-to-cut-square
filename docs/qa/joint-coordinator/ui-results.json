@@ -1,0 +1,50 @@
+[
+  {
+    "image": "patchwork_animals_5x4",
+    "count": 20,
+    "grid": [
+      5,
+      4
+    ],
+    "cut_inches": [
+      5.0,
+      5.0
+    ],
+    "overlaps": 0,
+    "artwork_clipped": 15,
+    "reviews": 6,
+    "inferred": 0
+  },
+  {
+    "image": "pastel_4x4",
+    "count": 16,
+    "grid": [
+      4,
+      4
+    ],
+    "cut_inches": [
+      5.0,
+      5.0
+    ],
+    "overlaps": 0,
+    "artwork_clipped": 1,
+    "reviews": 1,
+    "inferred": 0
+  },
+  {
+    "image": "space_dark_3x5",
+    "count": 15,
+    "grid": [
+      3,
+      5
+    ],
+    "cut_inches": [
+      5.0,
+      5.0
+    ],
+    "overlaps": 15,
+    "artwork_clipped": 14,
+    "reviews": 0,
+    "inferred": 0
+  }
+]

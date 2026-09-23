@@ -1,0 +1,15 @@
+{
+  "count": 24,
+  "grid": [
+    6,
+    4
+  ],
+  "cut_inches": [
+    5.0,
+    5.0
+  ],
+  "overlaps": 24,
+  "artwork_clipped": 8,
+  "extent_reviews": 9,
+  "inferred": 0
+}

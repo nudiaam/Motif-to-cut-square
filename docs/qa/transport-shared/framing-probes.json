@@ -1,0 +1,20 @@
+[
+  {
+    "variant": "padding80",
+    "count": 24,
+    "grid": [
+      6,
+      4
+    ],
+    "source": "observations"
+  },
+  {
+    "variant": "scale_half",
+    "count": 24,
+    "grid": [
+      6,
+      4
+    ],
+    "source": "observations"
+  }
+]

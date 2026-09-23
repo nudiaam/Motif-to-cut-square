@@ -1,0 +1,190 @@
+[
+  {
+    "version": "previous",
+    "diagnostics": {
+      "detector_revision": "2026-09-22-local-contrast-consensus",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto",
+        "adaptive_planning": true
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "grid": null,
+      "grid_notes": [],
+      "scene_profile": {
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "source_scale": 0.625,
+        "luminance_percentiles": [
+          65.0,
+          177.0,
+          218.0
+        ],
+        "fine_detail_fraction": 0.4808056640625,
+        "original_preserved": true
+      },
+      "illumination": {
+        "row_gain_min": 1.0,
+        "row_gain_max": 1.3386627435684204,
+        "affected_row_fraction": 0.0859375,
+        "affected_y_px": [
+          564,
+          651
+        ],
+        "evidence": "coherent luminance drop in at least three colour-consistent strips"
+      },
+      "analysis_policy": {
+        "max_scene_side": 960,
+        "context_fraction": 0.15,
+        "sample_inset": 0.035,
+        "sample_band": 0.06,
+        "palette_radius": 16.0,
+        "max_background_colours": 4,
+        "max_region_side": 320,
+        "max_shadow_gain": 1.6
+      },
+      "detection_plans": [
+        {
+          "stage": "grid",
+          "selected_route": null,
+          "hypotheses": [
+            {
+              "route": "camera",
+              "columns": 6,
+              "rows": 4,
+              "eligible": false,
+              "seam_support": 0.9987356889046324,
+              "occupied_fraction": 0.375,
+              "aligned_fraction": 0.07692307692307693,
+              "outside_fraction": 0.0,
+              "score": 0.5499750447926223,
+              "unique_assignment_fraction": 0.6923076923076923,
+              "rejection_reason": "Groups poorly aligned independent centres; no reliable ownership evidence"
+            }
+          ]
+        },
+        {
+          "stage": "contrast_geometry",
+          "accepted": false,
+          "reason": "No agreement across contrast scales and thresholds"
+        }
+      ],
+      "candidates_before_cleanup": 13,
+      "candidates_after_cleanup": 13,
+      "compositions_needing_extent_review": 13
+    }
+  },
+  {
+    "version": "current",
+    "diagnostics": {
+      "detector_revision": "2026-09-23-joint-evidence",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto",
+        "adaptive_planning": true
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "grid": null,
+      "grid_notes": [],
+      "scene_profile": {
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "source_scale": 0.625,
+        "luminance_percentiles": [
+          65.0,
+          177.0,
+          218.0
+        ],
+        "fine_detail_fraction": 0.4808056640625,
+        "original_preserved": true
+      },
+      "illumination": {
+        "row_gain_min": 1.0,
+        "row_gain_max": 1.3386627435684204,
+        "affected_row_fraction": 0.0859375,
+        "affected_y_px": [
+          564,
+          651
+        ],
+        "evidence": "coherent luminance drop in at least three colour-consistent strips"
+      },
+      "analysis_policy": {
+        "max_scene_side": 960,
+        "context_fraction": 0.15,
+        "sample_inset": 0.035,
+        "sample_band": 0.06,
+        "palette_radius": 16.0,
+        "max_background_colours": 4,
+        "max_region_side": 320,
+        "max_shadow_gain": 1.6
+      },
+      "detection_plans": [
+        {
+          "stage": "grid",
+          "selected_route": null,
+          "hypotheses": [
+            {
+              "route": "camera",
+              "columns": 6,
+              "rows": 4,
+              "eligible": false,
+              "evidence_count": 13,
+              "evidence_source": "primary",
+              "seam_support": 0.9987356889046324,
+              "occupied_fraction": 0.375,
+              "aligned_fraction": 0.07692307692307693,
+              "outside_fraction": 0.0,
+              "score": 0.5499750447926223,
+              "unique_assignment_fraction": 0.6923076923076923,
+              "rejection_reason": "Groups poorly aligned independent centres; no reliable ownership evidence"
+            }
+          ]
+        },
+        {
+          "stage": "contrast_geometry",
+          "accepted": false,
+          "reason": "No agreement across appearance scales and thresholds"
+        }
+      ],
+      "candidates_before_cleanup": 13,
+      "candidates_after_cleanup": 13,
+      "compositions_needing_extent_review": 13
+    }
+  }
+]

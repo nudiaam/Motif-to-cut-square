@@ -1,0 +1,256 @@
+[
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\folk_floral_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\pastel_animals_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\straight\\dogs_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\straight\\hearts_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\straight\\pastel_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\generated\\transport_spanning_5x4.png",
+    "previous_count": 19,
+    "count": 19,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\pastel_panels_camera.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\patchwork_camera.png",
+    "previous_count": 22,
+    "count": 22,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\transport_camera.png",
+    "previous_count": 19,
+    "count": 19,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\vehicles_panels.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\floral_patchwork_recovered.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\transport_irregular_shadows.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\groups_4x3.png",
+    "previous_count": 12,
+    "count": 12,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\pastel_4x4.png",
+    "previous_count": 16,
+    "count": 16,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\patchwork_animals_5x4.png",
+    "previous_count": 20,
+    "count": 20,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\space_dark_3x5.png",
+    "previous_count": 15,
+    "count": 15,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\spanning_5x4.png",
+    "previous_count": 19,
+    "count": 19,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\thin_7x3.png",
+    "previous_count": 21,
+    "count": 21,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\mixed_icons_6x4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\00_Nuria\\00-Work\\2025-Individual\\12-SquareDetect-Epilog\\tests\\fixtures\\acceptance\\dark_leaves_5x3.png",
+    "previous_count": 15,
+    "count": 15,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_03-1.png",
+    "previous_count": 15,
+    "count": 15,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_05-2.png",
+    "previous_count": 12,
+    "count": 12,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_07-3.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_09-4.png",
+    "previous_count": 24,
+    "count": 24,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_10-5.png",
+    "previous_count": 20,
+    "count": 20,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_12-6.png",
+    "previous_count": 21,
+    "count": 21,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_14-7.png",
+    "previous_count": 20,
+    "count": 12,
+    "same_boxes_and_centres": false,
+    "same_review_reasons": false,
+    "rechecks": [
+      {
+        "stage": "appearance_ownership_recheck",
+        "route": "shared_background",
+        "initial_evidence_count": 17,
+        "retained_regions_fraction": 1.0,
+        "corroborated": true,
+        "seam_support": 0.35348473983617923,
+        "occupied_fraction": 1.0,
+        "aligned_fraction": 1.0,
+        "outside_fraction": 0.0,
+        "score": 0.7413938959344717,
+        "unique_assignment_fraction": 1.0
+      }
+    ]
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_16-8.png",
+    "previous_count": 20,
+    "count": 20,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_18-9.png",
+    "previous_count": 22,
+    "count": 22,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  },
+  {
+    "file": "C:\\Users\\daman\\Downloads\\Imagen de Codex 23 sept 2026, 11_10_19-10.png",
+    "previous_count": 16,
+    "count": 16,
+    "same_boxes_and_centres": true,
+    "same_review_reasons": true,
+    "rechecks": []
+  }
+]

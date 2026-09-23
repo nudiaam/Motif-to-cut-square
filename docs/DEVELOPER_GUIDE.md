@@ -6,6 +6,16 @@ La separación sigue la recomendación de GitHub de usar el README para explicar
 
 ## Stack
 
+La [evaluación del análisis adaptativo](qa/adaptive-planning/README.md) documenta
+la revisión `2026-09-22-adaptive-plan`. `scene_profile.py` calcula medidas de la
+imagen y fondos locales; `detection_plan.py` compara propuestas y genera planes
+por zona; `region_analysis.py` ejecuta la segmentación local. `detector.py`
+orquesta las vistas de análisis y mantiene la calibración original;
+`extent_review.py` contrasta la extensión sobre la casilla completa. Los planes
+se incluyen en el JSON de diagnóstico. `DetectorSettings.adaptive_planning`
+permite desactivar el planificador para pruebas internas; no revierte por sí
+solo otros cambios de revisión de extensión, ni es un nuevo control de usuario.
+
 - Python 3.10 o posterior.
 - PySide6 para la interfaz de escritorio.
 - OpenCV para detección clásica de motivos.
@@ -150,6 +160,44 @@ huecos para las detecciones `exportable` y oscurece el resto de la cama; no camb
 coordenadas, estados ni contenido SVG.
 
 ## Detector
+
+La revisión de 2026-09-20 añade validación cruzada en `grid_validation.py`:
+antes de aceptar una cuadrícula de paneles, se compara su asignación uno-a-uno
+con las regiones estables de `infer_repeated_artwork`. Solo se rechaza cuando
+la alternativa explica al menos dos regiones más y un 15 % de su soporte.
+No basta intercambiar duplicados por outliers; tampoco se usa el número esperado
+de dibujos, el tamaño del corte o los fragmentos de un único umbral como verdad.
+Las divisiones confirmadas manualmente conservan la decisión del usuario.
+
+`locate_bright_fabric` ofrece una máscara conservadora sin referencia registrada:
+exige una pieza clara grande, contraste con el exterior y margen oscuro en los
+cuatro lados. Rechaza varias piezas significativas o una imagen sin contorno
+independiente. Solo filtra candidatos; no rectifica la fotografía ni amplía el
+grid a márgenes vacíos. Una geometría ajustada a dibujos y acotada por esta máscara
+usa `source="fabric"`, conserva candidatos exteriores al grid para revisión y
+solo consolida fragmentos próximos. La extensión a filas completas sin dibujos
+sigue requiriendo una referencia de cama aplicada.
+
+La consolidación final ya no depende de que haya coincidido la referencia de cama.
+Una celda con candidatos bien separados conserva la ambigüedad en vez de borrar
+un dibujo. Los porcentajes de confianza continúan siendo puntuaciones geométricas;
+no son precisión o exhaustividad de reconocimiento.
+
+`MotifDetector.last_diagnostics` conserva revisión, ajustes, estado de referencia,
+máscara, grid y decisiones. `MainWindow.detection_diagnostics` captura ese resultado
+y lo incluye en el historial: cambiar guías provisionalmente no altera los datos
+de la última ejecución. El botón de informe guarda el JSON antes de exportar,
+incluyendo tanto la ejecución original como las posiciones actuales. El JSON no
+contiene la fotografía: se necesita también el original para reproducir el caso.
+La lista, los contadores y el preflight muestran problemas de asignación y recorte
+sin cambiar las coordenadas compartidas ni la política de exportar cortes marcados.
+
+`test_detection_validation.py` cubre propuestas equivocadas con segmentación real,
+fondos, fragmentos, bordes, márgenes vacíos y límites del fallback.
+`test_detection_diagnostics_ui.py` cubre informe, rechazo de referencia, deshacer,
+nueva imagen, redetección manual y advertencias antes de confirmar. Las seis
+capturas nuevas del cliente contienen superposiciones; no se usan como si fueran
+originales ni se afirma que estas pruebas reproduzcan exactamente sus resultados.
 
 El detector sigue siendo clásico y reproducible:
 
@@ -381,6 +429,23 @@ los cortes de 5 pulgadas se solapan entre filas: se señalan sin deformar el gri
 ni reducir el tamaño solicitado. El caso de paneles pastel sigue cubierto aparte.
 
 ## Exportación
+
+### Contrato de detección y revisión de extensión (21-09-2026)
+
+`MotifDetector.finalize_compositions` aplica la agrupación común y luego revisa
+el contexto en píxeles originales. Las procedencias de grid no cambian las reglas
+de agrupación. `analysis_frame` conserva la transformación al encuadre original;
+`camera_panel` ajusta fase y paso a las divisiones observadas. `extent_review`
+añade `review_reasons` sin deformar las cajas para hacer que quepan en el corte.
+
+Estos motivos de revisión se propagan hasta `Detection`, UI, preflight e informe.
+No confundir `exportable` (geometría) con `READY` (sin problemas conocidos): una
+caja que cabe puede seguir requiriendo revisión de sus límites. Los huecos
+inferidos llevan aviso porque no hay dibujo detectado que los respalde.
+
+La suite actual tiene 166 pruebas. El [informe de evaluación](qa/global-rework/README.md)
+describe los cambios, comandos de reproducción y límites aún observados. La
+cobertura de casillas no constituye una validación de siluetas completas.
 
 `SVGExporter` crea un SVG con el tamaño físico completo de la cama y un `viewBox` en la misma unidad. Solo escribe elementos `<rect>` exportables.
 

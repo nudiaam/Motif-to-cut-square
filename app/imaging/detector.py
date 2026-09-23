@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 
 import cv2
 import numpy as np
@@ -11,6 +11,18 @@ from .panel_grid import PanelGrid
 from .visual_grid import infer_printed_panel_grid
 from .pattern_grid import infer_repeated_artwork
 from .camera_panel import infer_camera_panel, source_grid, project_points
+from .grid_validation import contradicts_artwork
+from .grid_guidance import extend_visual_grid, preserve_spanning_artwork
+from .analysis_frame import fabric_analysis_bounds, translate_grid
+from .extent_review import review_extents
+from .scene_profile import POLICY, profile_scene, illumination_view
+from .detection_plan import choose_grid, grid_evidence, plan_zones, stable_artwork_grid
+from .region_analysis import segment_zone
+from .contrast_grid import infer_contrast_geometry
+from .seam_grid import infer_seam_grid
+
+
+DETECTOR_REVISION = "2026-09-23-accessory-ownership-corroboration"
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,6 +33,7 @@ class DetectorSettings:
     merge_distance_px_x: float = 14.0
     merge_distance_px_y: float = 14.0
     layout_mode: str = "auto"
+    adaptive_planning: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,6 +43,7 @@ class MotifCandidate:
     score: float
     area_px: int
     layout_center_px: tuple[float, float] | None = None
+    review_reasons: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,19 +52,23 @@ class DetectionResult:
     panel_grid: PanelGrid | None = None
 
 
+def _inside_fabric(candidate: MotifCandidate, mask: np.ndarray | None) -> bool:
+    if mask is None:
+        return True
+    x, y = candidate.center_px
+    h, w = mask.shape
+    return 0 <= x < w and 0 <= y < h and bool(mask[int(y), int(x)])
+
+
 def _consolidate_grid_candidates(
     candidates: tuple[MotifCandidate, ...], panel_grid: PanelGrid,
 ) -> tuple[MotifCandidate, ...]:
-    """Return at most one artwork observation for each trusted fabric cell.
+    """Combine nearby fragments without hiding distinct artwork in one cell.
 
-    Reference, visual and camera grids are established independently from the
-    candidate count.  They can therefore reject bed artifacts outside the
-    fabric and resolve duplicated fragments without hiding evidence that was
-    needed to infer a pattern-only grid.
+    All reliable grid sources share the same ownership rules. A grid boundary
+    is not evidence that unexplained marks outside it are disposable.
     """
-    if panel_grid.confidence < .78 or panel_grid.source not in {
-        "reference", "visual", "camera",
-    }:
+    if panel_grid.confidence < .78 and panel_grid.source != "manual":
         return candidates
     from .logical_layout import LayoutObservation, layout_from_panel_grid
 
@@ -67,9 +85,14 @@ def _consolidate_grid_candidates(
     layout = layout_from_panel_grid(observations, panel_grid)
     matches = {match.detection_id: match for match in layout.matches}
     grouped: dict[tuple[int, int], list[int]] = {}
+    unresolved = []
     for index in range(len(candidates)):
         match = matches[index]
         if match.column is None or match.row is None or match.status == "outlier":
+            # A fabric outline establishes where the cloth ends, but not where
+            # all printed cells end. Preserve unexplained in-fabric artwork.
+            unresolved.append(replace(candidates[index], review_reasons=tuple(dict.fromkeys(
+                (*candidates[index].review_reasons, "Artwork outside the proposed printed grid")))))
             continue
         grouped.setdefault((match.column, match.row), []).append(index)
 
@@ -79,10 +102,7 @@ def _consolidate_grid_candidates(
     )
     consolidated = []
     for cell, indexes in grouped.items():
-        primary_index = next(
-            (index for index in indexes if matches[index].status == "matched"),
-            min(indexes, key=lambda index: matches[index].residual_px or float("inf")),
-        )
+        primary_index = max(indexes, key=lambda index: candidates[index].area_px)
         primary = candidates[primary_index]
         merged = [primary]
         for index in indexes:
@@ -98,25 +118,34 @@ def _consolidate_grid_candidates(
                 min(ax + aw, bx + bw) >= max(ax, bx)
                 and min(ay + ah, by + bh) >= max(ay, by)
             )
-            if overlaps or distance <= spacing * .24:
+            gap = np.hypot(max(ax-bx-bw, bx-ax-aw, 0), max(ay-by-bh, by-ay-ah, 0))
+            accessory = (candidate.area_px <= primary.area_px*.25 and gap <= spacing*.20)
+            if overlaps or distance <= spacing * .24 or accessory:
                 merged.append(candidate)
+            else:
+                unresolved.append(candidate)
         left = min(item.bounding_box_px[0] for item in merged)
         top = min(item.bounding_box_px[1] for item in merged)
         right = max(item.bounding_box_px[0] + item.bounding_box_px[2] for item in merged)
         bottom = max(item.bounding_box_px[1] + item.bounding_box_px[3] for item in merged)
         # A distant mark in the same cell must not enlarge the artwork extent.
         if right - left > spacing * 1.15 or bottom - top > spacing * 1.15:
+            unresolved.extend(merged[1:])
             merged = [primary]
             left, top, width, height = primary.bounding_box_px
             right, bottom = left + width, top + height
+        if len(merged) == 1:
+            consolidated.append(primary)
+            continue
         consolidated.append(MotifCandidate(
             ((left + right) / 2., (top + bottom) / 2.),
             (left, top, right - left, bottom - top),
             max(item.score for item in merged),
             sum(item.area_px for item in merged),
             primary.layout_center_px,
+            tuple(dict.fromkeys(reason for item in merged for reason in item.review_reasons)),
         ))
-    return tuple(sorted(consolidated, key=lambda item: (
+    return tuple(sorted(consolidated + unresolved, key=lambda item: (
         item.center_px[1], item.center_px[0],
     )))
 
@@ -135,26 +164,67 @@ class MotifDetector:
     def __init__(self):
         self.bed_reference = None
         self.reference_status = "No empty-bed reference"
+        self.last_diagnostics = {}
+        self._grid_notes = []
+        self._plans = []
 
     def detect_with_layout(self, image_bgr, settings):
-        from .bed_reference import locate_fabric, extend_to_fabric
+        from .bed_reference import locate_fabric, locate_bright_fabric, extend_to_fabric
         from .logical_layout import LayoutObservation, fit_logical_layout, layout_from_panel_grid
         self._validate_image(image_bgr)
+        self._grid_notes = []
+        self._plans = []
+        scene = profile_scene(image_bgr) if settings.adaptive_planning else None
         evidence = (locate_fabric(image_bgr, self.bed_reference)
                     if self.bed_reference is not None else None)
         self.reference_status = evidence.reason if evidence else "No empty-bed reference"
-        if evidence is None or evidence.mask is None:
-            return self._detect_layout(image_bgr, settings)
-        mask = evidence.mask
-        if not np.any(mask):
-            return DetectionResult(())
-        analysis = image_bgr.copy()
-        analysis[mask == 0] = np.median(image_bgr[mask > 0], axis=0)
-        result = self._detect_layout(analysis, settings)
-        h, w = mask.shape
-        candidates = tuple(c for c in result.candidates
-                           if 0 <= c.center_px[0] < w and 0 <= c.center_px[1] < h
-                           and mask[int(c.center_px[1]), int(c.center_px[0])])
+        matched_reference = evidence is not None and evidence.mask is not None
+        if not matched_reference:
+            evidence = locate_bright_fabric(image_bgr) if settings.layout_mode == "auto" else None
+        mask = evidence.mask if evidence is not None else None
+        detection_image = image_bgr
+        illumination = None
+        if settings.adaptive_planning and settings.layout_mode == 'auto' and not matched_reference:
+            alternate = illumination_view(image_bgr, mask)
+            if alternate is not None:
+                detection_image, illumination = alternate
+                expanded = locate_bright_fabric(detection_image)
+                if expanded.mask is not None:
+                    # A shadow can make the original support incomplete. Keep
+                    # either view's evidence, never intersect away dark artwork.
+                    mask = cv2.bitwise_or(mask, expanded.mask)
+        analysis_bounds = None
+        if mask is not None and not np.any(mask):
+            result = DetectionResult(())
+        elif matched_reference:
+            analysis = image_bgr.copy()
+            analysis[mask == 0] = np.median(image_bgr[mask > 0], axis=0)
+            result = self._detect_layout(analysis, settings)
+        else:
+            # Preserve the original camera/seam evidence. Only the segmentation
+            # candidates are masked; source pixels and calibration never change.
+            if mask is not None and settings.layout_mode == "auto":
+                left, top, right, bottom = fabric_analysis_bounds(mask)
+                analysis_bounds = [left, top, right, bottom]
+                local = self._detect_layout(detection_image[top:bottom, left:right], settings,
+                                            fabric_mask=mask[top:bottom, left:right])
+                candidates = tuple(replace(c,
+                    center_px=(c.center_px[0]+left, c.center_px[1]+top),
+                    bounding_box_px=(c.bounding_box_px[0]+left, c.bounding_box_px[1]+top,
+                                     *c.bounding_box_px[2:]),
+                    layout_center_px=((c.layout_center_px[0]+left, c.layout_center_px[1]+top)
+                                      if c.layout_center_px is not None else None),
+                ) for c in local.candidates)
+                result = DetectionResult(candidates, translate_grid(local.panel_grid, left, top))
+            else:
+                result = self._detect_layout(detection_image, settings, fabric_mask=mask)
+        if settings.adaptive_planning and settings.layout_mode == 'auto' and not matched_reference:
+            result, recovered = self._coordinate_appearance(image_bgr, settings, result, mask)
+            if recovered:
+                # Original-pixel local support supersedes a tentative bright mask.
+                mask = None
+                analysis_bounds = None
+        candidates = tuple(c for c in result.candidates if _inside_fabric(c, mask))
         observations = [LayoutObservation(i, (x+bw/2, y+bh/2), c.bounding_box_px,
                                           c.layout_center_px)
                         for i, c in enumerate(candidates)
@@ -162,22 +232,238 @@ class MotifDetector:
         grid = result.panel_grid
         layout = (layout_from_panel_grid(observations, grid) if grid and grid.confidence >= .78
                   else fit_logical_layout(observations))
-        extended = extend_to_fabric(layout, mask) if settings.layout_mode == "auto" else None
+        extended = (extend_to_fabric(layout, mask)
+                    if matched_reference and settings.layout_mode == "auto" else None)
+        if mask is not None and grid is None and layout.reliable and settings.layout_mode == "auto":
+            # An unregistered bright boundary is sufficient to remove bed
+            # marks, but not to fill blank fabric margins with extra rows.
+            # Keep exactly the artwork-supported extent for consolidation.
+            origin, col, row = layout.origin_px, layout.column_vector_px, layout.row_vector_px
+            if extended is None:
+                extended = PanelGrid(
+                    tuple(origin[0] + (c-.5)*col[0] + row[0]*(layout.rows-1)/2
+                          for c in range(layout.columns+1)),
+                    tuple(origin[1] + (r-.5)*row[1] + col[1]*(layout.columns-1)/2
+                          for r in range(layout.rows+1)),
+                    layout.confidence, "fabric", (origin, col, row), layout.projection,
+                )
         final_grid = extended or grid
-        if final_grid is not None:
-            candidates = _consolidate_grid_candidates(candidates, final_grid)
+        candidates = self.finalize_compositions(image_bgr, candidates, final_grid)
+        if illumination is not None:
+            first,last=illumination['affected_y_px']
+            candidates=tuple(replace(c,review_reasons=tuple(dict.fromkeys((*c.review_reasons,
+                'Illumination compensation used; check artwork in the shadowed band'))))
+                if c.bounding_box_px[1] <= last and c.bounding_box_px[1]+c.bounding_box_px[3] >= first else c
+                for c in candidates)
+        if settings.layout_mode == "auto" and final_grid is None:
+            candidates = tuple(replace(c, review_reasons=tuple(dict.fromkeys(
+                (*c.review_reasons, "No reliable panel layout; check which regions form each composition"))))
+                for c in candidates)
+        self.last_diagnostics = {
+            "detector_revision": DETECTOR_REVISION,
+            "image_size_px": [image_bgr.shape[1], image_bgr.shape[0]],
+            "settings": asdict(settings),
+            "reference_status": self.reference_status,
+            "reference_applied": matched_reference,
+            "fabric_status": evidence.reason if evidence is not None else "No fabric mask",
+            "analysis_bounds_px": analysis_bounds,
+            "grid": asdict(final_grid) if final_grid is not None else None,
+            "grid_notes": list(self._grid_notes),
+            "scene_profile": scene,
+            "illumination": illumination,
+            "analysis_policy": asdict(POLICY) if settings.adaptive_planning else None,
+            "detection_plans": self._plans,
+            "candidates_before_cleanup": len(result.candidates),
+            "candidates_after_cleanup": len(candidates),
+            "compositions_needing_extent_review": sum(bool(c.review_reasons) for c in candidates),
+        }
         return DetectionResult(candidates, final_grid)
+
+    def _coordinate_appearance(self, image, settings, current, fabric_mask=None):
+        """Compare geometry with its own artwork evidence before materializing cuts.
+
+        Original-pixel local analysis is a bounded second pass. It cannot change
+        the global ownership/extent validation shared by all routes.
+        """
+        grid=current.panel_grid
+        measures=grid_evidence(image,grid,current.candidates) if grid else None
+        complete=bool(measures and measures['occupied_fraction'] >= .85
+                      and measures['aligned_fraction'] >= .70
+                      and measures['unique_assignment_fraction'] >= .85)
+        # Filling a provisional grid is not independent proof of its geometry.
+        # Keep established light/chroma routing, but allow shared-background
+        # evidence to challenge an otherwise self-confirming coarse partition.
+        corroborated=bool(complete and grid.source in ('pattern','observations'))
+        geometries=[]
+        dark=infer_contrast_geometry(image)
+        if dark is not None: geometries.append(dark)
+        # Spend extra work on unresolved scenes, regardless of mean brightness.
+        # Dark-on-dark can carry colour evidence even without a useful L contrast.
+        if not complete and dark is None:
+            for channel in ('light','chroma'):
+                proposal=infer_contrast_geometry(image,channel=channel)
+                if proposal is not None: geometries.append(proposal)
+        if not corroborated and not geometries:
+            proposal=infer_contrast_geometry(image,channel='shared_background')
+            if proposal is not None: geometries.append(proposal)
+        if not geometries:
+            self._plans.append({'stage':'contrast_geometry','accepted':False,
+                                'reason':'No agreement across appearance scales and thresholds'})
+            return current,False
+        proposals=[('current',grid)]
+        evidence={'current':current.candidates}
+        by_name={}
+        for geometry in geometries:
+            name=geometry.diagnostics['channel']
+            proposals.append((name,geometry.grid));by_name[name]=geometry
+            evidence[name]=tuple(MotifCandidate(r.center_px,r.bounding_box_px,r.score,r.area_px)
+                                 for r in geometry.regions)
+        # A grid backed by whole compositions can contradict a competing geometry.
+        # Camera/seam grids remain proposals: their local extractions are not
+        # independent proof that the partition itself is correct.
+        stable=('current',) if grid and grid.source in ('pattern','observations') else ()
+        selected,rows=choose_grid(image,proposals,current.candidates,
+                                 stable_routes=(*stable,*by_name),route_evidence=evidence)
+        local_probes={};failed_probes=set()
+        if not complete and not stable:
+            def needs_ownership(row,geometry):
+                return (selected!=row['route'] and row['eligible'] and geometry.grid.confidence>=.80
+                        and row['occupied_fraction']>=.85 and row['aligned_fraction']>=.65
+                        and .65<=row['unique_assignment_fraction']<.85)
+            if 'shared_background' not in by_name and any(
+                    needs_ownership(r,by_name[r['route']]) for r in rows if r['route'] in by_name):
+                shared=infer_contrast_geometry(image,channel='shared_background')
+                if shared is not None:
+                    by_name['shared_background']=shared
+                    proposals.append(('shared_background',shared.grid))
+                    evidence['shared_background']=tuple(MotifCandidate(
+                        r.center_px,r.bounding_box_px,r.score,r.area_px) for r in shared.regions)
+                    selected,rows=choose_grid(image,proposals,current.candidates,
+                        stable_routes=(*stable,*by_name),route_evidence=evidence)
+            # Check recovery against every independent appearance reading, not
+            # only the fragments that happened to propose its own partition.
+            regions=tuple(r for g in by_name.values() for r in g.regions)
+            for name,geometry in by_name.items():
+                row=next(r for r in rows if r['route']==name)
+                # Several nearby components may belong to one composition.
+                # Only recheck a repeated, mostly aligned hypothesis with a
+                # limited number of duplicate owners; never collapse a second
+                # complete lattice of distinct figures into the first one.
+                if not needs_ownership(row,geometry):
+                    continue
+                model=((geometry.diagnostics['background_lab'],geometry.diagnostics['background_noise_lab'])
+                       if name=='shared_background' else None)
+                local=self.detect_in_grid(image,settings,geometry.grid,background_model=model)
+                support=grid_evidence(image,geometry.grid,local)
+                retained=[]
+                for region in regions:
+                    x,y,w,h=region.bounding_box_px
+                    retained.append(max((max(0,min(x+w,bx+bw)-max(x,bx))*
+                                         max(0,min(y+h,by+bh)-max(y,by))/max(1,w*h)
+                                         for c in local for bx,by,bw,bh in [c.bounding_box_px]),default=0.))
+                coverage=float(np.mean(np.array(retained)>=.85)) if retained else 0.
+                accepted=(support['occupied_fraction']>=.85 and support['aligned_fraction']>=.85
+                          and support['unique_assignment_fraction']>=.85 and coverage>=.90)
+                self._plans.append({'stage':'appearance_ownership_recheck','route':name,
+                                    'initial_evidence_count':len(evidence[name]),
+                                    'retained_regions_fraction':coverage,'corroborated':accepted,**support})
+                if accepted:
+                    evidence[name]=tuple(local);local_probes[name]=local
+                else:
+                    failed_probes.add(name)
+            if local_probes:
+                rejected=[dict(r,eligible=False,rejection_reason=
+                               'Local ownership did not preserve independent appearance evidence')
+                          for r in rows if r['route'] in failed_probes]
+                selected,rows=choose_grid(image,[(n,g) for n,g in proposals if n not in failed_probes],current.candidates,
+                                         stable_routes=(*stable,*by_name),route_evidence=evidence)
+                rows.extend(rejected)
+        self._plans.append({'stage':'joint_appearance','selected_route':selected,
+                            'hypotheses':rows,'scene_resolved_before_refinement':complete})
+        recovered=False
+        for name,geometry in by_name.items():
+            proposal=geometry.grid
+            same=bool(grid and (grid.columns,grid.rows)==(proposal.columns,proposal.rows)
+                      and max(np.max(abs(np.array(grid.x_lines_px)-proposal.x_lines_px)),
+                              np.max(abs(np.array(grid.y_lines_px)-proposal.y_lines_px)))
+                      < min(np.median(np.diff(proposal.x_lines_px)),
+                            np.median(np.diff(proposal.y_lines_px)))*.15)
+            accepted=False
+            visible=sum(_inside_fabric(c,fabric_mask) for c in current.candidates)
+            missing_support=(geometry.diagnostics['occupancy'] >
+                             visible/(proposal.columns*proposal.rows)+.02)
+            refine_agreement=(same and missing_support and selected in ('current',name))
+            if refine_agreement or (selected==name and not (same and complete)):
+                background_model=((geometry.diagnostics['background_lab'],geometry.diagnostics['background_noise_lab'])
+                                  if name=='shared_background' else None)
+                if refine_agreement:
+                    retained=[c for c in current.candidates if _inside_fabric(c,fabric_mask)]
+                    occupied={(col,row) for col,row,(x,y,w,h) in proposal.cells()
+                              if any(x<=c.center_px[0]<x+w and y<=c.center_px[1]<y+h for c in retained)}
+                    doubtful={(col,row) for col,row,_ in proposal.cells()}-occupied
+                    local=retained+self.detect_in_grid(image,settings,proposal,cell_filter=doubtful,
+                                                       background_model=background_model)
+                    self._plans.append({'stage':'local_recheck','cells':[list(c) for c in sorted(doubtful)],
+                                        'reason':'Appearance support disagrees with provisional fabric mask or missing extraction'})
+                else:
+                    local=(local_probes[name] if name in local_probes else
+                           self.detect_in_grid(image,settings,proposal,background_model=background_model))
+                support=grid_evidence(image,proposal,local)
+                # Do not certify a repeated texture merely for fitting a lattice.
+                if (support['occupied_fraction'] >= .85 and support['aligned_fraction'] >= .65):
+                    current=DetectionResult(tuple(local),proposal)
+                    recovered=accepted=True
+                    self._grid_notes.append('Joint '+name+' evidence corroborated by original-pixel local analysis')
+            self._plans.append({'stage':'contrast_geometry',**geometry.diagnostics,
+                                'columns':proposal.columns,'rows':proposal.rows,
+                                'accepted':accepted,'existing_geometry_agrees':same})
+        return current,recovered
+
+    def finalize_compositions(self, image_bgr, candidates, grid):
+        """Every automatic/manual grid uses one ownership and review contract."""
+        candidates = tuple(candidates)
+        if grid is not None:
+            candidates = _consolidate_grid_candidates(candidates, grid)
+            issues = grid.review_reasons
+            if grid.confidence < .78 and grid.source != "manual":
+                issues = (*issues, "Panel layout is uncertain; check composition ownership")
+            if issues:
+                candidates = tuple(replace(c, review_reasons=tuple(dict.fromkeys(
+                    (*c.review_reasons, *issues)))) for c in candidates)
+        return review_extents(image_bgr, candidates, grid)
 
     def detect(
         self, image_bgr: np.ndarray, settings: DetectorSettings
     ) -> list[MotifCandidate]:
         return list(self.detect_with_layout(image_bgr, settings).candidates)
 
+    def _camera_candidates(self, panel, settings):
+        """Analyse a provisional camera grid once; keep source coordinates."""
+        corners = project_points([(0,0), (panel.image.shape[1],0),
+                                  (panel.image.shape[1],panel.image.shape[0]),
+                                  (0,panel.image.shape[0])], panel.to_source)
+        area_scale = panel.image.shape[0]*panel.image.shape[1] / cv2.contourArea(corners.astype(np.float32))
+        local_settings = replace(settings, minimum_area_px=max(1, int(settings.minimum_area_px*area_scale)))
+        local = self.detect_in_grid(panel.image, local_settings, panel.grid, region_segmentation=True)
+        mapped = []
+        for item in local:
+            x, y, w, h = item.bounding_box_px
+            bounds = project_points([(x,y),(x+w,y),(x+w,y+h),(x,y+h)], panel.to_source)
+            left, top = np.floor(bounds.min(axis=0)).astype(int)
+            right, bottom = np.ceil(bounds.max(axis=0)).astype(int)
+            center = project_points([item.center_px], panel.to_source)[0]
+            mapped.append(MotifCandidate(tuple(float(v) for v in center),
+                                         (int(left),int(top),int(right-left),int(bottom-top)),
+                                         item.score, int(item.area_px/area_scale),
+                                         review_reasons=item.review_reasons))
+        return sorted(mapped,key=lambda c: (c.center_px[1],c.center_px[0]))
+
     def _detect_layout(
-        self, image_bgr: np.ndarray, settings: DetectorSettings
+        self, image_bgr: np.ndarray, settings: DetectorSettings,
+        *, fabric_mask: np.ndarray | None = None,
     ) -> DetectionResult:
         self._validate_image(image_bgr)
-        primary = self._detect_once(image_bgr, settings)
+        primary = [c for c in self._detect_once(image_bgr, settings) if _inside_fabric(c, fabric_mask)]
         height, width = image_bgr.shape[:2]
 
         layout_mode = settings.layout_mode if settings.layout_mode in {
@@ -185,12 +471,118 @@ class MotifDetector:
             "panels",
             "free",
         } else "auto"
+        pattern = (infer_repeated_artwork(image_bgr, settings.sensitivity, settings.minimum_area_px)
+                   if layout_mode == "auto" else None)
+        camera = infer_camera_panel(image_bgr) if layout_mode == "auto" else None
+        camera_candidates = None
+        preferred = None
+        artwork_grid = None
         if layout_mode != "free":
             panel_grid = infer_panel_grid(image_bgr, primary)
+            # A frame-sized proposal is weaker than independently visible
+            # printed divisions. Do not let its early return hide that evidence.
+            if panel_grid is not None and panel_grid.source == "automatic" and camera is not None:
+                panel_grid = None
+            if panel_grid is not None and pattern is not None and contradicts_artwork(panel_grid, pattern):
+                self._grid_notes.append(
+                    f"Rejected {panel_grid.columns}x{panel_grid.rows} panel grid: "
+                    f"stable artwork supports {pattern.grid.columns}x{pattern.grid.rows}."
+                )
+                panel_grid = None
+            if settings.adaptive_planning and layout_mode == 'auto':
+                evidence_by_route={}
+                if pattern is not None:
+                    evidence_by_route['pattern']=tuple(MotifCandidate(
+                        r.center_px or (r.bounding_box_px[0]+r.bounding_box_px[2]/2,
+                                        r.bounding_box_px[1]+r.bounding_box_px[3]/2),
+                        r.bounding_box_px,r.score,r.area_px) for r in pattern.regions)
+                seams=infer_seam_grid(image_bgr)
+                seam_candidates=None
+                if seams is not None:
+                    seam_candidates=self.detect_in_grid(image_bgr,settings,seams)
+                    evidence_by_route['seams']=seam_candidates
+                    if len(seam_candidates) < seams.columns*seams.rows*.85:
+                        seams=None
+                regular = _infer_regular_tile_grid(primary,width,height)
+                regular_proposal = (PanelGrid.regular(width,height,*regular,confidence=.8,source='automatic')
+                                    if regular is not None else None)
+                if pattern is None and regular is None and 6 <= len(primary) <= 300:
+                    passes = [primary]
+                    for offset in (-10,10):
+                        passes.append([c for c in self._detect_once(image_bgr, replace(
+                            settings, sensitivity=int(np.clip(settings.sensitivity+offset,0,100))))
+                            if _inside_fabric(c,fabric_mask)])
+                    artwork_grid = stable_artwork_grid(passes)
+                proposals = [
+                    ('panels', panel_grid),
+                    ('pattern', pattern.grid if pattern is not None else None),
+                    ('regular', regular_proposal),
+                    ('observations', artwork_grid),
+                    ('camera', source_grid(camera) if camera is not None else None),
+                    ('seams',seams),
+                ]
+                preferred, hypotheses = choose_grid(image_bgr, proposals, primary,
+                    stable_routes=('pattern','observations'),route_evidence=evidence_by_route)
+                # Sparse global fragments cannot alone disprove sustained printed
+                # divisions. Test that disputed hypothesis locally before rejecting
+                # it; never use this to merge a larger set of distinct observations.
+                disputed=next((h for h in hypotheses if h['route']=='camera'
+                               and not h['eligible'] and h['evidence_source']=='primary'
+                               and h.get('rejection_reason','').startswith('Groups poorly aligned')
+                               and h['seam_support'] >= .75),None)
+                if (disputed is not None and camera is not None and camera.grid.confidence >= .85
+                        and len(primary) < camera.grid.columns*camera.grid.rows*.85):
+                    camera_candidates=self._camera_candidates(camera,settings)
+                    support=grid_evidence(image_bgr,source_grid(camera),camera_candidates)
+                    corroborated=(support['occupied_fraction'] >= .85 and
+                                  support['aligned_fraction'] >= .65 and
+                                  support['unique_assignment_fraction'] >= .85)
+                    self._plans.append({'stage':'disputed_grid_recheck','route':'camera',
+                                        'initial_evidence_count':len(primary),
+                                        'local_evidence_count':len(camera_candidates),
+                                        'corroborated':corroborated,**support})
+                    if corroborated:
+                        evidence_by_route['camera']=camera_candidates
+                        preferred,hypotheses=choose_grid(image_bgr,proposals,primary,
+                            stable_routes=('pattern','observations'),route_evidence=evidence_by_route)
+                self._plans.append({'stage':'grid','selected_route':preferred,'hypotheses':hypotheses})
+                eligible_routes = {h['route'] for h in hypotheses if h['eligible']}
+                if 'panels' not in eligible_routes: panel_grid = None
+                if 'camera' not in eligible_routes: camera = None
+                if 'pattern' not in eligible_routes: pattern = None
+                if preferred == 'seams':
+                    return DetectionResult(tuple(self.reconcile_grid_artwork(
+                        image_bgr,settings,seams,seam_candidates,whole=primary)),seams)
+                if preferred == 'observations':
+                    self._grid_notes.append('Artwork spacing and phase agree across three thresholds; retained complete compositions')
+                    return DetectionResult(tuple(primary), artwork_grid)
+                if preferred in ('pattern','camera','regular'):
+                    if panel_grid is not None:
+                        self._grid_notes.append('Grid planner preferred '+preferred+' evidence over the panel proposal')
+                    panel_grid = None
             if panel_grid is not None and (panel_grid.confidence >= 0.78 or layout_mode == "panels"):
+                strict = []
+                if layout_mode == "auto":
+                    strict = [c for c in self._detect_once(image_bgr, replace(
+                        settings, sensitivity=max(0, settings.sensitivity-10),
+                    )) if _inside_fabric(c, fabric_mask)]
+                    checked = extend_visual_grid(panel_grid, primary, strict, image_bgr.shape, fabric_mask)
+                    if checked != panel_grid:
+                        self._grid_notes.append(
+                            f"Extended {panel_grid.columns}x{panel_grid.rows} visual grid to "
+                            f"{checked.columns}x{checked.rows}: multiple stable outer motifs."
+                        )
+                    panel_grid = checked
                 panel_candidates = self.detect_in_grid(
                     image_bgr, settings, panel_grid
                 )
+                if layout_mode == "auto":
+                    complete = self.reconcile_grid_artwork(
+                        image_bgr, settings, panel_grid, panel_candidates, whole=primary,
+                    )
+                    if len(complete) < len(panel_candidates):
+                        self._grid_notes.append("Preserved whole artwork spanning adjacent cells.")
+                    panel_candidates = complete
                 coverage = len(panel_candidates) / max(
                     1, panel_grid.columns * panel_grid.rows
                 )
@@ -198,8 +590,11 @@ class MotifDetector:
                     return DetectionResult(tuple(panel_candidates), panel_grid)
 
         if layout_mode == "auto":
-            pattern = infer_repeated_artwork(image_bgr, settings.sensitivity, settings.minimum_area_px)
-            if pattern is not None:
+            if pattern is not None and preferred not in ('camera','regular'):
+                if settings.adaptive_planning:
+                    self._plans.append({'stage':'zones','execution':'whole_compositions',
+                        'image_size_px':[width,height],
+                        'zones':[asdict(z) for z in plan_zones(image_bgr,pattern.grid)]})
                 # Keep complete regions, including artwork crossing a cell boundary.
                 # Detecting independently in each cell here would split such artwork.
                 candidates = tuple(MotifCandidate((x + w / 2., y + h / 2.),
@@ -211,32 +606,16 @@ class MotifDetector:
                 return DetectionResult(tuple(sorted(candidates, key=lambda c: (c.center_px[1], c.center_px[0]))),
                                        pattern.grid)
 
-        if layout_mode == "auto" and _infer_regular_tile_grid(primary, width, height) is None:
-            panel = infer_camera_panel(image_bgr)
+        if layout_mode == "auto" and preferred != 'regular' and (preferred == 'camera' or _infer_regular_tile_grid(primary, width, height) is None):
+            panel = camera
             if panel is not None:
-                # Normalize the photographed fabric for analysis, not the displayed
-                # image or calibration. Weak ink is separated by a local colour
-                # model rather than a fixed global contrast threshold.
-                corners = project_points([(0,0), (panel.image.shape[1],0),
-                                          (panel.image.shape[1],panel.image.shape[0]),
-                                          (0,panel.image.shape[0])], panel.to_source)
-                area_scale = panel.image.shape[0]*panel.image.shape[1] / cv2.contourArea(corners.astype(np.float32))
-                local_settings = replace(settings, minimum_area_px=max(1, int(settings.minimum_area_px*area_scale)))
-                local = self.detect_in_grid(panel.image, local_settings, panel.grid, region_segmentation=True)
-                if len(local) >= panel.grid.columns * panel.grid.rows * .70:
-                    mapped = []
-                    for item in local:
-                        x, y, w, h = item.bounding_box_px
-                        bounds = project_points([(x,y),(x+w,y),(x+w,y+h),(x,y+h)], panel.to_source)
-                        left, top = np.floor(bounds.min(axis=0)).astype(int)
-                        right, bottom = np.ceil(bounds.max(axis=0)).astype(int)
-                        center = project_points([item.center_px], panel.to_source)[0]
-                        mapped.append(MotifCandidate(tuple(float(v) for v in center),
-                                                     (int(left),int(top),int(right-left),int(bottom-top)),
-                                                     item.score, int(item.area_px/area_scale)))
-                    return DetectionResult(tuple(sorted(mapped, key=lambda c: (c.center_px[1],c.center_px[0]))),
-                                           source_grid(panel))
+                mapped=(camera_candidates if camera_candidates is not None else
+                        self._camera_candidates(panel,settings))
+                if len(mapped) >= panel.grid.columns * panel.grid.rows * .70:
+                    return DetectionResult(tuple(mapped),source_grid(panel))
 
+        if settings.adaptive_planning and layout_mode == 'auto' and preferred is None:
+            return DetectionResult(tuple(primary))
         regular_grid = _infer_regular_tile_grid(primary, width, height)
         if regular_grid is None:
             return DetectionResult(
@@ -268,7 +647,8 @@ class MotifDetector:
                 merge_distance_px_y=settings.merge_distance_px_y,
             )
             passes.append(
-                (pass_sensitivity, self._detect_once(image_bgr, pass_settings))
+                (pass_sensitivity, [c for c in self._detect_once(image_bgr, pass_settings)
+                                    if _inside_fabric(c, fabric_mask)])
             )
 
         def pass_quality(
@@ -357,6 +737,22 @@ class MotifDetector:
             tuple(sorted(refined, key=lambda item: (item.center_px[1], item.center_px[0])))
         )
 
+    def reconcile_grid_artwork(self, image_bgr, settings, grid, candidates, *, whole=None):
+        """Check cell crops against whole-image evidence without moving guides."""
+        if grid.confidence < .78 or grid.lattice is not None or grid.projection is not None:
+            return candidates
+        whole = self._detect_once(image_bgr, settings) if whole is None else whole
+        dx = float(np.median(np.diff(grid.x_lines_px)))
+        dy = float(np.median(np.diff(grid.y_lines_px)))
+        possible_spans = [c for c in whole
+                          if (1.35*dy < c.bounding_box_px[3] < 2.4*dy and c.bounding_box_px[2] < .95*dx)
+                          or (1.35*dx < c.bounding_box_px[2] < 2.4*dx and c.bounding_box_px[3] < .95*dy)]
+        connected = self._detect_once(image_bgr, replace(
+            settings, sensitivity=max(0, settings.sensitivity-10),
+            merge_distance_px_x=0., merge_distance_px_y=0.,
+        )) if possible_spans else []
+        return preserve_spanning_artwork(candidates, possible_spans, connected, grid)
+
     def detect_in_grid(
         self,
         image_bgr: np.ndarray,
@@ -364,12 +760,18 @@ class MotifDetector:
         panel_grid: PanelGrid,
         *,
         region_segmentation: bool = False,
+        cell_filter: set[tuple[int,int]] | None = None,
+        background_model=None,
     ) -> list[MotifCandidate]:
         """Detect at most one locally separated motif inside each panel."""
 
         self._validate_image(image_bgr)
         image_height, image_width = image_bgr.shape[:2]
         results: list[MotifCandidate] = []
+        zones = {(z.column,z.row):z for z in plan_zones(image_bgr,panel_grid)} if settings.adaptive_planning else {}
+        plan_log={'stage':'zones','image_size_px':[image_width,image_height],
+                  'zones':[asdict(z) for z in zones.values()]}
+        if zones:self._plans.append(plan_log)
         base_sensitivity = int(np.clip(settings.sensitivity, 0, 100))
         sensitivities = tuple(
             dict.fromkeys(
@@ -379,28 +781,44 @@ class MotifDetector:
         )
 
         for _column, _row, (cell_x, cell_y, cell_width, cell_height) in panel_grid.cells():
+            if cell_filter is not None and (_column,_row) not in cell_filter:
+                continue
             left = min(max(cell_x, 0), image_width - 1)
             top = min(max(cell_y, 0), image_height - 1)
             right = min(max(cell_x + cell_width, left + 1), image_width)
             bottom = min(max(cell_y + cell_height, top + 1), image_height)
-            # Keep seams and binding outside the local background model while
-            # retaining thin motif details that approach a panel edge.
-            inset_x = max(2, int(round((right - left) * 0.035)))
-            inset_y = max(2, int(round((bottom - top) * 0.035)))
-            crop_left = min(left + inset_x, right - 1)
-            crop_top = min(top + inset_y, bottom - 1)
-            crop_right = max(crop_left + 1, right - inset_x)
-            crop_bottom = max(crop_top + 1, bottom - inset_y)
+            # Guides define ownership, not an irreversible foreground crop.
+            # Keep surrounding pixels available when ink approaches a seam.
+            context = POLICY.context_fraction if settings.adaptive_planning else .10
+            padding_x = max(3, int(round((right-left)*context)))
+            padding_y = max(3, int(round((bottom-top)*context)))
+            crop_left, crop_top = max(0, left-padding_x), max(0, top-padding_y)
+            crop_right, crop_bottom = min(image_width, right+padding_x), min(image_height, bottom+padding_y)
             crop = image_bgr[crop_top:crop_bottom, crop_left:crop_right]
             if crop.shape[0] < 8 or crop.shape[1] < 8:
                 continue
 
-            if region_segmentation:
-                region = self._local_colour_region(crop, settings.minimum_area_px)
-                if region is not None:
+            zone=zones.get((_column,_row))
+            if zone is not None and (zone.strategy == 'local_palette' or background_model is not None):
+                analysed=segment_zone(crop,settings.minimum_area_px,
+                    (left-crop_left,top-crop_top,right-crop_left,bottom-crop_top),
+                    shadow_gain=zone.shadow_gain,background_model=background_model)
+                if analysed is not None:
+                    x,y,w,h=analysed['box']
+                    cx,cy=x+w/2+crop_left,y+h/2+crop_top
+                    if left <= cx < right and top <= cy < bottom:
+                        results.append(MotifCandidate((cx,cy),(x+crop_left,y+crop_top,w,h),
+                            analysed['score'],analysed['area'],review_reasons=analysed['issues']))
+                        continue
+            if region_segmentation and not settings.adaptive_planning:
+                region = self._local_colour_region(crop, settings.minimum_area_px,
+                    core_bounds=(left-crop_left, top-crop_top, right-crop_left, bottom-crop_top))
+                if region is not None and (left <= region.center_px[0]+crop_left < right
+                                           and top <= region.center_px[1]+crop_top < bottom):
                     x, y, w, h = region.bounding_box_px
                     results.append(MotifCandidate((region.center_px[0]+crop_left, region.center_px[1]+crop_top),
-                                                   (x+crop_left,y+crop_top,w,h), region.score, region.area_px))
+                                                   (x+crop_left,y+crop_top,w,h), region.score, region.area_px,
+                                                   review_reasons=region.review_reasons))
                     continue
 
             options: list[tuple[float, int, MotifCandidate]] = []
@@ -408,13 +826,18 @@ class MotifDetector:
                 pass_settings = DetectorSettings(
                     sensitivity=pass_sensitivity,
                     minimum_area_px=settings.minimum_area_px,
-                    morphological_cleanup=settings.morphological_cleanup,
+                    morphological_cleanup=0. if zone is not None and zone.preserve_detail else settings.morphological_cleanup,
                     merge_distance_px_x=settings.merge_distance_px_x,
                     merge_distance_px_y=settings.merge_distance_px_y,
                     layout_mode="free",
+                    adaptive_planning=settings.adaptive_planning,
                 )
-                local_candidates = self._detect_once(crop, pass_settings)
+                local_candidates = self._detect_once(crop, pass_settings, local_context=True) if settings.adaptive_planning else self._detect_once(crop, pass_settings)
                 for candidate in local_candidates:
+                    # Overlapping windows must not claim their neighbour's core.
+                    cx, cy = candidate.center_px[0]+crop_left, candidate.center_px[1]+crop_top
+                    if not (left <= cx < right and top <= cy < bottom):
+                        continue
                     rank = _panel_candidate_rank(
                         candidate, crop.shape[1], crop.shape[0]
                     )
@@ -434,6 +857,7 @@ class MotifDetector:
                         ),
                         score=candidate.score,
                         area_px=candidate.area_px,
+                        review_reasons=candidate.review_reasons,
                     )
                     options.append(
                         (rank, -abs(pass_sensitivity - base_sensitivity), translated)
@@ -444,27 +868,57 @@ class MotifDetector:
         return sorted(results, key=lambda item: (item.center_px[1], item.center_px[0]))
 
     @staticmethod
-    def _local_colour_region(image: np.ndarray, minimum_area: int) -> MotifCandidate | None:
+    def _local_colour_region(image: np.ndarray, minimum_area: int,
+                             core_bounds=None) -> MotifCandidate | None:
         """Separate coherent artwork from the cell border; never seed fixed foreground."""
         h, w = image.shape[:2]
-        mask = np.zeros((h,w), np.uint8)
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB).astype(np.float32)
+        if core_bounds is None:
+            sample = lab
+        else:
+            left, top, right, bottom = core_bounds
+            # Sample this panel's background, not the neighbouring panels in
+            # the expanded window. This changes seeds, never available pixels.
+            inset = max(1, round(min(right-left, bottom-top)*.035))
+            sample = lab[top+inset:bottom-inset, left+inset:right-inset]
+        border = np.concatenate([sample[0], sample[-1], sample[:,0], sample[:,-1]])
+        background_colour = np.median(border, axis=0)
+        distance = np.linalg.norm(lab-background_colour, axis=2)
+        border_distance = np.linalg.norm(border-background_colour, axis=1)
+        threshold = max(10., float(np.percentile(border_distance, 65)))
+        mask = np.full((h,w), cv2.GC_PR_BGD, np.uint8)
+        mask[distance > threshold] = cv2.GC_PR_FGD
+        if core_bounds is not None:
+            outside = np.ones((h,w), bool)
+            outside[top:bottom, left:right] = False
+            mask[outside] = cv2.GC_PR_BGD
+        # Only border pixels that agree with the sampled background are fixed.
+        # Everything else remains revisable, including artwork near an edge.
+        rim = np.zeros((h,w), bool)
+        rim[[0,-1],:] = True
+        rim[:,[0,-1]] = True
+        sure_background = rim & (distance <= max(3., float(np.percentile(border_distance, 25))))
+        mask[sure_background] = cv2.GC_BGD
+        if not np.any(sure_background) or np.count_nonzero(mask == cv2.GC_PR_FGD) < minimum_area:
+            return None
         background, foreground = np.zeros((1,65), np.float64), np.zeros((1,65), np.float64)
-        rect = (int(w*.10), int(h*.07), int(w*.80), int(h*.86))
         cv2.setRNGSeed(0)
-        cv2.grabCut(image, mask, rect, background, foreground, 4, cv2.GC_INIT_WITH_RECT)
+        cv2.grabCut(image, mask, None, background, foreground, 4, cv2.GC_INIT_WITH_MASK)
         selected = np.isin(mask, [cv2.GC_FGD, cv2.GC_PR_FGD])
         ys, xs = np.nonzero(selected)
         area = len(xs)
         if area < minimum_area or area > w*h*.60:
             return None
         x, y, right, bottom = int(xs.min()), int(ys.min()), int(xs.max()+1), int(ys.max()+1)
-        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB).astype(np.float32)
         contrast = float(np.linalg.norm(lab[selected].mean(axis=0)-lab[~selected].mean(axis=0)))
         score = float(.72*np.clip(contrast/80, 0, 1) + .28*min(1,area/max(1,minimum_area*8)))
-        return MotifCandidate(((x+right)/2,(y+bottom)/2),(x,y,right-x,bottom-y),score,area)
+        issues = (("Foreground reaches the analysis boundary",)
+                  if np.any(selected[rim]) else ())
+        return MotifCandidate(((x+right)/2,(y+bottom)/2),(x,y,right-x,bottom-y),score,area,
+                              review_reasons=issues)
 
     def _detect_once(
-        self, image_bgr: np.ndarray, settings: DetectorSettings
+        self, image_bgr: np.ndarray, settings: DetectorSettings, *, local_context: bool = False
     ) -> list[MotifCandidate]:
         sensitivity = int(np.clip(settings.sensitivity, 0, 100))
         cleanup = float(np.clip(settings.morphological_cleanup, 0.0, 1.0))
@@ -515,7 +969,8 @@ class MotifDetector:
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, open_kernel)
             mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
 
-        mask = self._remove_camera_surround(mask)
+        if not local_context:
+            mask = self._remove_camera_surround(mask)
 
         candidates = self._components(
             mask,

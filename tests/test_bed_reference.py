@@ -94,7 +94,7 @@ class BedReferenceTests(unittest.TestCase):
         self.assertEqual((result.panel_grid.columns,result.panel_grid.rows),(6,4))
         self.assertEqual(result.panel_grid.source,'reference')
 
-    def test_trusted_grid_removes_bed_artifacts_and_combines_cell_fragments(self):
+    def test_grid_combines_fragments_but_preserves_unexplained_changed_regions(self):
         image=self.reference.copy()
         image[65:420,90:630]=225
         # Changed areas of the bed mimic stains/reflections that survive the
@@ -119,19 +119,24 @@ class BedReferenceTests(unittest.TestCase):
         with patch.object(detector,'_detect_layout',return_value=DetectionResult(tuple(candidates))):
             result=detector.detect_with_layout(image,DetectorSettings())
         self.assertEqual((result.panel_grid.columns,result.panel_grid.rows),(6,4))
-        self.assertEqual(len(result.candidates),24)
-        layout_cells={(round(c.center_px[0]),round(c.center_px[1])) for c in result.candidates}
-        self.assertTrue(all(80 < x < 640 and 60 < y < 425 for x,y in layout_cells))
+        # A changed bed region could also be a separate printed piece. A grid
+        # alone cannot justify deleting it; retain it with explicit uncertainty.
+        self.assertEqual(len(result.candidates),27)
+        outliers=[c for c in result.candidates if not (80 < c.center_px[0] < 640
+                                                       and 60 < c.center_px[1] < 425)]
+        self.assertEqual(len(outliers),3)
+        self.assertTrue(all("Artwork outside the proposed printed grid" in c.review_reasons
+                            for c in outliers))
         merged=[c for c in result.candidates if 390 < c.center_px[0] < 450
                 and 260 < c.center_px[1] < 320]
         self.assertEqual(len(merged),1)
         self.assertGreater(merged[0].area_px,900)
 
-    def test_candidate_cleanup_requires_an_independent_reliable_grid(self):
+    def test_candidate_cleanup_requires_reliability_not_a_source_specific_rule(self):
         grid=PanelGrid.regular(600,400,6,4,confidence=.95,source='pattern')
         candidates=tuple(MotifCandidate((50+i*10,50),(45+i*10,45,10,10),.8,100)
                          for i in range(3))
-        self.assertEqual(_consolidate_grid_candidates(candidates,grid),candidates)
+        self.assertEqual(len(_consolidate_grid_candidates(candidates,grid)),1)
         uncertain=PanelGrid.regular(600,400,6,4,confidence=.70,source='reference')
         self.assertEqual(_consolidate_grid_candidates(candidates,uncertain),candidates)
 

@@ -1,0 +1,54 @@
+{
+  "image": "tests/fixtures/floral_patchwork_recovered.png",
+  "sha256": "48d92672e5e5040c51b0f10dbbae72f2a0e5cb5c6e44806c57cda109b0824b03",
+  "expected_compositions_visual_count": 24,
+  "count": 24,
+  "seconds": 2.0263260999927297,
+  "review_count": 4,
+  "diagnostics": {
+    "detector_revision": "2026-09-21-global-review",
+    "image_size_px": [
+      1545,
+      1018
+    ],
+    "settings": {
+      "sensitivity": 65,
+      "minimum_area_px": 500,
+      "morphological_cleanup": 0.25,
+      "merge_distance_px_x": 14.0,
+      "merge_distance_px_y": 14.0,
+      "layout_mode": "auto"
+    },
+    "reference_status": "No empty-bed reference",
+    "reference_applied": false,
+    "fabric_status": "No independent fabric boundary",
+    "analysis_bounds_px": null,
+    "grid": {
+      "x_lines_px": [
+        39.7386038961041,
+        286.91853896103913,
+        534.0984740259743,
+        781.2784090909092,
+        1028.4583441558443,
+        1275.6382792207794,
+        1522.8182142857142
+      ],
+      "y_lines_px": [
+        35.67545454545458,
+        271.3581818181819,
+        507.04090909090917,
+        742.7236363636365,
+        978.4063636363638
+      ],
+      "confidence": 0.9205538202989927,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "grid_notes": [],
+    "candidates_before_cleanup": 24,
+    "candidates_after_cleanup": 24,
+    "compositions_needing_extent_review": 4
+  }
+}

@@ -1,0 +1,1524 @@
+[
+  {
+    "file": "pastel_6x4.png",
+    "sha256": "1b4816e0ee1957b4c352a3aee65b6220501b77b15d0d4407a3d0aeac00bb195d",
+    "expected_compositions": 24,
+    "candidate_count": 24,
+    "occupied_cells": 24,
+    "missing_cells": [],
+    "duplicate_cells": [],
+    "outside_candidates": [],
+    "cell_coverage_passed": true,
+    "seconds": 0.7887844000360928,
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        25,
+        24,
+        1512,
+        1005
+      ],
+      "grid": {
+        "x_lines_px": [
+          81.69212755836568,
+          310.61792534107695,
+          539.5437231237881,
+          768.4695209064994,
+          997.3953186892106,
+          1226.3211164719219,
+          1455.2469142546333
+        ],
+        "y_lines_px": [
+          104.28738059585825,
+          321.98753277763035,
+          539.6876849594024,
+          757.3878371411745,
+          975.0879893229466
+        ],
+        "confidence": 0.8,
+        "source": "pattern",
+        "lattice": [
+          [
+            197.80503635815916,
+            210.71788827010678
+          ],
+          [
+            228.92579778271124,
+            0.9678273666550048
+          ],
+          [
+            -1.1000066056252342,
+            217.7001521817721
+          ]
+        ],
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 25,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 5
+    },
+    "candidates": [
+      {
+        "center_px": [
+          659.5,
+          194.5
+        ],
+        "bounding_box_px": [
+          568,
+          92,
+          183,
+          205
+        ],
+        "score": 0.4424991885375977,
+        "area_px": 18805,
+        "layout_center_px": [
+          655.0,
+          212.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          429.5,
+          197.0
+        ],
+        "bounding_box_px": [
+          345,
+          101,
+          169,
+          192
+        ],
+        "score": 0.39786499893188476,
+        "area_px": 13857,
+        "layout_center_px": [
+          426.5,
+          212.5
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          885.5,
+          206.5
+        ],
+        "bounding_box_px": [
+          797,
+          114,
+          177,
+          185
+        ],
+        "score": 0.49640858566284185,
+        "area_px": 16240,
+        "layout_center_px": [
+          882.5,
+          216.0
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          194.5,
+          214.0
+        ],
+        "bounding_box_px": [
+          105,
+          130,
+          179,
+          168
+        ],
+        "score": 0.5089292575073242,
+        "area_px": 17722,
+        "layout_center_px": [
+          196.0,
+          215.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1112.0,
+          216.0
+        ],
+        "bounding_box_px": [
+          1029,
+          137,
+          166,
+          158
+        ],
+        "score": 0.396973630065918,
+        "area_px": 10138,
+        "layout_center_px": [
+          1113.5,
+          230.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1337.0,
+          220.0
+        ],
+        "bounding_box_px": [
+          1250,
+          135,
+          174,
+          170
+        ],
+        "score": 0.49689363204956055,
+        "area_px": 18750,
+        "layout_center_px": [
+          1343.5,
+          213.5
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1116.0,
+          424.0
+        ],
+        "bounding_box_px": [
+          1061,
+          328,
+          110,
+          192
+        ],
+        "score": 0.39282648002624515,
+        "area_px": 11832,
+        "layout_center_px": [
+          1115.5,
+          431.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1344.0,
+          430.5
+        ],
+        "bounding_box_px": [
+          1266,
+          343,
+          156,
+          175
+        ],
+        "score": 0.4399524890136719,
+        "area_px": 17735,
+        "layout_center_px": [
+          1343.5,
+          444.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          423.0,
+          435.0
+        ],
+        "bounding_box_px": [
+          366,
+          348,
+          114,
+          174
+        ],
+        "score": 0.5123227969360352,
+        "area_px": 12785,
+        "layout_center_px": [
+          422.0,
+          436.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          205.5,
+          439.0
+        ],
+        "bounding_box_px": [
+          127,
+          357,
+          157,
+          164
+        ],
+        "score": 0.44769328414917,
+        "area_px": 16196,
+        "layout_center_px": [
+          196.0,
+          448.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          888.0,
+          439.0
+        ],
+        "bounding_box_px": [
+          821,
+          356,
+          134,
+          166
+        ],
+        "score": 0.5279433299255372,
+        "area_px": 17011,
+        "layout_center_px": [
+          883.5,
+          441.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          644.5,
+          440.0
+        ],
+        "bounding_box_px": [
+          574,
+          358,
+          141,
+          164
+        ],
+        "score": 0.6927476931762695,
+        "area_px": 14452,
+        "layout_center_px": [
+          647.5,
+          452.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          192.5,
+          645.0
+        ],
+        "bounding_box_px": [
+          108,
+          556,
+          169,
+          178
+        ],
+        "score": 0.49125222122192386,
+        "area_px": 16224,
+        "layout_center_px": [
+          191.0,
+          655.0
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          664.5,
+          648.0
+        ],
+        "bounding_box_px": [
+          581,
+          562,
+          167,
+          172
+        ],
+        "score": 0.500195984954834,
+        "area_px": 17684,
+        "layout_center_px": [
+          659.5,
+          652.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1344.5,
+          650.5
+        ],
+        "bounding_box_px": [
+          1281,
+          569,
+          127,
+          163
+        ],
+        "score": 0.6723201609802245,
+        "area_px": 13266,
+        "layout_center_px": [
+          1342.5,
+          666.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1110.0,
+          657.5
+        ],
+        "bounding_box_px": [
+          1022,
+          580,
+          176,
+          155
+        ],
+        "score": 0.5026719256591797,
+        "area_px": 10179,
+        "layout_center_px": [
+          1098.5,
+          668.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          426.0,
+          660.5
+        ],
+        "bounding_box_px": [
+          359,
+          585,
+          134,
+          151
+        ],
+        "score": 0.4201043482971192,
+        "area_px": 8629,
+        "layout_center_px": [
+          420.4000000000001,
+          665.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          882.5,
+          671.0
+        ],
+        "bounding_box_px": [
+          783,
+          613,
+          199,
+          116
+        ],
+        "score": 0.4749706202697754,
+        "area_px": 15506,
+        "layout_center_px": [
+          884.5,
+          675.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          653.5,
+          850.5
+        ],
+        "bounding_box_px": [
+          577,
+          759,
+          153,
+          183
+        ],
+        "score": 0.4229103423309326,
+        "area_px": 14177,
+        "layout_center_px": [
+          652.5,
+          869.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          422.0,
+          857.5
+        ],
+        "bounding_box_px": [
+          343,
+          772,
+          158,
+          171
+        ],
+        "score": 0.5316001979064942,
+        "area_px": 18300,
+        "layout_center_px": [
+          426.5,
+          862.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          191.0,
+          859.5
+        ],
+        "bounding_box_px": [
+          114,
+          775,
+          154,
+          169
+        ],
+        "score": 0.45953537857055665,
+        "area_px": 18540,
+        "layout_center_px": [
+          190.5,
+          865.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          882.5,
+          859.5
+        ],
+        "bounding_box_px": [
+          805,
+          772,
+          155,
+          175
+        ],
+        "score": 0.506004937286377,
+        "area_px": 14351,
+        "layout_center_px": [
+          886.5,
+          869.5
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1341.5,
+          861.5
+        ],
+        "bounding_box_px": [
+          1254,
+          781,
+          175,
+          161
+        ],
+        "score": 0.45053833114624026,
+        "area_px": 16413,
+        "layout_center_px": [
+          1341.5,
+          866.0
+        ],
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1108.0,
+          884.0
+        ],
+        "bounding_box_px": [
+          1020,
+          831,
+          176,
+          106
+        ],
+        "score": 0.3921514903259278,
+        "area_px": 7561,
+        "layout_center_px": [
+          1105.1000000000004,
+          890.5
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      }
+    ]
+  },
+  {
+    "file": "dogs_6x4.png",
+    "sha256": "6b5e62f0e3243288c69900afdc817db5ca1d201c67a1fdd92b2026b5b3df6efd",
+    "expected_compositions": 24,
+    "candidate_count": 24,
+    "occupied_cells": 24,
+    "missing_cells": [],
+    "duplicate_cells": [],
+    "outside_candidates": [],
+    "cell_coverage_passed": true,
+    "seconds": 2.042642300017178,
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        20,
+        3,
+        1517,
+        1012
+      ],
+      "grid": {
+        "x_lines_px": [
+          79.85724401142676,
+          310.05697191620595,
+          540.2566998209851,
+          770.4564277257642,
+          1000.6561556305434,
+          1230.8558835353224,
+          1461.0556114401015
+        ],
+        "y_lines_px": [
+          56.75402398798026,
+          281.3736278344755,
+          505.9932316809708,
+          730.6128355274661,
+          955.2324393739614
+        ],
+        "confidence": 0.9122836255838921,
+        "source": "camera",
+        "lattice": [
+          [
+            196.01919929675532,
+            169.06549564833358
+          ],
+          [
+            230.19972790477914,
+            -0.000667894842275943
+          ],
+          [
+            -0.7080608886259935,
+            224.61960384649527
+          ]
+        ],
+        "projection": [
+          [
+            229.52019292120312,
+            -1.2131658418614086,
+            196.84368712103657
+          ],
+          [
+            -0.17082723115877904,
+            223.87681175237208,
+            169.49663067800086
+          ],
+          [
+            -0.00033616738822811264,
+            -0.000657077777049179,
+            1.0
+          ]
+        ],
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 15
+    },
+    "candidates": [
+      {
+        "center_px": [
+          662.6069891788826,
+          135.23674247722673
+        ],
+        "bounding_box_px": [
+          531,
+          70,
+          209,
+          120
+        ],
+        "score": 0.40791567326823963,
+        "area_px": 7137,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          189.4092562990924,
+          137.24128809626572
+        ],
+        "bounding_box_px": [
+          137,
+          84,
+          110,
+          110
+        ],
+        "score": 0.39552156250117376,
+        "area_px": 3581,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          426.79168143785705,
+          175.03566448025956
+        ],
+        "bounding_box_px": [
+          352,
+          72,
+          153,
+          206
+        ],
+        "score": 0.37650640977815814,
+        "area_px": 10504,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1342.684830882328,
+          175.10368016731834
+        ],
+        "bounding_box_px": [
+          1237,
+          58,
+          179,
+          235
+        ],
+        "score": 0.3720493446755286,
+        "area_px": 14727,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          890.5577484005162,
+          189.72407123105793
+        ],
+        "bounding_box_px": [
+          796,
+          56,
+          146,
+          223
+        ],
+        "score": 0.3913538808357965,
+        "area_px": 8222,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1143.538832404849,
+          190.1207428083756
+        ],
+        "bounding_box_px": [
+          1032,
+          76,
+          223,
+          228
+        ],
+        "score": 0.619529312133789,
+        "area_px": 20011,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          1354.2498832798572,
+          363.86317364676506
+        ],
+        "bounding_box_px": [
+          1295,
+          303,
+          122,
+          124
+        ],
+        "score": 0.40877372790166105,
+        "area_px": 4517,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1123.0822979253908,
+          376.9939140939588
+        ],
+        "bounding_box_px": [
+          1012,
+          300,
+          176,
+          178
+        ],
+        "score": 0.3622136702482162,
+        "area_px": 4928,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          898.2369025835295,
+          385.79037792357684
+        ],
+        "bounding_box_px": [
+          801,
+          268,
+          194,
+          235
+        ],
+        "score": 1.0,
+        "area_px": 16903,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          192.73734645196743,
+          402.8921824386506
+        ],
+        "bounding_box_px": [
+          119,
+          264,
+          147,
+          246
+        ],
+        "score": 0.38180022169294114,
+        "area_px": 10355,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          652.924002746783,
+          407.4543516382078
+        ],
+        "bounding_box_px": [
+          565,
+          316,
+          165,
+          184
+        ],
+        "score": 0.37922618877366926,
+        "area_px": 7908,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          424.24421591758903,
+          416.7515311947575
+        ],
+        "bounding_box_px": [
+          339,
+          318,
+          161,
+          186
+        ],
+        "score": 0.3881932230011388,
+        "area_px": 11617,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          197.29773883959393,
+          585.1003591962702
+        ],
+        "bounding_box_px": [
+          136,
+          550,
+          122,
+          73
+        ],
+        "score": 0.3609820079979283,
+        "area_px": 4024,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1110.2422691542122,
+          603.7686405131906
+        ],
+        "bounding_box_px": [
+          1028,
+          483,
+          164,
+          242
+        ],
+        "score": 0.4895796413421631,
+        "area_px": 20680,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          416.267999762322,
+          604.1868318567507
+        ],
+        "bounding_box_px": [
+          348,
+          483,
+          137,
+          243
+        ],
+        "score": 0.9042807922363282,
+        "area_px": 17432,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          875.5009932959342,
+          604.2513809473061
+        ],
+        "bounding_box_px": [
+          746,
+          483,
+          259,
+          243
+        ],
+        "score": 0.587277400970459,
+        "area_px": 25429,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          1309.051556399665,
+          617.7258842674468
+        ],
+        "bounding_box_px": [
+          1207,
+          483,
+          204,
+          270
+        ],
+        "score": 0.9379174270629883,
+        "area_px": 16126,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          654.75841253507,
+          618.1365219442321
+        ],
+        "bounding_box_px": [
+          516,
+          483,
+          277,
+          271
+        ],
+        "score": 0.7571733779907226,
+        "area_px": 23218,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          1109.7592613448064,
+          827.7442367322147
+        ],
+        "bounding_box_px": [
+          1028,
+          707,
+          164,
+          241
+        ],
+        "score": 0.893470932006836,
+        "area_px": 20257,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          416.3568945935938,
+          828.4519767748181
+        ],
+        "bounding_box_px": [
+          350,
+          707,
+          133,
+          243
+        ],
+        "score": 0.6375790596008302,
+        "area_px": 14450,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          183.47776203556145,
+          828.8585127267962
+        ],
+        "bounding_box_px": [
+          101,
+          707,
+          165,
+          244
+        ],
+        "score": 0.8220471649169923,
+        "area_px": 23494,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1344.296436164099,
+          829.403614584958
+        ],
+        "bounding_box_px": [
+          1278,
+          708,
+          132,
+          243
+        ],
+        "score": 0.6958258590698243,
+        "area_px": 18063,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ]
+      },
+      {
+        "center_px": [
+          656.5142037707827,
+          852.3055728579056
+        ],
+        "bounding_box_px": [
+          586,
+          749,
+          143,
+          200
+        ],
+        "score": 0.3805398891496099,
+        "area_px": 8579,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          876.8448097130301,
+          856.0307403237912
+        ],
+        "bounding_box_px": [
+          800,
+          763,
+          149,
+          185
+        ],
+        "score": 0.38314270678254747,
+        "area_px": 12644,
+        "layout_center_px": null,
+        "review_reasons": []
+      }
+    ]
+  },
+  {
+    "file": "hearts_6x4.png",
+    "sha256": "79b1f77574d14659e7b7397328df25f33c8acd3b8432bf7937543f3a84dbb171",
+    "expected_compositions": 24,
+    "candidate_count": 24,
+    "occupied_cells": 24,
+    "missing_cells": [],
+    "duplicate_cells": [],
+    "outside_candidates": [],
+    "cell_coverage_passed": true,
+    "seconds": 1.609042700030841,
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        12,
+        13,
+        1525,
+        1002
+      ],
+      "grid": {
+        "x_lines_px": [
+          66.45162554112575,
+          300.8880281385283,
+          535.3244307359308,
+          769.7608333333334,
+          1004.197235930736,
+          1238.6336385281386,
+          1473.0700411255411
+        ],
+        "y_lines_px": [
+          59.627909090909135,
+          278.73781818181817,
+          497.84772727272724,
+          716.9576363636362,
+          936.0675454545454
+        ],
+        "confidence": 0.9686332815051181,
+        "source": "visual",
+        "lattice": null,
+        "projection": null,
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 9
+    },
+    "candidates": [
+      {
+        "center_px": [
+          420.0,
+          170.5
+        ],
+        "bounding_box_px": [
+          330,
+          107,
+          182,
+          153
+        ],
+        "score": 0.3520546353692777,
+        "area_px": 11897,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          652.5,
+          173.5
+        ],
+        "bounding_box_px": [
+          546,
+          89,
+          212,
+          208
+        ],
+        "score": 0.4539669969677016,
+        "area_px": 21621,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          185.0,
+          174.0
+        ],
+        "bounding_box_px": [
+          101,
+          106,
+          169,
+          153
+        ],
+        "score": 0.3901224555969239,
+        "area_px": 14383,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1122.0,
+          174.5
+        ],
+        "bounding_box_px": [
+          1015,
+          78,
+          210,
+          198
+        ],
+        "score": 0.3818678843558896,
+        "area_px": 12529,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1353.0,
+          174.5
+        ],
+        "bounding_box_px": [
+          1261,
+          92,
+          188,
+          171
+        ],
+        "score": 0.44366907752929013,
+        "area_px": 15206,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          885.0,
+          177.0
+        ],
+        "bounding_box_px": [
+          798,
+          105,
+          176,
+          157
+        ],
+        "score": 0.352880414943153,
+        "area_px": 16044,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          651.5,
+          390.0
+        ],
+        "bounding_box_px": [
+          565,
+          291,
+          173,
+          187
+        ],
+        "score": 0.3721124153973544,
+        "area_px": 14459,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          184.5,
+          391.0
+        ],
+        "bounding_box_px": [
+          101,
+          298,
+          187,
+          182
+        ],
+        "score": 0.37799963807903214,
+        "area_px": 17674,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          416.5,
+          391.0
+        ],
+        "bounding_box_px": [
+          302,
+          311,
+          232,
+          206
+        ],
+        "score": 0.41709106636240995,
+        "area_px": 21671,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1118.0,
+          392.0
+        ],
+        "bounding_box_px": [
+          1028,
+          322,
+          178,
+          158
+        ],
+        "score": 0.35625508642843706,
+        "area_px": 10612,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          884.0,
+          393.5
+        ],
+        "bounding_box_px": [
+          791,
+          317,
+          190,
+          162
+        ],
+        "score": 0.4231949796941431,
+        "area_px": 18584,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1355.5,
+          397.0
+        ],
+        "bounding_box_px": [
+          1238,
+          297,
+          231,
+          208
+        ],
+        "score": 0.3655063104230919,
+        "area_px": 12561,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          185.5,
+          609.0
+        ],
+        "bounding_box_px": [
+          89,
+          537,
+          200,
+          166
+        ],
+        "score": 0.4313242416381836,
+        "area_px": 20724,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          422.5,
+          609.0
+        ],
+        "bounding_box_px": [
+          327,
+          544,
+          183,
+          156
+        ],
+        "score": 0.3509692646924415,
+        "area_px": 11829,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          1355.0,
+          612.0
+        ],
+        "bounding_box_px": [
+          1258,
+          500,
+          200,
+          218
+        ],
+        "score": 0.39348275049312,
+        "area_px": 18514,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          885.5,
+          612.5
+        ],
+        "bounding_box_px": [
+          791,
+          534,
+          189,
+          167
+        ],
+        "score": 0.369634184369246,
+        "area_px": 15873,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          652.5,
+          613.5
+        ],
+        "bounding_box_px": [
+          550,
+          518,
+          210,
+          201
+        ],
+        "score": 0.36032190337027953,
+        "area_px": 8127,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1118.5,
+          614.5
+        ],
+        "bounding_box_px": [
+          1028,
+          545,
+          185,
+          157
+        ],
+        "score": 0.4155274639129639,
+        "area_px": 18434,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          185.0,
+          823.5500000000002
+        ],
+        "bounding_box_px": [
+          94,
+          755,
+          182,
+          165
+        ],
+        "score": 0.34242394535092807,
+        "area_px": 11944,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          884.5,
+          830.5
+        ],
+        "bounding_box_px": [
+          799,
+          762,
+          173,
+          157
+        ],
+        "score": 0.3548691737050419,
+        "area_px": 8452,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1354.0,
+          831.0
+        ],
+        "bounding_box_px": [
+          1261,
+          756,
+          188,
+          164
+        ],
+        "score": 0.3950093201700324,
+        "area_px": 19949,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "center_px": [
+          650.0,
+          832.0
+        ],
+        "bounding_box_px": [
+          515,
+          759,
+          236,
+          182
+        ],
+        "score": 0.43996816619420503,
+        "area_px": 16134,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          418.0,
+          833.5
+        ],
+        "bounding_box_px": [
+          311,
+          738,
+          195,
+          204
+        ],
+        "score": 0.3714954215636073,
+        "area_px": 7778,
+        "layout_center_px": null,
+        "review_reasons": []
+      },
+      {
+        "center_px": [
+          1117.5,
+          834.5
+        ],
+        "bounding_box_px": [
+          1009,
+          732,
+          221,
+          209
+        ],
+        "score": 0.41574844417166923,
+        "area_px": 16950,
+        "layout_center_px": null,
+        "review_reasons": []
+      }
+    ]
+  }
+]

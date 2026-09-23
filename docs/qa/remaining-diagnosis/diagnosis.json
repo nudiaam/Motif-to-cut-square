@@ -1,0 +1,2150 @@
+{
+  "source_sha256": "6b5e62f0e3243288c69900afdc817db5ca1d201c67a1fdd92b2026b5b3df6efd",
+  "detector_revision": "2026-09-21-global-review",
+  "application_files_changed": false,
+  "baseline": {
+    "count": 24,
+    "calls": [
+      {
+        "index": 0,
+        "cell_row_major": [
+          1,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 20761,
+        "returned_region": null
+      },
+      {
+        "index": 1,
+        "cell_row_major": [
+          2,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25045,
+        "returned_region": null
+      },
+      {
+        "index": 2,
+        "cell_row_major": [
+          3,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 21439,
+        "returned_region": null
+      },
+      {
+        "index": 3,
+        "cell_row_major": [
+          4,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26358,
+        "returned_region": null
+      },
+      {
+        "index": 4,
+        "cell_row_major": [
+          5,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 11,
+        "probable_foreground_pixels": 22169,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2689130682465535,
+        "foreground_box": [
+          53,
+          41,
+          215,
+          221
+        ],
+        "returned_region": {
+          "center_px": [
+            160.5,
+            151.5
+          ],
+          "bounding_box_px": [
+            53,
+            41,
+            215,
+            221
+          ],
+          "score": 0.619529312133789,
+          "area_px": 18882,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "cell_row_major": [
+          6,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 21881,
+        "returned_region": null
+      },
+      {
+        "index": 6,
+        "cell_row_major": [
+          1,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 22478,
+        "returned_region": null
+      },
+      {
+        "index": 7,
+        "cell_row_major": [
+          2,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26290,
+        "returned_region": null
+      },
+      {
+        "index": 8,
+        "cell_row_major": [
+          3,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25753,
+        "returned_region": null
+      },
+      {
+        "index": 9,
+        "cell_row_major": [
+          4,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 4,
+        "probable_foreground_pixels": 23918,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2271419619459952,
+        "foreground_box": [
+          53,
+          10,
+          187,
+          227
+        ],
+        "returned_region": {
+          "center_px": [
+            146.5,
+            123.5
+          ],
+          "bounding_box_px": [
+            53,
+            10,
+            187,
+            227
+          ],
+          "score": 1.0,
+          "area_px": 15949,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 10,
+        "cell_row_major": [
+          5,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 23314,
+        "returned_region": null
+      },
+      {
+        "index": 11,
+        "cell_row_major": [
+          6,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 20459,
+        "returned_region": null
+      },
+      {
+        "index": 12,
+        "cell_row_major": [
+          1,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25479,
+        "returned_region": null
+      },
+      {
+        "index": 13,
+        "cell_row_major": [
+          2,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 8,
+        "probable_foreground_pixels": 21675,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2342486043067107,
+        "foreground_box": [
+          60,
+          0,
+          131,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            125.5,
+            117.5
+          ],
+          "bounding_box_px": [
+            60,
+            0,
+            131,
+            235
+          ],
+          "score": 0.9042807922363282,
+          "area_px": 16448,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 14,
+        "cell_row_major": [
+          3,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 15,
+        "probable_foreground_pixels": 26989,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.3131772307516368,
+        "foreground_box": [
+          0,
+          0,
+          267,
+          262
+        ],
+        "returned_region": {
+          "center_px": [
+            133.5,
+            131.0
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            267,
+            262
+          ],
+          "score": 0.7571733779907226,
+          "area_px": 21908,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 15,
+        "cell_row_major": [
+          4,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 9,
+        "probable_foreground_pixels": 25090,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.3417169875811781,
+        "foreground_box": [
+          0,
+          0,
+          250,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            125.0,
+            117.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            250,
+            235
+          ],
+          "score": 0.587277400970459,
+          "area_px": 23994,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 16,
+        "cell_row_major": [
+          5,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 13,
+        "probable_foreground_pixels": 23370,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.277899624017318,
+        "foreground_box": [
+          50,
+          0,
+          158,
+          234
+        ],
+        "returned_region": {
+          "center_px": [
+            129.0,
+            117.0
+          ],
+          "bounding_box_px": [
+            50,
+            0,
+            158,
+            234
+          ],
+          "score": 0.4895796413421631,
+          "area_px": 19513,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 17,
+        "cell_row_major": [
+          6,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 1,
+        "probable_foreground_pixels": 26246,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.21670274581292012,
+        "foreground_box": [
+          0,
+          0,
+          196,
+          261
+        ],
+        "returned_region": {
+          "center_px": [
+            98.0,
+            130.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            196,
+            261
+          ],
+          "score": 0.9379174270629883,
+          "area_px": 15216,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 18,
+        "cell_row_major": [
+          1,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 7,
+        "probable_foreground_pixels": 24164,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.315711518742167,
+        "foreground_box": [
+          45,
+          0,
+          158,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            124.0,
+            117.5
+          ],
+          "bounding_box_px": [
+            45,
+            0,
+            158,
+            235
+          ],
+          "score": 0.8220471649169923,
+          "area_px": 22168,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 19,
+        "cell_row_major": [
+          2,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 18,
+        "probable_foreground_pixels": 20544,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.19418651019710606,
+        "foreground_box": [
+          63,
+          0,
+          127,
+          234
+        ],
+        "returned_region": {
+          "center_px": [
+            126.5,
+            117.0
+          ],
+          "bounding_box_px": [
+            63,
+            0,
+            127,
+            234
+          ],
+          "score": 0.6375790596008302,
+          "area_px": 13635,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 20,
+        "cell_row_major": [
+          3,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 22537,
+        "returned_region": null
+      },
+      {
+        "index": 21,
+        "cell_row_major": [
+          4,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26195,
+        "returned_region": null
+      },
+      {
+        "index": 22,
+        "cell_row_major": [
+          5,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 24,
+        "probable_foreground_pixels": 24976,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2722171584823972,
+        "foreground_box": [
+          50,
+          0,
+          158,
+          232
+        ],
+        "returned_region": {
+          "center_px": [
+            129.0,
+            116.0
+          ],
+          "bounding_box_px": [
+            50,
+            0,
+            158,
+            232
+          ],
+          "score": 0.893470932006836,
+          "area_px": 19114,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 23,
+        "cell_row_major": [
+          6,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 14,
+        "probable_foreground_pixels": 22622,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.24273669818844706,
+        "foreground_box": [
+          69,
+          0,
+          127,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            132.5,
+            117.5
+          ],
+          "bounding_box_px": [
+            69,
+            0,
+            127,
+            235
+          ],
+          "score": 0.6958258590698243,
+          "area_px": 17044,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      }
+    ],
+    "witnesses": [
+      {
+        "cell": [
+          1,
+          1
+        ],
+        "name": "dalmatian",
+        "points": [
+          [
+            165,
+            264
+          ],
+          [
+            230,
+            264
+          ]
+        ],
+        "detected_box": [
+          137,
+          84,
+          110,
+          110
+        ],
+        "review_window": [
+          97,
+          44,
+          190,
+          190
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "points_outside_detection": [
+          [
+            165,
+            264
+          ],
+          [
+            230,
+            264
+          ]
+        ],
+        "points_outside_review_window": [
+          [
+            165,
+            264
+          ],
+          [
+            230,
+            264
+          ]
+        ]
+      },
+      {
+        "cell": [
+          3,
+          1
+        ],
+        "name": "pug",
+        "points": [
+          [
+            625,
+            257
+          ],
+          [
+            688,
+            257
+          ],
+          [
+            657,
+            224
+          ]
+        ],
+        "detected_box": [
+          531,
+          70,
+          209,
+          120
+        ],
+        "review_window": [
+          491,
+          30,
+          289,
+          200
+        ],
+        "review_reasons": [],
+        "points_outside_detection": [
+          [
+            625,
+            257
+          ],
+          [
+            688,
+            257
+          ],
+          [
+            657,
+            224
+          ]
+        ],
+        "points_outside_review_window": [
+          [
+            625,
+            257
+          ],
+          [
+            688,
+            257
+          ]
+        ]
+      },
+      {
+        "cell": [
+          6,
+          2
+        ],
+        "name": "french_bulldog",
+        "points": [
+          [
+            1327,
+            481
+          ],
+          [
+            1389,
+            481
+          ]
+        ],
+        "detected_box": [
+          1295,
+          303,
+          122,
+          124
+        ],
+        "review_window": [
+          1255,
+          263,
+          202,
+          204
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "points_outside_detection": [
+          [
+            1327,
+            481
+          ],
+          [
+            1389,
+            481
+          ]
+        ],
+        "points_outside_review_window": [
+          [
+            1327,
+            481
+          ],
+          [
+            1389,
+            481
+          ]
+        ]
+      },
+      {
+        "cell": [
+          1,
+          3
+        ],
+        "name": "golden_retriever",
+        "points": [
+          [
+            160,
+            710
+          ],
+          [
+            221,
+            710
+          ]
+        ],
+        "detected_box": [
+          136,
+          550,
+          122,
+          73
+        ],
+        "review_window": [
+          96,
+          510,
+          202,
+          153
+        ],
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "points_outside_detection": [
+          [
+            160,
+            710
+          ],
+          [
+            221,
+            710
+          ]
+        ],
+        "points_outside_review_window": [
+          [
+            160,
+            710
+          ],
+          [
+            221,
+            710
+          ]
+        ]
+      }
+    ],
+    "diagnostics": {
+      "detector_revision": "2026-09-21-global-review",
+      "image_size_px": [
+        1536,
+        1024
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto"
+      },
+      "reference_status": "No empty-bed reference",
+      "reference_applied": false,
+      "fabric_status": "Visible fabric boundary applied (without bed matching)",
+      "analysis_bounds_px": [
+        20,
+        3,
+        1517,
+        1012
+      ],
+      "grid": {
+        "x_lines_px": [
+          79.85724401142676,
+          310.05697191620595,
+          540.2566998209851,
+          770.4564277257642,
+          1000.6561556305434,
+          1230.8558835353224,
+          1461.0556114401015
+        ],
+        "y_lines_px": [
+          56.75402398798026,
+          281.3736278344755,
+          505.9932316809708,
+          730.6128355274661,
+          955.2324393739614
+        ],
+        "confidence": 0.9122836255838921,
+        "source": "camera",
+        "lattice": [
+          [
+            196.01919929675532,
+            169.06549564833358
+          ],
+          [
+            230.19972790477914,
+            -0.000667894842275943
+          ],
+          [
+            -0.7080608886259935,
+            224.61960384649527
+          ]
+        ],
+        "projection": [
+          [
+            229.52019292120312,
+            -1.2131658418614086,
+            196.84368712103657
+          ],
+          [
+            -0.17082723115877904,
+            223.87681175237208,
+            169.49663067800086
+          ],
+          [
+            -0.00033616738822811264,
+            -0.000657077777049179,
+            1.0
+          ]
+        ],
+        "review_reasons": []
+      },
+      "grid_notes": [],
+      "candidates_before_cleanup": 24,
+      "candidates_after_cleanup": 24,
+      "compositions_needing_extent_review": 15
+    }
+  },
+  "ablation_remove_hard_bg_guard_only": {
+    "count": 24,
+    "calls": [
+      {
+        "index": 0,
+        "cell_row_major": [
+          1,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 20761,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.24008772929246897,
+        "foreground_box": [
+          66,
+          41,
+          202,
+          221
+        ],
+        "returned_region": {
+          "center_px": [
+            167.0,
+            151.5
+          ],
+          "bounding_box_px": [
+            66,
+            41,
+            202,
+            221
+          ],
+          "score": 0.5425782890319824,
+          "area_px": 16858,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 1,
+        "cell_row_major": [
+          2,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25045,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2788538224906004,
+        "foreground_box": [
+          63,
+          45,
+          141,
+          189
+        ],
+        "returned_region": {
+          "center_px": [
+            133.5,
+            139.5
+          ],
+          "bounding_box_px": [
+            63,
+            45,
+            141,
+            189
+          ],
+          "score": 0.7203657112121582,
+          "area_px": 19580,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 2,
+        "cell_row_major": [
+          3,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 21439,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.24391743145495612,
+        "foreground_box": [
+          65,
+          57,
+          131,
+          175
+        ],
+        "returned_region": {
+          "center_px": [
+            130.5,
+            144.5
+          ],
+          "bounding_box_px": [
+            65,
+            57,
+            131,
+            175
+          ],
+          "score": 0.6852412872314453,
+          "area_px": 17063,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 3,
+        "cell_row_major": [
+          4,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26358,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.23686908966617296,
+        "foreground_box": [
+          0,
+          48,
+          268,
+          214
+        ],
+        "returned_region": {
+          "center_px": [
+            134.0,
+            155.0
+          ],
+          "bounding_box_px": [
+            0,
+            48,
+            268,
+            214
+          ],
+          "score": 0.4845384101867676,
+          "area_px": 16632,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "cell_row_major": [
+          5,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 11,
+        "probable_foreground_pixels": 22169,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2689130682465535,
+        "foreground_box": [
+          53,
+          41,
+          215,
+          221
+        ],
+        "returned_region": {
+          "center_px": [
+            160.5,
+            151.5
+          ],
+          "bounding_box_px": [
+            53,
+            41,
+            215,
+            221
+          ],
+          "score": 0.619529312133789,
+          "area_px": 18882,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "cell_row_major": [
+          6,
+          1
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 21881,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.25519824541415065,
+        "foreground_box": [
+          60,
+          25,
+          141,
+          211
+        ],
+        "returned_region": {
+          "center_px": [
+            130.5,
+            130.5
+          ],
+          "bounding_box_px": [
+            60,
+            25,
+            141,
+            211
+          ],
+          "score": 1.0,
+          "area_px": 17919,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 6,
+        "cell_row_major": [
+          1,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 22478,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.27375526945425543,
+        "foreground_box": [
+          60,
+          0,
+          157,
+          240
+        ],
+        "returned_region": {
+          "center_px": [
+            138.5,
+            120.0
+          ],
+          "bounding_box_px": [
+            60,
+            0,
+            157,
+            240
+          ],
+          "score": 0.5809514389038086,
+          "area_px": 19222,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 7,
+        "cell_row_major": [
+          2,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26290,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.24206733508032358,
+        "foreground_box": [
+          50,
+          0,
+          155,
+          237
+        ],
+        "returned_region": {
+          "center_px": [
+            127.5,
+            118.5
+          ],
+          "bounding_box_px": [
+            50,
+            0,
+            155,
+            237
+          ],
+          "score": 0.7292010536193847,
+          "area_px": 16997,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 8,
+        "cell_row_major": [
+          3,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25753,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.3218400663293021,
+        "foreground_box": [
+          46,
+          0,
+          159,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            125.5,
+            117.5
+          ],
+          "bounding_box_px": [
+            46,
+            0,
+            159,
+            235
+          ],
+          "score": 0.6085864486694337,
+          "area_px": 22514,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 9,
+        "cell_row_major": [
+          4,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 4,
+        "probable_foreground_pixels": 23918,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2271419619459952,
+        "foreground_box": [
+          53,
+          10,
+          187,
+          227
+        ],
+        "returned_region": {
+          "center_px": [
+            146.5,
+            123.5
+          ],
+          "bounding_box_px": [
+            53,
+            10,
+            187,
+            227
+          ],
+          "score": 1.0,
+          "area_px": 15949,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 10,
+        "cell_row_major": [
+          5,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 23314,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2554688390110516,
+        "foreground_box": [
+          0,
+          0,
+          203,
+          239
+        ],
+        "returned_region": {
+          "center_px": [
+            101.5,
+            119.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            203,
+            239
+          ],
+          "score": 0.5114982929229737,
+          "area_px": 17938,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 11,
+        "cell_row_major": [
+          6,
+          2
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 20459,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.22793950096844023,
+        "foreground_box": [
+          63,
+          0,
+          138,
+          262
+        ],
+        "returned_region": {
+          "center_px": [
+            132.0,
+            131.0
+          ],
+          "bounding_box_px": [
+            63,
+            0,
+            138,
+            262
+          ],
+          "score": 0.861845687866211,
+          "area_px": 16005,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 12,
+        "cell_row_major": [
+          1,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 25479,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2896775663666401,
+        "foreground_box": [
+          54,
+          20,
+          150,
+          242
+        ],
+        "returned_region": {
+          "center_px": [
+            129.0,
+            141.0
+          ],
+          "bounding_box_px": [
+            54,
+            20,
+            150,
+            242
+          ],
+          "score": 0.6973443069458007,
+          "area_px": 20340,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 13,
+        "cell_row_major": [
+          2,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 8,
+        "probable_foreground_pixels": 21675,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2342486043067107,
+        "foreground_box": [
+          60,
+          0,
+          131,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            125.5,
+            117.5
+          ],
+          "bounding_box_px": [
+            60,
+            0,
+            131,
+            235
+          ],
+          "score": 0.9042807922363282,
+          "area_px": 16448,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 14,
+        "cell_row_major": [
+          3,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 15,
+        "probable_foreground_pixels": 26989,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.3131772307516368,
+        "foreground_box": [
+          0,
+          0,
+          267,
+          262
+        ],
+        "returned_region": {
+          "center_px": [
+            133.5,
+            131.0
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            267,
+            262
+          ],
+          "score": 0.7571733779907226,
+          "area_px": 21908,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 15,
+        "cell_row_major": [
+          4,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 9,
+        "probable_foreground_pixels": 25090,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.3417169875811781,
+        "foreground_box": [
+          0,
+          0,
+          250,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            125.0,
+            117.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            250,
+            235
+          ],
+          "score": 0.587277400970459,
+          "area_px": 23994,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 16,
+        "cell_row_major": [
+          5,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 13,
+        "probable_foreground_pixels": 23370,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.277899624017318,
+        "foreground_box": [
+          50,
+          0,
+          158,
+          234
+        ],
+        "returned_region": {
+          "center_px": [
+            129.0,
+            117.0
+          ],
+          "bounding_box_px": [
+            50,
+            0,
+            158,
+            234
+          ],
+          "score": 0.4895796413421631,
+          "area_px": 19513,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 17,
+        "cell_row_major": [
+          6,
+          3
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 1,
+        "probable_foreground_pixels": 26246,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.21670274581292012,
+        "foreground_box": [
+          0,
+          0,
+          196,
+          261
+        ],
+        "returned_region": {
+          "center_px": [
+            98.0,
+            130.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            196,
+            261
+          ],
+          "score": 0.9379174270629883,
+          "area_px": 15216,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 18,
+        "cell_row_major": [
+          1,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 7,
+        "probable_foreground_pixels": 24164,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.315711518742167,
+        "foreground_box": [
+          45,
+          0,
+          158,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            124.0,
+            117.5
+          ],
+          "bounding_box_px": [
+            45,
+            0,
+            158,
+            235
+          ],
+          "score": 0.8220471649169923,
+          "area_px": 22168,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 19,
+        "cell_row_major": [
+          2,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 18,
+        "probable_foreground_pixels": 20544,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.19418651019710606,
+        "foreground_box": [
+          63,
+          0,
+          127,
+          234
+        ],
+        "returned_region": {
+          "center_px": [
+            126.5,
+            117.0
+          ],
+          "bounding_box_px": [
+            63,
+            0,
+            127,
+            234
+          ],
+          "score": 0.6375790596008302,
+          "area_px": 13635,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 20,
+        "cell_row_major": [
+          3,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          245,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 22537,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2483775052177145,
+        "foreground_box": [
+          67,
+          38,
+          139,
+          194
+        ],
+        "returned_region": {
+          "center_px": [
+            136.5,
+            135.0
+          ],
+          "bounding_box_px": [
+            67,
+            38,
+            139,
+            194
+          ],
+          "score": 0.8373111228942871,
+          "area_px": 17375,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 21,
+        "cell_row_major": [
+          4,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 0,
+        "probable_foreground_pixels": 26195,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2322120314458243,
+        "foreground_box": [
+          54,
+          11,
+          142,
+          221
+        ],
+        "returned_region": {
+          "center_px": [
+            125.0,
+            121.5
+          ],
+          "bounding_box_px": [
+            54,
+            11,
+            142,
+            221
+          ],
+          "score": 0.8145421981811524,
+          "area_px": 16305,
+          "layout_center_px": null,
+          "review_reasons": []
+        }
+      },
+      {
+        "index": 22,
+        "cell_row_major": [
+          5,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 24,
+        "probable_foreground_pixels": 24976,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.2722171584823972,
+        "foreground_box": [
+          50,
+          0,
+          158,
+          232
+        ],
+        "returned_region": {
+          "center_px": [
+            129.0,
+            116.0
+          ],
+          "bounding_box_px": [
+            50,
+            0,
+            158,
+            232
+          ],
+          "score": 0.893470932006836,
+          "area_px": 19114,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      },
+      {
+        "index": 23,
+        "cell_row_major": [
+          6,
+          4
+        ],
+        "core_bounds": [
+          22,
+          22,
+          246,
+          240
+        ],
+        "minimum_area": 471,
+        "sure_background_pixels": 14,
+        "probable_foreground_pixels": 22622,
+        "grabcut_executed": true,
+        "foreground_fraction": 0.24273669818844706,
+        "foreground_box": [
+          69,
+          0,
+          127,
+          235
+        ],
+        "returned_region": {
+          "center_px": [
+            132.5,
+            117.5
+          ],
+          "bounding_box_px": [
+            69,
+            0,
+            127,
+            235
+          ],
+          "score": 0.6958258590698243,
+          "area_px": 17044,
+          "layout_center_px": null,
+          "review_reasons": [
+            "Foreground reaches the analysis boundary"
+          ]
+        }
+      }
+    ],
+    "witnesses": [
+      {
+        "cell": [
+          1,
+          1
+        ],
+        "name": "dalmatian",
+        "points": [
+          [
+            165,
+            264
+          ],
+          [
+            230,
+            264
+          ]
+        ],
+        "detected_box": [
+          126,
+          76,
+          209,
+          229
+        ],
+        "review_window": [
+          86,
+          36,
+          289,
+          309
+        ],
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ],
+        "points_outside_detection": [],
+        "points_outside_review_window": []
+      },
+      {
+        "cell": [
+          3,
+          1
+        ],
+        "name": "pug",
+        "points": [
+          [
+            625,
+            257
+          ],
+          [
+            688,
+            257
+          ],
+          [
+            657,
+            224
+          ]
+        ],
+        "detected_box": [
+          585,
+          93,
+          136,
+          181
+        ],
+        "review_window": [
+          545,
+          53,
+          216,
+          261
+        ],
+        "review_reasons": [],
+        "points_outside_detection": [],
+        "points_outside_review_window": []
+      },
+      {
+        "cell": [
+          6,
+          2
+        ],
+        "name": "french_bulldog",
+        "points": [
+          [
+            1327,
+            481
+          ],
+          [
+            1389,
+            481
+          ]
+        ],
+        "detected_box": [
+          1273,
+          258,
+          143,
+          271
+        ],
+        "review_window": [
+          1233,
+          218,
+          223,
+          351
+        ],
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ],
+        "points_outside_detection": [],
+        "points_outside_review_window": []
+      },
+      {
+        "cell": [
+          1,
+          3
+        ],
+        "name": "golden_retriever",
+        "points": [
+          [
+            160,
+            710
+          ],
+          [
+            221,
+            710
+          ]
+        ],
+        "detected_box": [
+          111,
+          503,
+          157,
+          251
+        ],
+        "review_window": [
+          71,
+          463,
+          237,
+          331
+        ],
+        "review_reasons": [
+          "Foreground reaches the analysis boundary"
+        ],
+        "points_outside_detection": [],
+        "points_outside_review_window": []
+      }
+    ]
+  },
+  "mechanism_probes": {
+    "complete_figure_background_comparison": [
+      {
+        "striped_background": false,
+        "review_reasons": []
+      },
+      {
+        "striped_background": true,
+        "review_reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      }
+    ],
+    "local_border_component": {
+      "input_pixels": 4800,
+      "retained_pixels": 0
+    }
+  },
+  "grid_line_max_error_px": {
+    "x": 3.543572274235771,
+    "y": 3.7675606260386303
+  }
+}

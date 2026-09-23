@@ -12,6 +12,7 @@ from PySide6.QtCore import (
     Signal,
 )
 from PySide6.QtGui import QColor, QPainter, QPen
+from app.ui.cut_status import cut_status_color, OVERLAP_COLOR, REVIEW_COLOR
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -105,8 +106,8 @@ HELP = {
     "merge": "Sets the maximum physical gap for grouping nearby printed fragments into one motif, such as a bird and branch or a mushroom cap and stem. Low values keep groups separate and may split one motif into several detections. High values join fragments farther apart, but may combine neighboring motifs.",
     "detections_section": "Lists every automatically detected or manually added motif center. A row checkbox controls export inclusion.",
     "total": "The total number of detections currently present.",
-    "valid": "Enabled detections whose global cut rectangle fits inside the bed and does not touch another enabled cut.",
-    "invalid": "Enabled cuts that extend outside the bed or touch another cut. Outside cuts are red, collisions are orange, and neither is exported.",
+    "valid": "Enabled cuts without known geometry or assignment problems. This does not confirm that every intended figure was found: compare the result with the image.",
+    "invalid": "Enabled cuts with overlap, outside-bed, clipped-artwork or assignment warnings. Every checked cut is still included in the SVG; review the warnings before exporting.",
     "disabled": "Detections manually excluded from export. They remain visible and can be enabled again.",
     "selected_section": "Shows pixel coordinates, physical coordinates, global cut geometry, boundary status, and export state for the selected detection.",
     "export_units": "SVG units normally follow the working units. Choosing another unit triggers a warning before export because downstream software may interpret unit conversions differently.",
@@ -261,6 +262,11 @@ class SidePanel(QWidget):
         )
         self.detection_review_hint.setWordWrap(True)
         layout.addWidget(self.detection_review_hint)
+        self.detection_reference_label = QLabel()
+        self.detection_reference_label.setWordWrap(True)
+        self.detection_reference_label.setObjectName("mutedHint")
+        self.detection_reference_label.setVisible(False)
+        layout.addWidget(self.detection_reference_label)
         self.confirm_detection_button = QPushButton(
             "Detection is correct — continue"
         )
@@ -569,18 +575,17 @@ class SidePanel(QWidget):
         self.review_actions.setVisible("actions" in visibility)
         self.export_options.setVisible("export" in visibility)
         self._render_logical_layout()
-        # Layout assignment and ambiguity details belong to Review cuts.  The
-        # Detect step only reports whether an automatic grid actually governs
-        # the visible cut centres.
+        # Assignment warnings are visible before confirmation. Detailed guide
+        # overlays remain optional in Review cuts.
         self.show_layout_checkbox.setVisible(phase == "review")
         self.set_detections(self._detections, self._selected_ids, self._selected_id)
         self.scroll.verticalScrollBar().setValue(0)
 
     def set_detection_review_state(
-        self, has_detections: bool, confirmed: bool
+        self, has_detections: bool, confirmed: bool, *, has_image: bool = False
     ) -> None:
         self.confirm_detection_button.setEnabled(has_detections and not confirmed)
-        self.review_grid_button.setEnabled(has_detections and not confirmed)
+        self.review_grid_button.setEnabled(has_image and not confirmed)
         if confirmed:
             self.detection_review_hint.setText(
                 "✓ Detection confirmed. Review the cut areas next."
@@ -588,14 +593,15 @@ class SidePanel(QWidget):
             self.confirm_detection_button.setText("✓ Detection confirmed")
         elif has_detections:
             self.detection_review_hint.setText(
-                "Compare every cut area with the image. Are all intended figures detected exactly once?"
+                "Compare every cut area with the image. Are all intended figures detected exactly once? "
+                "Ready cuts alone do not confirm a complete detection."
             )
             self.confirm_detection_button.setText(
                 "Detection is correct — continue"
             )
         else:
             self.detection_review_hint.setText(
-                "Run detection, then compare every result with the image."
+                "Run detection or use Adjust panel grid to set the rows and columns, then detect again."
             )
             self.confirm_detection_button.setText(
                 "Detection is correct — continue"
@@ -709,6 +715,13 @@ class SidePanel(QWidget):
             )
         )
         self._register_detection_resets()
+        self.detection_report_button = QPushButton("Save detection report…")
+        self.detection_report_button.setEnabled(False)
+        self.detection_report_button.setToolTip(
+            "Save settings, reference status, grid evidence and cut positions as JSON. "
+            "Keep the original photograph with this report when reporting a problem."
+        )
+        advanced_layout.addWidget(self.detection_report_button)
         return self._section(
             "ADVANCED DETECTION SETTINGS",
             self.advanced_detection_controls,
@@ -744,6 +757,18 @@ class SidePanel(QWidget):
             stats_layout.addWidget(value, 1, column, Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(stats)
 
+        self.cut_color_legend = QLabel(
+            f'<span style="color:{OVERLAP_COLOR}">■ Overlapping cuts</span><br>'
+            f'<span style="color:{REVIEW_COLOR}">■ Artwork / layout needs review</span>'
+        )
+        self.cut_color_legend.setWordWrap(True)
+        self.cut_color_legend.setToolTip(
+            "Orange means cuts overlap. Purple means artwork may be clipped, "
+            "its extent is uncertain, or its grid assignment needs review. "
+            "If both apply, overlap takes priority; all reasons remain in the cut details."
+        )
+        layout.addWidget(self.cut_color_legend)
+
         self._logical_layout = LogicalLayout()
         self.layout_status_label = QLabel(self._logical_layout.reason)
         self.layout_status_label.setWordWrap(True)
@@ -772,6 +797,21 @@ class SidePanel(QWidget):
         self.detection_list.viewport().installEventFilter(self)
         layout.addWidget(self.detection_list)
         return self._section("CUT AREAS", box, HELP["detections_section"])
+
+    def set_detection_diagnostics(self, diagnostics: dict) -> None:
+        self.detection_report_button.setEnabled(bool(diagnostics))
+        self.detection_reference_label.setVisible(bool(diagnostics))
+        status = diagnostics.get("reference_status", "")
+        if diagnostics.get("reference_applied"):
+            text = "Empty-bed reference applied."
+        elif status == "No empty-bed reference":
+            text = "No empty-bed reference is set."
+        else:
+            text = "Empty-bed reference not applied: " + status.rstrip(".") + "."
+        if diagnostics.get("fabric_status", "").startswith("Visible fabric boundary"):
+            text += " Visible fabric boundary used."
+        self.detection_reference_label.setText("Last detection: " + text if diagnostics else "")
+        self.detection_reference_label.setToolTip("\n".join(diagnostics.get("grid_notes", [])))
 
     def set_logical_layout(self, result: LogicalLayout, accepted_count: int = 0) -> None:
         self._logical_layout = result
@@ -808,6 +848,20 @@ class SidePanel(QWidget):
                        else result.reason)
                     + (f"\n{sum(bool(m.review_reason) for m in result.matches)} artwork spans multiple cells."
                        if any(m.review_reason for m in result.matches) else "")
+                )
+            if self._phase == "detect":
+                warnings = []
+                if outliers:
+                    warnings.append(f"{outliers} outliers/duplicates need review.")
+                spanning = sum(bool(m.review_reason) for m in result.matches)
+                if spanning:
+                    warnings.append(f"{spanning} artwork spans multiple cells.")
+                if warnings:
+                    self.layout_status_label.setText(self.layout_status_label.text() + "\n" + "\n".join(warnings))
+            inferred = sum(d.inferred and not d.manual for d in self._detections)
+            if inferred:
+                self.layout_status_label.setText(
+                    self.layout_status_label.text() + f"\n{inferred} cuts added from grid spacing; check the image."
                 )
         self.layout_status_label.setToolTip(
             f"Mean residual: {result.mean_residual_px:.2f} px; "
@@ -930,7 +984,6 @@ class SidePanel(QWidget):
         self.distribute_columns_button.setEnabled(edit_enabled)
         self.distribute_rows_button.setEnabled(edit_enabled)
         self.grid_spacing_controls.setVisible(edit_enabled)
-        self.redetect_grid_button.setEnabled(available)
         if not available:
             self.grid_status_label.setText(
                 "Enter rows and columns to create the panel grid"
@@ -1046,7 +1099,9 @@ class SidePanel(QWidget):
         blocker = QSignalBlocker(self.detection_list)
         self.detection_list.clear()
         primary_item: QListWidgetItem | None = None
+        warning_ids = set()
         for detection in detections:
+            match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
             if not detection.enabled:
                 state = "EXCLUDED"
             elif detection.overlaps_cut:
@@ -1059,29 +1114,36 @@ class SidePanel(QWidget):
                     and not detection.preserves_layout_position
                     else "OUTSIDE"
                 )
+            elif detection.artwork_clipped:
+                state = "CLIPPED"
+            elif detection.review_reasons:
+                state = "REVIEW"
+            elif match is not None and (match.status != "matched" or match.review_reason):
+                state = "REVIEW"
             else:
                 state = "READY"
+            if detection.enabled and state != "READY":
+                warning_ids.add(detection.id)
             source = ("manual" if detection.manual else "automatic") if detection.inferred else (
                 "manual" if detection.manual else f"{detection.score:.0%}"
             )
             item = QListWidgetItem(f"#{detection.id:02d}   {state:<9}   {source}")
-            match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
             if match is not None:
                 item.setToolTip(f"Layout: {match.status}; residual {match.residual_px:.2f} px")
-                if self._phase == "review" and match.status != "matched":
+                if match.status != "matched":
                     item.setText(item.text() + f" · {match.status}")
-                if self._phase == "review" and match.review_reason:
+                if match.review_reason:
                     item.setText(item.text() + " · spans cells")
                     item.setToolTip(item.toolTip() + "\n" + match.review_reason)
+            if detection.review_reasons:
+                item.setToolTip(item.toolTip() + "\n" + "\n".join(detection.review_reasons))
+                item.setText(item.text() + " · check full artwork")
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(
                 Qt.CheckState.Checked if detection.enabled else Qt.CheckState.Unchecked
             )
-            if detection.overlaps_cut and detection.enabled:
-                item.setForeground(QColor("#ff8a3d"))
-            elif not detection.valid_cut and detection.enabled:
-                item.setForeground(Qt.GlobalColor.red)
+            item.setForeground(QColor(cut_status_color(detection, state == "REVIEW")))
             self.detection_list.addItem(item)
             if detection.id in self._selected_ids:
                 item.setSelected(True)
@@ -1093,16 +1155,13 @@ class SidePanel(QWidget):
             )
         del blocker
         disabled = sum(1 for item in detections if not item.enabled)
-        valid = sum(1 for item in detections if item.exportable)
-        invalid = sum(
-            1
-            for item in detections
-            if item.enabled and (not item.valid_cut or item.overlaps_cut)
-        )
+        valid = sum(1 for item in detections if item.enabled and item.id not in warning_ids)
+        invalid = len(warning_ids)
         self.total_value_label.setText(str(len(detections)))
         self.valid_value_label.setText(str(valid))
         self.invalid_value_label.setText(str(invalid))
         self.disabled_value_label.setText(str(disabled))
+        self._render_logical_layout()
         self._update_details()
 
     def set_selected_id(self, detection_id: int | None) -> None:
@@ -1204,6 +1263,8 @@ class SidePanel(QWidget):
                 and not detection.preserves_layout_position
                 else "Outside bed - not exported"
             )
+        elif detection.review_reasons:
+            status = "Review required\n" + "\n".join(detection.review_reasons)
         else:
             status = "Ready for export"
         if detection.grid_positioned and detection.artwork_clipped:

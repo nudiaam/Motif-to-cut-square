@@ -1,0 +1,19 @@
+[1/4] Checking Python...
+[2/4] Creating local environment if needed...
+[3/4] Installing required packages...
+Requirement already satisfied: pip in .\.venv\Lib\site-packages (26.2.1)
+Ignoring numpy: markers 'python_version < "3.12"' don't match your environment
+Requirement already satisfied: PySide6-Essentials==6.11.2 in .\.venv\Lib\site-packages (from -r requirements.txt (line 2)) (6.11.2)
+Requirement already satisfied: numpy==2.5.3 in .\.venv\Lib\site-packages (from -r requirements.txt (line 3)) (2.5.3)
+Requirement already satisfied: opencv-python-headless==4.14.0.94 in .\.venv\Lib\site-packages (from -r requirements.txt (line 5)) (4.14.0.94)
+Requirement already satisfied: shiboken6==6.11.2 in .\.venv\Lib\site-packages (from PySide6-Essentials==6.11.2->-r requirements.txt (line 2)) (6.11.2)
+[4/4] Verifying the installed application and bundled files...
+No broken requirements found.
+Application imports and bundled files verified: {'python': '3.12.10', 'PySide6': '6.11.2', 'opencv': '4.14.0', 'numpy': '2.5.3'}
+Shortcut created: C:\Users\daman\AppData\Local\Temp\lcp-check-�-23\Lalikul-Cut-Prep\Lalikul Cut Prep.lnk
+
+Setup complete.
+Double-click "Lalikul Cut Prep.lnk" to start with the app icon and no terminal.
+If the shortcut is unavailable, use "Lalikul Cut Prep.vbs".
+Use run_console.bat only if you need to diagnose an error.
+Presione una tecla para continuar . . .

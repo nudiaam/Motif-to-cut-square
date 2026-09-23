@@ -14,6 +14,42 @@ class FabricEvidence:
     reason: str
 
 
+def locate_bright_fabric(image: np.ndarray) -> FabricEvidence:
+    """Conservative fallback for a light, bounded piece on a dark camera bed.
+
+    This is not a substitute for a matched reference on dark fabric. Require
+    a large filled piece, a contrasting exterior and visible surround on every
+    side; ambiguous/full-frame images retain their original detections.
+    """
+    h, w = image.shape[:2]
+    scale = min(1., 1000 / max(h, w))
+    small = cv2.resize(image, (round(w * scale), round(h * scale)))
+    gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+    _, bright = cv2.threshold(cv2.GaussianBlur(gray, (9, 9), 0), 0, 255,
+                              cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    contours, _ = cv2.findContours(bright, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return FabricEvidence(None, "No independent fabric boundary")
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    if len(contours) > 1 and cv2.contourArea(contours[1]) >= gray.size * .025:
+        return FabricEvidence(None, "Multiple pieces require an empty-bed reference")
+    contour = contours[0]
+    mask = np.zeros_like(gray)
+    cv2.drawContours(mask, [contour], -1, 255, -1)
+    fraction = np.mean(mask > 0)
+    edge = max(2, round(min(gray.shape) * .01))
+    sides = (mask[:edge], mask[-edge:], mask[:, :edge], mask[:, -edge:])
+    if not .30 <= fraction <= .97 or any(np.mean(side > 0) > .25 for side in sides):
+        return FabricEvidence(None, "No independent fabric boundary")
+    if np.median(gray[mask > 0]) - np.median(gray[mask == 0]) < 35:
+        return FabricEvidence(None, "Fabric and surround are ambiguous")
+    # Dilating protects edge artwork and antialiased boundaries. Do not erode
+    # the piece just to get rid of print near its edges.
+    mask = cv2.dilate(mask, np.ones((5, 5), np.uint8))
+    return FabricEvidence(cv2.resize(mask, (w, h), interpolation=cv2.INTER_NEAREST),
+                          "Visible fabric boundary applied (without bed matching)")
+
+
 def locate_fabric(image: np.ndarray, reference: np.ndarray) -> FabricEvidence:
     """Require visible matching bed before trusting foreground differences.
 

@@ -22,22 +22,41 @@ The documentation is split so that non-technical users do not have to read devel
   navigation controls, automatic overlap correction, and troubleshooting guidance.
 - The [developer guide](docs/DEVELOPER_GUIDE.md) describes the architecture, virtual environment, tests, and technical decisions.
 - [CHANGELOG.md](CHANGELOG.md) lists the behavior included in each shared update.
+- [Current detection evaluation](docs/qa/joint-coordinator/README.md) records the
+  adaptive analysis, repeatable tests, CPU timings and remaining artwork-boundary
+  limitations.
 
 ## Quick start for Windows users
 
+[Instrucciones de actualización en español](docs/ACTUALIZACION_2026-09-23.md).
+
+**Known limitation:** black/dark-background detection remains unreliable for
+some collections despite passing specific regression examples. It is not
+considered universally resolved. Review each result before export.
+
 ### 1. Download and extract
 
-On GitHub, select **Code -> Download ZIP**. Extract the entire ZIP to a normal folder before continuing. Do not run the application from inside the ZIP file.
+On GitHub, select **Code -> Download ZIP**. Extract the entire ZIP to a new,
+short folder such as **Desktop\Lalikul** before continuing. Do not run the
+application from inside the ZIP file. Setup detects overly long folder paths
+and asks you to move the extracted folder before installing packages.
 
 ### 2. Install Python
 
-Install [Python for Windows](https://www.python.org/downloads/windows/) 3.10 or later. During installation, enable **Add python.exe to PATH**.
+Install [Python for Windows](https://www.python.org/downloads/windows/) 3.12
+(64-bit, recommended). The pinned GUI dependencies support Python 3.10–3.14.
+During installation, enable **Add python.exe to PATH**.
+Python 3.12, 64-bit, is the Windows version used for this update's clean-install check.
 
 ### 3. Set up the application once
 
 Double-click `setup.bat` and wait for the `Setup complete` message.
 
 The setup script creates `.venv`, a private Python environment for this application, and installs PySide6, OpenCV, and NumPy. It does not install Node.js or create a web server.
+Only the PySide6 Essentials components used by the application are installed;
+unused Qt Addons are excluded to reduce downloads.
+Setup also checks package compatibility, application imports and required bundled
+images before reporting success. Internet access is needed to install packages.
 
 ### 4. Open the app without a terminal
 
@@ -58,6 +77,10 @@ to a normal folder, and run `setup.bat` in that new folder. Open the application
 with the newly created `Lalikul Cut Prep.lnk`. Machine profiles and user-provided
 empty-bed references are stored outside the installation and remain available.
 The default Epilog empty-bed reference is already included in the ZIP.
+Do not copy an old `.venv` into the new folder or use a shortcut pointing to the
+previous installation. If setup reports an error, keep its message and do not
+continue as if installation had completed. Use `run_console.bat` if the application
+does not open after successful setup.
 
 ## Typical workflow
 
@@ -75,6 +98,8 @@ The default Epilog empty-bed reference is already included in the ZIP.
 6. If the automatic result needs correction, select **Adjust panel grid**,
    correct the estimated rows, columns, or guides, and choose **Use this grid and
    detect again**. Check the new result and confirm it explicitly as well.
+   This recovery remains available when zero figures are detected. If no grid
+   can be estimated, enter rows and columns to create it manually and retry.
 7. In **Review cuts**, select false positives or use `Shift+click` to select several,
    then choose **Delete selected** or press `Delete`. Add missing cuts when needed.
 8. Resolve orange cuts with **Fix overlaps**. This establishes a collision-free
@@ -129,12 +154,17 @@ Epilog explains that **Copy Background Image** uses the IRIS camera system to ca
 | Green | Ready | Ready for export. |
 | Bright cyan | Selected cut | Inspect, move, or delete it. |
 | Orange | Overlap | Separate the cuts or exclude one of them. |
+| Orange | Clipped artwork / Review | Check artwork extending beyond its cut, duplicated detections, or grid assignments. |
 | Red | Outside the bed | Move the centre or reduce the cut size. |
 | Grey | Excluded | Not included in the SVG. |
 
 Two enabled cuts are considered to overlap if they cross or if their edges touch
 exactly. Both change to `OVERLAP`. This is a warning state, not a filter: a
 checked cut is still exported, so resolve or uncheck the ones you do not want.
+
+**Ready does not certify that all drawings were found.** Detection review now
+shows known assignment and clipping warnings before confirmation, and identifies
+cuts added from grid spacing. Always compare the complete result with the image.
 
 After the centring step, **Fix Overlaps** is enabled when at least one collision
 exists. It keeps each complete drawing inside its cut, leaves
@@ -232,6 +262,9 @@ The top toolbar contains only image loading and the global **Undo** command.
 - **Join separated parts** keeps detached details belonging to one figure together.
 - Sensitivity, area, cleanup, and merge distance are technical overrides. Double-click
   a control to restore its default.
+- **Save detection report…** saves a JSON report of the last detection and current
+  cut positions without requiring SVG export or detection confirmation. Keep the
+  original source photograph with this report when reporting a problem.
 
 ## Manual editing
 
@@ -280,6 +313,19 @@ The internal debug JSON option is hidden and disabled by default for normal user
 ### The application reports a missing or broken environment
 
 Run `setup.bat` again. If Python has been uninstalled, reinstall it first.
+
+### Wrong counts, duplicate cuts, or missing rows
+
+Check the **Last detection** message in **Detect + check**. Having a saved
+empty-bed photograph does not guarantee it matched the current image; a framing
+or texture mismatch is now reported. A clearly bounded light fabric on a dark
+bed can use its visible boundary for cleanup without a matched reference.
+
+The detector cross-checks panel geometry against stable artwork evidence before
+accepting it. Separated drawings that remain ambiguous are kept for review rather
+than silently removed. Correct the panel guides if necessary, and save a detection
+report from advanced settings. Send the original photograph and report together;
+screenshots with coloured squares cannot reproduce the original detection.
 
 ### Ctrl+V does not load the image
 

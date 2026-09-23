@@ -1,0 +1,250 @@
+{
+  "extent_experiment": [
+    {
+      "known_extent": [
+        70,
+        45,
+        61,
+        102
+      ],
+      "current": [
+        70,
+        45,
+        61,
+        102
+      ],
+      "mask_with_known_seeds": [
+        70,
+        45,
+        61,
+        102
+      ]
+    },
+    {
+      "known_extent": [
+        70,
+        45,
+        61,
+        126
+      ],
+      "current": [
+        70,
+        45,
+        61,
+        126
+      ],
+      "mask_with_known_seeds": [
+        70,
+        45,
+        61,
+        126
+      ]
+    },
+    {
+      "known_extent": [
+        70,
+        45,
+        61,
+        141
+      ],
+      "current": [
+        70,
+        45,
+        61,
+        141
+      ],
+      "mask_with_known_seeds": [
+        70,
+        45,
+        61,
+        141
+      ]
+    },
+    {
+      "known_extent": [
+        70,
+        45,
+        61,
+        146
+      ],
+      "current": [
+        70,
+        45,
+        61,
+        141
+      ],
+      "mask_with_known_seeds": [
+        70,
+        45,
+        61,
+        146
+      ]
+    },
+    {
+      "known_extent": [
+        70,
+        45,
+        61,
+        152
+      ],
+      "current": [
+        70,
+        45,
+        61,
+        141
+      ],
+      "mask_with_known_seeds": [
+        70,
+        45,
+        61,
+        152
+      ]
+    }
+  ],
+  "margin_experiment": [
+    {
+      "image": "pastel_6x4",
+      "added_border_px": 0,
+      "candidates": 25,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "pattern",
+        "bounds_in_original_px": [
+          80.88635996303529,
+          103.62045529755014,
+          1455.3190732773326,
+          976.1365450674712
+        ]
+      }
+    },
+    {
+      "image": "pastel_6x4",
+      "added_border_px": 80,
+      "candidates": 25,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "pattern",
+        "bounds_in_original_px": [
+          81.18810108224113,
+          104.2018843502969,
+          1455.291100334979,
+          976.612802219352
+        ]
+      }
+    },
+    {
+      "image": "pastel_6x4",
+      "added_border_px": 160,
+      "candidates": 25,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "pattern",
+        "bounds_in_original_px": [
+          81.6777358061089,
+          104.01223001120525,
+          1455.164171851839,
+          975.8635143685631
+        ]
+      }
+    },
+    {
+      "image": "dogs_6x4",
+      "added_border_px": 0,
+      "candidates": 24,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "camera",
+        "bounds_in_original_px": [
+          48.2428778048713,
+          32.65898558727668,
+          1488.7732912755582,
+          983.1917602467965
+        ]
+      }
+    },
+    {
+      "image": "dogs_6x4",
+      "added_border_px": 80,
+      "candidates": 24,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "camera",
+        "bounds_in_original_px": [
+          46.73035290438399,
+          32.04555601882841,
+          1488.7623196619654,
+          982.577948470165
+        ]
+      }
+    },
+    {
+      "image": "dogs_6x4",
+      "added_border_px": 160,
+      "candidates": 15,
+      "grid": {
+        "columns": 6,
+        "rows": 3,
+        "source": "automatic",
+        "bounds_in_original_px": [
+          -160.0,
+          -160.0,
+          1696.0,
+          1184.0
+        ]
+      }
+    },
+    {
+      "image": "hearts_6x4",
+      "added_border_px": 0,
+      "candidates": 24,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "visual",
+        "bounds_in_original_px": [
+          66.7628051948054,
+          59.904000000000025,
+          1472.262649350649,
+          935.7032727272729
+        ]
+      }
+    },
+    {
+      "image": "hearts_6x4",
+      "added_border_px": 80,
+      "candidates": 24,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "visual",
+        "bounds_in_original_px": [
+          66.20107359307403,
+          59.68872727272722,
+          1473.3965021645017,
+          936.6749090909092
+        ]
+      }
+    },
+    {
+      "image": "hearts_6x4",
+      "added_border_px": 160,
+      "candidates": 24,
+      "grid": {
+        "columns": 6,
+        "rows": 4,
+        "source": "visual",
+        "bounds_in_original_px": [
+          67.68540259740291,
+          59.00800000000007,
+          1471.6891428571428,
+          937.0647272727274
+        ]
+      }
+    }
+  ]
+}
