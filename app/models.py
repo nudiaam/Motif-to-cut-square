@@ -29,6 +29,7 @@ class Detection:
     inferred: bool = False  # Automatic grid cell with no detector evidence
     artwork_clipped: bool = False
     layout_observation_px: tuple[float, float] | None = None
+    review_reasons: tuple[str, ...] = ()
 
     @classmethod
     def from_pixel_center(
@@ -43,6 +44,7 @@ class Detection:
         cut_width_inches: float = 5.0,
         cut_height_inches: float = 5.0,
         layout_observation_px: tuple[float, float] | None = None,
+        review_reasons: tuple[str, ...] = (),
     ) -> "Detection":
         center_inches = mapper.pixel_to_inches(*center_px)
         square = CutSquare.centered_at(
@@ -65,6 +67,7 @@ class Detection:
                 tuple(float(value) for value in layout_observation_px)
                 if layout_observation_px is not None else None
             ),
+            review_reasons=review_reasons,
         )
         detection._update_validity(mapper)
         return detection

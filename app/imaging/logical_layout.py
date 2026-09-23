@@ -41,6 +41,7 @@ class MissingPosition:
     source: str = "inferred"  # No image evidence; never an exportable detection.
     review_state: str = "proposed"  # Internal evidence class; never a UI step.
     reason: str = ""
+    covered_by_artwork: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,7 +147,8 @@ def layout_from_panel_grid(observations: list[LayoutObservation], grid: PanelGri
     missing = tuple(MissingPosition(col, row, layout.position(col, row),
                                    review_state="proposed" if confidence >= .86 and (col, row) not in covered else "pending",
                                    reason="Covered by artwork assigned to another cell; review before adding a cut."
-                                   if (col, row) in covered else "")
+                                   if (col, row) in covered else "",
+                                   covered_by_artwork=(col, row) in covered)
                     for row in range(grid.rows) for col in range(grid.columns)
                     if (col, row) not in occupied)
     return replace(layout, matches=tuple(sorted(matches, key=lambda m: m.detection_id)),

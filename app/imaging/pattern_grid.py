@@ -46,7 +46,8 @@ def _cloth_mask(image: np.ndarray) -> np.ndarray:
     return mask
 
 
-def _regions(signal: np.ndarray, threshold: float, minimum_area: float) -> tuple[PatternRegion, ...]:
+def _regions(signal: np.ndarray, threshold: float, minimum_area: float,
+             *, exclude_frame: bool = False) -> tuple[PatternRegion, ...]:
     small = min(signal.shape)
     mask = (signal > threshold).astype(np.uint8) * 255
     opening = max(1, int(small * .0027) | 1)
@@ -54,8 +55,18 @@ def _regions(signal: np.ndarray, threshold: float, minimum_area: float) -> tuple
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((opening, opening), np.uint8))
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((closing, closing), np.uint8))
     _, _, stats, _ = cv2.connectedComponentsWithStats(mask)
+    def frame_component(b):
+        x,y,w,h,_ = b
+        touches = x == 0 or y == 0 or x+w == signal.shape[1] or y+h == signal.shape[0]
+        return (w*h >= signal.size*.35 or
+                (touches and (w >= signal.shape[1]*.25 or h >= signal.shape[0]*.25)))
     boxes = [tuple(map(int, b)) for b in stats[1:]
-             if minimum_area <= b[4] <= signal.size * .15]
+             if minimum_area <= b[4] <= signal.size * .15
+             and (not exclude_frame or not frame_component(b))]
+    if exclude_frame and len(boxes) > 150:
+        # Highly fragmented texture is not bounded evidence for a motif lattice.
+        # Avoid the quadratic box-merge work in this optional proposal route.
+        return ()
     # Nested/overlapping component extents belong to the same region (e.g. an
     # aeroplane wing). The merge does not bridge gaps between separate figures.
     changed = True

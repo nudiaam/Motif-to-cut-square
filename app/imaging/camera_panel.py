@@ -52,6 +52,46 @@ def _axis_choices(profile: np.ndarray, minimum_cell: int):
     return fits
 
 
+def _measured_lines(profile: np.ndarray, count: int) -> tuple[float, ...] | None:
+    """Fit spacing and phase from internal seams, not the cloth rectangle.
+
+    The dimension hypothesis supplies only the number of cells. Three or more
+    cells provide multiple internal seams that locate the printed extent even
+    when the cloth has unequal blank margins. Two cells do not identify both
+    margins; return no verified extent in that underdetermined case.
+    """
+    length = len(profile)
+    if count < 3:
+        return None
+    baseline, high = np.percentile(profile, [50, 96])
+    normalized = np.clip((profile-baseline)/max(.5, high-baseline), 0., 1.5)
+    best = None
+    for left in np.linspace(0., length*.14, 9):
+        for right in np.linspace(0., length*.14, 9):
+            step = (length-left-right)/count
+            radius = max(2, int(step*.10))
+            positions, strengths = [], []
+            for index in range(1, count):
+                expected = left+index*step
+                start, stop = max(0, int(expected)-radius), min(length, int(expected)+radius+1)
+                xs = np.arange(start, stop)
+                k = int(np.argmax(normalized[start:stop]-.12*abs(xs-expected)/radius))
+                positions.append(xs[k])
+                strengths.append(normalized[xs[k]])
+            design = np.column_stack([np.ones(count-1), np.arange(1, count)])
+            origin, spacing = np.linalg.lstsq(design, positions, rcond=None)[0]
+            lines = origin+np.arange(count+1)*spacing
+            residual = np.mean(abs(np.asarray(positions)-design @ [origin, spacing]))/step
+            if spacing <= 0 or lines[0] < -2 or lines[-1] > length+2 or residual > .045:
+                continue
+            score = .6*np.mean(strengths)+.4*np.min(strengths)-3*residual
+            if best is None or score > best[0]:
+                # Preserve a single regular spacing for the global projection.
+                # Crop windows are clipped when reading pixels, not grid lines.
+                best = score, tuple(float(v) for v in lines)
+    return best[1] if best is not None and best[0] >= .4 else None
+
+
 def infer_camera_panel(image_bgr: np.ndarray) -> CameraPanel | None:
     height, width = image_bgr.shape[:2]
     if min(height, width) < 160:
@@ -85,9 +125,11 @@ def infer_camera_panel(image_bgr: np.ndarray) -> CameraPanel | None:
     rectified = cv2.warpPerspective(image_bgr, transform, (w, h))
     lab = cv2.cvtColor(rectified, cv2.COLOR_BGR2LAB).astype(np.float32)
     votes = []
+    profiles = []
     for smoothing in (.006, .010, .014):
         softened = cv2.GaussianBlur(lab, (0, 0), min(w,h)*smoothing)
         axes = []
+        axis_profiles = []
         delta = max(4, int(min(w,h)*.014)//2*2)
         for axis in (1, 0):
             along = np.swapaxes(softened, 0, axis)
@@ -97,6 +139,8 @@ def infer_camera_panel(image_bgr: np.ndarray) -> CameraPanel | None:
             profile = np.pad(np.percentile(difference, 40, axis=1), (delta//2, delta//2))
             profile = cv2.GaussianBlur(profile.reshape(1,-1), (0,0), max(1., min(w,h)*.003)).ravel()
             axes.append(_axis_choices(profile, max(30, int(min(w,h)*.04))))
+            axis_profiles.append(profile)
+        profiles.append(axis_profiles)
         choices = [(float(np.sqrt(sx*sy)), c, r) for c, sx in axes[0] for r, sy in axes[1]
                    if c*r >= 6 and .60 <= (w/c)/(h/r) <= 1.7]
         choices.sort(reverse=True)
@@ -113,7 +157,14 @@ def infer_camera_panel(image_bgr: np.ndarray) -> CameraPanel | None:
     if len(agreement) < 2:
         return None
     confidence = float(min(.96, .80 + .10*len(agreement)/3 + .06*np.mean([v[2] for v in agreement])))
-    grid = PanelGrid.regular(w, h, *dimensions, confidence=confidence, source="camera")
+    xs = _measured_lines(np.median([p[0] for p in profiles], axis=0), dimensions[0])
+    ys = _measured_lines(np.median([p[1] for p in profiles], axis=0), dimensions[1])
+    issues = ()
+    if xs is None or ys is None:
+        issues = ("Printed extent is uncertain; check the outer panel guides",)
+    xs = xs if xs is not None else tuple(np.linspace(0., float(w), dimensions[0]+1))
+    ys = ys if ys is not None else tuple(np.linspace(0., float(h), dimensions[1]+1))
+    grid = PanelGrid(xs, ys, confidence=confidence, source="camera", review_reasons=issues)
     return CameraPanel(rectified, grid, np.linalg.inv(transform))
 
 
@@ -133,8 +184,9 @@ def source_grid(panel: CameraPanel) -> PanelGrid:
     xs = tuple(float(origin[0] + (c-.5)*col[0] + (grid.rows-1)*row[0]/2) for c in range(grid.columns+1))
     ys = tuple(float(origin[1] + (r-.5)*row[1] + (grid.columns-1)*col[1]/2) for r in range(grid.rows+1))
     step_x, step_y = grid.x_lines_px[1]-grid.x_lines_px[0], grid.y_lines_px[1]-grid.y_lines_px[0]
-    cell_to_rectified = np.array([[step_x,0,step_x/2], [0,step_y,step_y/2], [0,0,1.]])
+    cell_to_rectified = np.array([[step_x,0,grid.x_lines_px[0]+step_x/2],
+                                  [0,step_y,grid.y_lines_px[0]+step_y/2], [0,0,1.]])
     projection = panel.to_source @ cell_to_rectified
     projection /= projection[2,2]
     return PanelGrid(xs, ys, grid.confidence, "camera", tuple(tuple(float(v) for v in p) for p in model),
-                     tuple(tuple(float(v) for v in p) for p in projection))
+                     tuple(tuple(float(v) for v in p) for p in projection), grid.review_reasons)

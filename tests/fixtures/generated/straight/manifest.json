@@ -1,0 +1,70 @@
+{
+  "generator": "Built-in image_gen",
+  "date": "2026-09-21",
+  "description": "New frontal synthetic textile panels, inspected before evaluation. No detector changes were made for this evaluation. Lines are approximate manual annotations of the generated image, not guaranteed geometry from the prompt.",
+  "cases": [
+    {
+      "file": "pastel_6x4.png",
+      "expected_compositions": 24,
+      "x_lines_px": [
+        80,
+        312,
+        540,
+        768,
+        996,
+        1224,
+        1456
+      ],
+      "y_lines_px": [
+        77,
+        308,
+        535,
+        746,
+        953
+      ],
+      "prompt": "Use case: product-mockup. Asset: synthetic textile detection test input, unannotated. Generate a landscape image 1536x1024, an EXACT ORTHOGRAPHIC overhead flatbed-style scan of a rectangular cotton panel on a flat dark honeycomb laser bed. No perspective whatsoever, no trapezoid, no rotation, no converging lines, no curved rows, no folds. Cloth and printed grid edges exactly parallel to image edges. The print is a perfect rectangular array of SIX columns and FOUR rows of equal SQUARE tiles, exactly 24 tiles, each containing ONE complete pale watercolor baby-animal composition. Keep all four rows identical in height, all six columns identical in width. Approximate printed rectangle x=120 to1416, y=80 to944; narrow straight cream cloth border outside it, dark bed visible all around. This occupies about85% of both image dimensions. Motifs occupy 55-65% of each tile, centered, fully visible, separated from adjacent motifs. Teddy bears, rabbits, lambs, koalas, elephants, foxes, cats, pandas, puppies; muted beige cream gray peach watercolor, low contrast. Each tile has a different low-contrast printed background: tiny sage hearts, pale stripes, cream polka dots, subtle chevrons, little stars. Include small accessories that belong to the composition, like a balloon, branch, toy or flower. Realistic fine cotton weave, uniform diffuse illumination. No tilt or photographic perspective, this should look like a straight textile scanner capture. No drawing of boxes, coordinates, titles, numbered labels, interface, watermark or rulers. Critical: visibly perfectly straight rectangular orthogonal layout, 6x4, 24 compositions."
+    },
+    {
+      "file": "dogs_6x4.png",
+      "expected_compositions": 24,
+      "x_lines_px": [
+        80,
+        313,
+        543,
+        774,
+        1002,
+        1231,
+        1461
+      ],
+      "y_lines_px": [
+        55,
+        282,
+        508,
+        732,
+        959
+      ],
+      "prompt": "Use case: product-mockup. Asset: orthogonal textile scan for testing a computer-vision application, not a screenshot. Landscape 1536x1024 image. A perfectly flat rectangular printed cotton sheet on dark honeycomb laser bed. STRICT ZERO PERSPECTIVE: all cloth edges and printed panel boundaries perfectly straight, horizontal or vertical, parallel to the image edges, all rows equal height, columns equal width. Six columns and four rows of equal SQUARE printed panels, exactly 24 DOG compositions. Each panel has one complete dog composition centered with generous clear space: dalmatian, spaniel, pug, terrier, corgi, shepherd, husky, beagle, bulldog, dachshund, poodle and other puppy illustrations, some with small ball, basket, scarf or toy forming part of that same composition. No second independent dog in a tile. Distinct patterned backgrounds over entire panels: muted green hearts, pale yellow spots, peach stars, mint chevrons, cream stripes, powder blue tiny dots. Background patterns conspicuous but smaller than the dog. Illustrations moderately contrasted watercolor on cotton, like a commercial patchwork fabric collection. Narrow cream cloth border and dark bed margin on all four sides. The six-by-four printed region fills roughly85percent width and height of the image; each dog occupies55-65percent of its square. Even flat scanner lighting, subtle weave. No folds, no wrinkles, no shadows causing distorted edges, no rotation, no tilt, no lens distortion, no trapezoids, no bent grid. Absolutely no overlaid rectangles, labels, IDs, ruler, axes or interface. Exactly24 motifs on a visibly straight 6x4 rectangular layout."
+    },
+    {
+      "file": "hearts_6x4.png",
+      "expected_compositions": 24,
+      "x_lines_px": [
+        69,
+        303,
+        536,
+        769,
+        1003,
+        1237,
+        1470
+      ],
+      "y_lines_px": [
+        72,
+        284,
+        505,
+        726,
+        947
+      ],
+      "prompt": "Use case: product-mockup. Asset: unannotated synthetic flat textile scan used to test motif detection. Landscape1536x1024. Perfect orthographic top-down flatbed scan, ZERO perspective, ZERO rotation, ZERO skew. A perfectly rectangular cotton printed panel lies completely flat on black honeycomb laser bed, with a narrow straight cream border on all sides. All edges horizontal/vertical and parallel to image boundaries. Exactly SIX columns and FOUR rows of equal SQUARE printed tiles, 24 tiles, one large complete HEART silhouette centered in each tile. Exactly24 hearts. Floral and leaf patterns fill each heart; varied colors coral, ochre, sage, navy, rose, mint, teal. Hearts are compact single compositions, about60percent of tile width/height, with clear surrounding space. Each tile has a different muted printed background: cream polka dots, pale mint waves, pastel chevrons, beige diagonal stripes, little tiny sage hearts. Main floral hearts should be more prominent than the background patterns. Commercial patchwork fabric appearance with fine textile weave, uniform even light. Printed rectangle occupies about85percent of total image width and height. Thin cream outer cloth border, black bed visible around all sides. Straight rows, straight columns, no converging lines, no wrinkles, no trapezoids, no lens distortion. No UI, no overlaid bounding boxes or detection dots, no text, axes, watermark or labels. Exactly24 main hearts in6x4, visibly rectangular frontal geometry."
+    }
+  ]
+}

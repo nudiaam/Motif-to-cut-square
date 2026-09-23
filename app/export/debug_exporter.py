@@ -20,6 +20,7 @@ def export_debug_json(
     export_unit: LengthUnit = LengthUnit.INCHES,
     machine_name: str = "Epilog Fusion Maker 36",
     logical_layout: LogicalLayout | None = None,
+    detection_run: dict | None = None,
 ) -> Path:
     output_path = Path(path)
     recalculate_cut_overlaps(detections)
@@ -40,6 +41,7 @@ def export_debug_json(
         "working_unit": working_unit.value,
         "export_unit": export_unit.value,
         "logical_layout": asdict(logical_layout) if logical_layout is not None else None,
+        "detection_run": detection_run,
         "bed_in_working_units": {
             "width": from_inches(mapper.bed_width_in, working_unit),
             "height": from_inches(mapper.bed_height_in, working_unit),
@@ -56,6 +58,7 @@ def export_debug_json(
                 "position_source": ("manual" if detection.manual else "grid" if detection.grid_positioned else "individual"),
                 "inferred": detection.inferred,
                 "artwork_clipped": detection.artwork_clipped,
+                "review_reasons": detection.review_reasons,
                 "manual": detection.manual,
                 "score": detection.score,
                 "center_px": {

@@ -1,0 +1,3 @@
+# Keep regression evidence in Git while making the user Download ZIP lightweight.
+/tests export-ignore
+/docs/qa export-ignore

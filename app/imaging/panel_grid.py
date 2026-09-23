@@ -15,6 +15,7 @@ class PanelGrid:
     source: str = "automatic"
     lattice: tuple[tuple[float, float], tuple[float, float], tuple[float, float]] | None = None
     projection: tuple[tuple[float, float, float], ...] | None = None
+    review_reasons: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if len(self.x_lines_px) < 3 or len(self.y_lines_px) < 3:
