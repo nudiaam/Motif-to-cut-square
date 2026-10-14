@@ -213,7 +213,11 @@ class BedCanvas(QWidget):
 
         self._paint_cut_preview(painter, bed)
         self._paint_rulers(painter, bed)
+        painter.save()
+        if not self._grid_edit_active:
+            painter.setClipRect(bed)
         self._paint_panel_grid(painter)
+        painter.restore()
 
         if self._mapper is not None and self._image_selected and not self._image_locked:
             self._paint_image_selection(painter)
@@ -232,7 +236,7 @@ class BedCanvas(QWidget):
         shaded_area.setFillRule(Qt.FillRule.OddEvenFill)
         shaded_area.addRect(bed)
         for detection in self._detections:
-            if not detection.enabled:
+            if not detection.enabled or detection.cut_block_reason(self._mapper):
                 continue
             square_px = self._mapper.inches_rect_to_pixel(
                 detection.square_inches.as_tuple()
@@ -315,6 +319,7 @@ class BedCanvas(QWidget):
             return
         layout = self._logical_layout
         painter.save()
+        painter.setClipRect(self._bed_rect())
         painter.setBrush(Qt.BrushStyle.NoBrush)
         if layout.columns:
             painter.setPen(QPen(QColor(80, 180, 255, 95), 1, Qt.PenStyle.DotLine))
@@ -355,13 +360,14 @@ class BedCanvas(QWidget):
                                if m.status != "matched" or m.review_reason}
         for detection in self._detections:
             selected = detection.id in self._selected_ids
+            blocked = detection.cut_block_reason(self._mapper)
             color = QColor(cut_status_color(detection, detection.id in assignment_warnings))
             if not detection.enabled:
                 color.setAlpha(135)
 
             if detection.bounding_box_px is not None:
                 bbox = self._pixel_rect_to_widget(detection.bounding_box_px)
-                bbox_pen = QPen(QColor(color.red(), color.green(), color.blue(), 125), 1)
+                bbox_pen = QPen(QColor(85, 230, 255, 190 if detection.enabled else 100), 1.5)
                 bbox_pen.setStyle(Qt.PenStyle.DashLine)
                 painter.setPen(bbox_pen)
                 painter.setBrush(Qt.BrushStyle.NoBrush)
@@ -383,7 +389,10 @@ class BedCanvas(QWidget):
                 if selected
                 else QColor(color.red(), color.green(), color.blue(), 18)
             )
-            painter.drawRect(square)
+            # An excluded boundary observation is not a proposed cut. Reveal
+            # its rectangle only when selected so its placement can be fixed.
+            if not blocked or selected:
+                painter.drawRect(square)
 
             center = self._pixel_to_widget(*detection.center_px)
             painter.setPen(QPen(QColor("#11151a"), 6 if selected else 4))
@@ -394,13 +403,14 @@ class BedCanvas(QWidget):
             painter.drawEllipse(center, 6.0 if selected else 3.5, 6.0 if selected else 3.5)
 
             painter.setFont(label_font)
-            label_rect = QRectF(center.x() + 7, center.y() - 19, 42, 18)
+            label_rect = QRectF(center.x() + 7, center.y() - 19, 112 if blocked else 42, 18)
             painter.setPen(Qt.PenStyle.NoPen)
             painter.setBrush(selection_color if selected else QColor(15, 18, 23, 190))
             painter.drawRoundedRect(label_rect, 3, 3)
             painter.setPen(QColor("#071419") if selected else color)
             painter.drawText(
-                label_rect, Qt.AlignmentFlag.AlignCenter, f"#{detection.id:02d}"
+                label_rect, Qt.AlignmentFlag.AlignCenter,
+                f"#{detection.id:02d} · Excluded" if blocked else f"#{detection.id:02d}"
             )
         self._paint_logical_layout(painter)
 

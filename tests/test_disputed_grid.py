@@ -1,7 +1,6 @@
 """Sparse fragments cannot veto a grid without checking its local pixels."""
 import json
 from pathlib import Path
-from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -10,6 +9,7 @@ import numpy as np
 
 from app.imaging.detector import MotifDetector, MotifCandidate, DetectorSettings
 from app.imaging.panel_grid import PanelGrid
+from app.imaging.camera_panel import CameraPanel
 
 
 class DisputedGridTests(unittest.TestCase):
@@ -45,7 +45,7 @@ class DisputedGridTests(unittest.TestCase):
         coarse=PanelGrid.regular(600,400,3,2,confidence=.95,source='camera')
         detector=MotifDetector()
         with patch('app.imaging.detector.infer_panel_grid',return_value=None), \
-             patch('app.imaging.detector.infer_camera_panel',return_value=SimpleNamespace(grid=coarse)), \
+             patch('app.imaging.detector.infer_camera_panel',return_value=CameraPanel(image,coarse,np.eye(3))), \
              patch('app.imaging.detector.source_grid',return_value=coarse), \
              patch('app.imaging.detector.infer_repeated_artwork',return_value=None), \
              patch('app.imaging.detector.infer_seam_grid',return_value=None), \

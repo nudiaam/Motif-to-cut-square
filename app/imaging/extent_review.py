@@ -11,6 +11,8 @@ from .scene_profile import background_evidence
 
 
 def review_extents(image, candidates, grid=None):
+    from .logical_layout import layout_from_panel_grid
+    layout = layout_from_panel_grid([], grid) if grid is not None else None
     if grid is not None:
         spacing = min(float(np.median(np.diff(grid.x_lines_px))),
                       float(np.median(np.diff(grid.y_lines_px))))
@@ -25,18 +27,42 @@ def review_extents(image, candidates, grid=None):
         left, top = max(0, x-pad), max(0, y-pad)
         right, bottom = min(iw, x+w+pad), min(ih, y+h+pad)
         core = None
+        partial_cell = False
         if grid is not None:
             cx, cy = candidate.layout_center_px or candidate.center_px
             column = int(np.searchsorted(grid.x_lines_px,cx)-1)
             row = int(np.searchsorted(grid.y_lines_px,cy)-1)
+            if grid.lattice is not None:
+                gc, gr = layout.coordinates(cx,cy)
+                column, row = int(np.floor(gc+.5)), int(np.floor(gr+.5))
             if 0 <= column < grid.columns and 0 <= row < grid.rows:
                 gx0, gx1 = grid.x_lines_px[column:column+2]
                 gy0, gy1 = grid.y_lines_px[row:row+2]
+                if grid.lattice is not None:
+                    corners = np.asarray([layout.position(column+dc,row+dr)
+                                          for dc,dr in ((-.5,-.5),(.5,-.5),(.5,.5),(-.5,.5))])
+                    gx0, gy0 = corners.min(axis=0)
+                    gx1, gy1 = corners.max(axis=0)
+                partial_cell = not layout.cell_inside_image(column, row, iw, ih)
+                if partial_cell and grid.source in ('pattern','observations','local_contrast'):
+                    # Extrapolated artwork spacing is not a printed panel edge.
+                    # Require nearby ink before declaring the source truncated.
+                    margin=max(2.,scale*.10)
+                    partial_cell=((gx0<0 and x<margin) or (gy0<0 and y<margin) or
+                                  (gx1>iw and x+w>iw-margin) or (gy1>ih and y+h>ih-margin))
                 # Inspect the owning cell even if segmentation found only a head.
                 left,top=max(0,min(left,int(gx0)-pad)),max(0,min(top,int(gy0)-pad))
                 right,bottom=min(iw,max(right,int(gx1)+pad)),min(ih,max(bottom,int(gy1)+pad))
                 core=(max(0,round(gx0)-left),max(0,round(gy0)-top),
                       min(right-left,round(gx1)-left),min(bottom-top,round(gy1)-top))
+        issues = list(candidate.review_reasons)
+        boundary_artwork = x <= 0 or y <= 0 or x+w >= iw or y+h >= ih
+        if partial_cell:
+            issues.append('Panel is only partly inside the source image; verify the complete composition')
+        if boundary_artwork:
+            issues.append('Artwork reaches the source-image boundary')
+        candidate = replace(candidate, source_incomplete=(candidate.source_incomplete or partial_cell or boundary_artwork),
+                            review_reasons=tuple(dict.fromkeys(issues)))
         crop = image[top:bottom, left:right]
         if min(crop.shape[:2]) < 8:
             reviewed.append(candidate)
@@ -69,11 +95,13 @@ def review_extents(image, candidates, grid=None):
                 extension = True
                 break
         issues = list(candidate.review_reasons)
+        if core is not None:
+            cell_area = max(1, (core[2]-core[0])*(core[3]-core[1]))
+            if (w*h < cell_area*.12 and evidence['stats']['fine_detail_fraction'] > .12):
+                issues.append('Small foreground on a textured panel; check for missing faint or detached details')
         if not evidence['stats']['background_reliable']:
             issues.append('Background is ambiguous; artwork extent needs review')
         if extension:
             issues.append("Image evidence continues beyond the detected artwork; check its full extent")
-        if x <= 0 or y <= 0 or x+w >= iw or y+h >= ih:
-            issues.append("Artwork reaches the source-image boundary")
         reviewed.append(replace(candidate, review_reasons=tuple(dict.fromkeys(issues))))
     return tuple(reviewed)

@@ -1,0 +1,12 @@
+{
+  "alphabet_6x4.png": {
+    "sha256": "e8688a4a61ef7d4204ee8e479f3998cb4b5dc4b552fb7331a6ccde142a075b34",
+    "synthetic": true,
+    "expected_compositions": 24
+  },
+  "christmas_6x4.png": {
+    "sha256": "72331a60106dd72d89354e57fbd48776e11adbc8598587c1cce938186e15c132",
+    "synthetic": true,
+    "expected_compositions": 24
+  }
+}

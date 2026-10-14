@@ -1,5 +1,132 @@
 # Change log
 
+## 2026-10-14 — Whole-source grouping and sustained fabric recovery
+
+- Infer composition geometry from stable whitespace at several grouping scales
+  and foreground readings before assigning all source parts. Compare it even
+  when the existing route has no grid or leaves extra fragments.
+- Preserve corroborated ink components instead of treating unvalidated free
+  boxes or flagged cross-cell boxes as authoritative compositions.
+- Recover sustained colour divisions directly on the cloth when camera fitting
+  fails. Keep detached faint details inside corroborated panels.
+- Require agreement between two spatial illumination views, and normalize
+  uniform dim exposure only in the analysis view.
+- Distinguish detected artwork with cyan dashed bounds from solid physical cut
+  outlines. Explain insufficient cut size without enlarging it automatically.
+- Validate the five newly supplied originals and 20 image variations with
+  independent group and neighbour witnesses; 34 targeted tests pass. Of 16
+  previous image comparisons, 15 stay identical and one retains all 20 groups
+  with small extent/phase refinements. See the new-source validation report.
+
+## 2026-10-14 — Conditional comparison of primary marks and accessory clusters
+
+- Compare a second composition level on unprinted automatic grids with repeated
+  tall marks, clusters of small parts and wider gaps between complete groups.
+- Infer primary spacing from height and distribution at multiple contrast
+  readings; use separate lower-contrast parts for whole bounds and require
+  preservation of every existing region before accepting the alternative.
+- Require two supported illumination views to agree for shadow recovery; keep
+  confirmed guides, incomplete observations and ambiguous fields protected.
+- Add the compact number/object original, nine photographic variations,
+  other group counts, independent flowers/butterflies and separation negatives.
+- Validate only the agreed at-risk collections: 27 focused tests pass and all
+  15 previous native-image results remain identical. No full-suite claim for
+  this change; see the focused validation report.
+
+## 2026-10-14 — Preserve complete compositions across detection routes
+
+- Compare automatic geometry with complete luminance and colour evidence even
+  when the provisional grid is full. A count of one decoration per cell cannot
+  certify detached text or ingredients.
+- Require every corroborated composition to retain its ink in a single output
+  group before accepting replacement bounds. Keep uncertain shadows on the
+  existing local analysis routes and preserve confirmed/printed guides.
+- Reject automatic partitions that split independently supported groups;
+  keep sparse layouts under review rather than creating missing cuts.
+- Where all groups fit the chosen size, translate the whole automatic cut grid
+  together to contain them. Keep size, row/column spacing, manual positions and
+  bed limits unchanged; impossible containment still produces warnings.
+- Add independent ownership, neighbour, boundary and alignment checks for the
+  supplied cocktails and text/decoration sources across nine variants each.
+
+## 2026-10-14 — Nested number and object groups
+
+- Add a bounded recovery route for unresolved shared-background scenes: infer
+  repeated primary anchors at multiple area and contrast scales, then assign
+  small parts using a common composition geometry.
+- Refine common spacing and phase from complete foreground groups, preserving
+  broad digits and peripheral objects without independently shifting cuts.
+- Require consistent independent illumination readings for shadow recovery and
+  retain an explicit review warning when compensation is used.
+- Add the supplied 20-composition source, nine photographic variations,
+  independent number/object witnesses, different-count examples and negatives.
+
+## 2026-10-14 — Detached letters and whole compositions
+
+- Gather shared-background ink before assigning components to a corroborated
+  lattice, preserving detached letters and accessories in their full bounds.
+- Recover background evidence within visible fabric when the camera surround
+  changes. For supported shadows, require two spatial illumination estimates to
+  agree before using a normalized analysis view; source pixels remain unchanged.
+- Fall back to local analysis for large connected fields and uncertain border
+  fragments. Preserve drawings that span multiple cells.
+- Do not invent missing cuts when competing layouts remain unresolved.
+- Add all 24 independent alphabet letter/illustration witnesses across nine
+  photographic variants, plus a catalogue coverage audit and ten new prompts.
+
+## 2026-10-13 — Combined cut and output review
+
+- Merge Review cuts and Check output into one review screen, with an output
+  summary that updates after edits and exclusions.
+- Keep preview, editing, export options and geometry checks in the same review.
+  Export SVG opens the save dialog without an extra check step or repeat click.
+- Retain detection confirmation, warning confirmation and hard export blocks.
+
+## 2026-10-13 — Repeated accessory columns
+
+- Corroborate sustained panel separators in colour and Lab across multiple
+  scales before replacing a camera grid that subdivides each printed panel.
+  Repeated animal/accessory columns no longer supply extra cuts in the new
+  customer fixture: 12 complete compositions instead of 24 fragments.
+- If illumination compensation loses the camera grid, check sustained separators
+  in the original pixels before giving up on the panel geometry.
+- Add nine reproducible image variations and independent animal/accessory
+  witnesses, plus a UI check using the background analysis worker.
+
+## 2026-10-12 — Composition grouping and non-exportable boundaries
+
+- Recheck detached-accessory ownership even when a provisional camera grid is
+  fully populated. The customer animal image now produces 12 groups (4×3),
+  retaining both accessories per animal, instead of 18 split groups (6×3).
+- Exclude cuts/artwork outside the bed and compositions incomplete in the source
+  image. Preserve them for inspection, hide their unselected cut rectangles, and
+  reject any attempt to export an enabled blocked cut. Resizing or moving a cut
+  cannot override missing source pixels.
+- Use projected cell corners when checking partial source panels, including
+  cases where foreground extent analysis has insufficient evidence.
+
+## 2026-10-12 — Reproducible collection diagnostics and responsive detection
+
+- Run the main Detect action in a background worker with phase progress and
+  cancellation; preserve the previous cuts on cancellation or failure.
+- Integrate analysis progress and Cancel into the bottom status bar instead of
+  a modal progress dialog, keeping the image unobscured.
+- Record image/reference pixel fingerprints, effective settings, route, confirmed
+  guides, runtime versions, result fingerprint and phase timings. Save a diagnostic
+  ZIP with lossless source pixels and the matching reference when available.
+- Compare two JSON reports or ZIP packages with `python -m
+  app.compare_detection_reports first.zip second.zip`.
+- Expose competing grid phases when the scores are close; clear this uncertainty
+  when independent appearance evidence corroborates the selected geometry.
+  Reuse image-only seam profiles within each comparison.
+- Break down overlapping cuts, artwork size, bed limits, layout uncertainty,
+  inferred positions and partial-image panels. Show estimated physical spacing.
+- Flag very small extracted foreground on a textured cell for detail review;
+  do not silently claim that a faint composition is complete.
+- Add generated Alfabeto/Navidad inputs and tests. These do not replace the
+  client's originals or establish a general accuracy rate. See
+  `docs/qa/customer-improvements/README.md` for verification and known limits.
+
 ## 2026-09-23 — Keep grid recovery available and verify Windows setup
 
 - Allow an image with zero detected figures to open grid adjustment, retry
