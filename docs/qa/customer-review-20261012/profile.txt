@@ -40,5 +40,3 @@ Fixture: transport_dashed_shared.png
      5743    0.003    0.000    0.109    0.000 fromnumeric.py:732(partition)
      5478    0.017    0.000    0.091    0.000 _linalg.py:2034(matrix_rank)
      7960    0.029    0.000    0.090    0.000 _methods.py:115(_mean)
-
-

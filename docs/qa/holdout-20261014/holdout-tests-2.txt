@@ -1,5 +1,5 @@
 test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) ... ok
-test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) ... 
+test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) ...
   test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='dim') ... FAIL
   test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='diagonal_shadow') ... FAIL
   test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='animals_panels', variant='diagonal_shadow') ... FAIL
