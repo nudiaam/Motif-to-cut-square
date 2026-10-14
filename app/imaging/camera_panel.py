@@ -16,6 +16,78 @@ class CameraPanel:
     image: np.ndarray
     grid: PanelGrid
     to_source: np.ndarray
+    partition_evidence: dict | None = None
+
+
+def infer_fabric_partition(image):
+    """Visible divisions need not depend on a successful camera rectification."""
+    from .pattern_grid import _cloth_mask
+    from .analysis_frame import translate_grid
+    mask=_cloth_mask(image)
+    if not np.any(mask):return None
+    x,y,w,h=cv2.boundingRect(mask)
+    if min(w,h)<100:return None
+    lab=cv2.cvtColor(image[y:y+h,x:x+w],cv2.COLOR_BGR2LAB).astype(np.float32)
+    proposal=_sustained_partition(lab)
+    if proposal is None:return None
+    return translate_grid(proposal[0],x,y),proposal[1]
+
+
+def _sustained_partition(lab):
+    """Require near-continuous seams in both colour and luminance-inclusive views.
+
+    Repeated artwork edges can occupy most of a column without being a panel
+    division. A low percentile requires support over 80% of its length. Both
+    colour views and multiple smoothing scales must agree before this
+    evidence can replace an accessory-induced subdivision.
+    """
+    h, w = lab.shape[:2]
+    votes = []
+    for smoothing in (.006, .010, .014):
+        softened = cv2.GaussianBlur(lab, (0, 0), min(w,h)*smoothing)
+        delta = max(4, int(min(w,h)*.014)//2*2)
+        for channel in ('lab', 'chroma'):
+            pixels = softened if channel == 'lab' else softened[:,:,1:]
+            axes, profiles = [], []
+            for axis in (1,0):
+                along = np.swapaxes(pixels,0,axis)
+                difference = np.linalg.norm(along[delta:]-along[:-delta],axis=2)
+                profile = np.pad(np.percentile(difference,20,axis=1),(delta//2,delta//2))
+                profile = cv2.GaussianBlur(profile.reshape(1,-1),(0,0),max(1.,min(w,h)*.003)).ravel()
+                axes.append(_axis_choices(profile,max(30,int(min(w,h)*.04))))
+                profiles.append(profile)
+            choices = sorted([(float(np.sqrt(sx*sy)),c,r) for c,sx in axes[0] for r,sy in axes[1]
+                              if min(c,r) >= 3 and .60 <= (w/c)/(h/r) <= 1.7],reverse=True)
+            if not choices or choices[0][0] < .35:
+                continue
+            best = choices[0]
+            separation = (best[0]-choices[1][0])/best[0] if len(choices)>1 else 1.
+            if separation >= .25:
+                votes.append((best[1:3],channel,profiles,separation))
+    if not votes:
+        return None
+    dimensions = max(sorted({v[0] for v in votes}),key=lambda cr:sum(v[0]==cr for v in votes))
+    agreed = [v for v in votes if v[0]==dimensions]
+    if any(sum(v[1]==channel for v in agreed)<2 for channel in ('lab','chroma')):
+        return None
+    # Locate pastel boundaries in colour: luminance includes the animal edges
+    # that caused the subdivision. Require stable colour phase at two scales,
+    # in addition to agreement in count across both channels above.
+    measured = [tuple(_measured_lines(p,count) for p,count in zip(v[2],dimensions))
+                for v in agreed if v[1] == 'chroma']
+    measured = [axes for axes in measured if all(lines is not None for lines in axes)]
+    if len(measured) < 2:
+        return None
+    median = [np.median([m[axis] for m in measured],axis=0) for axis in (0,1)]
+    measured = [m for m in measured if all(
+        np.max(abs(np.array(m[axis])-median[axis])) <= np.median(np.diff(median[axis]))*.06
+        for axis in (0,1))]
+    if len(measured) < 2:
+        return None
+    median = [np.median([m[axis] for m in measured],axis=0) for axis in (0,1)]
+    return PanelGrid(tuple(median[0]),tuple(median[1]),.94,'camera'), {
+        'method':'sustained_colour_seams','columns':dimensions[0],'rows':dimensions[1],
+        'agreeing_views':len(agreed),'minimum_separation':min(v[3] for v in agreed)}
 
 
 def _axis_choices(profile: np.ndarray, minimum_cell: int):
@@ -152,10 +224,18 @@ def infer_camera_panel(image_bgr: np.ndarray) -> CameraPanel | None:
             votes.append((best[1], best[2], separation))
     if len(votes) < 2:
         return None
-    dimensions = max({v[:2] for v in votes}, key=lambda cr: sum(v[:2] == cr for v in votes))
+    dimensions = max(sorted({v[:2] for v in votes}), key=lambda cr: sum(v[:2] == cr for v in votes))
     agreement = [v for v in votes if v[:2] == dimensions]
     if len(agreement) < 2:
         return None
+    sustained = _sustained_partition(lab) if max(dimensions) >= 6 else None
+    if sustained is not None:
+        alternative, support = sustained
+        alternative_dimensions = (alternative.columns, alternative.rows)
+        if (alternative_dimensions != dimensions
+                and all(old >= new and old % new == 0 for old,new in zip(dimensions,alternative_dimensions))):
+            support['rejected_subdivision'] = list(dimensions)
+            return CameraPanel(rectified, alternative, np.linalg.inv(transform), support)
     confidence = float(min(.96, .80 + .10*len(agreement)/3 + .06*np.mean([v[2] for v in agreement])))
     xs = _measured_lines(np.median([p[0] for p in profiles], axis=0), dimensions[0])
     ys = _measured_lines(np.median([p[1] for p in profiles], axis=0), dimensions[1])

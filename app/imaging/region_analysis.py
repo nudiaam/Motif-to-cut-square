@@ -5,7 +5,7 @@ import numpy as np
 from .scene_profile import POLICY, background_evidence
 
 
-def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background_model=None):
+def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background_model=None, preserve_detached=False):
     h,w=image.shape[:2]
     scale=min(1.,POLICY.max_region_side/max(h,w))
     size=(max(1,round(w*scale)),max(1,round(h*scale)))
@@ -43,6 +43,16 @@ def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background
     cv2.setRNGSeed(0)
     cv2.grabCut(pixels,mask,None,bg,fg,3,cv2.GC_INIT_WITH_MASK)
     selected=np.isin(mask,(cv2.GC_FGD,cv2.GC_PR_FGD))
+    if preserve_detached:
+        supported=((distance>threshold)&inside).astype(np.uint8)
+        n,components,stats,_=cv2.connectedComponentsWithStats(supported)
+        keep=np.zeros(n,bool)
+        for i,(x,y,bw,bh,area) in enumerate(stats[1:],1):
+            # Sustained guides define ownership. Retain detached faint ink,
+            # while excluding weave specks and thin full-height panel rules.
+            rule=(bw<(right-left)*.025 and bh>(bottom-top)*.70) or (bh<(bottom-top)*.025 and bw>(right-left)*.70)
+            keep[i]=area>=max(4,inside.sum()*.0004) and not rule
+        selected |= keep[components]
     if background_model is not None:
         # GrabCut can absorb a thin, weakly coloured stem into its background
         # mixture. Retain colour evidence connected to an accepted composition;

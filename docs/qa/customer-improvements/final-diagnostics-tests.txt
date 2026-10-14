@@ -1,0 +1,12 @@
+test_bundle_preserves_pixels_and_rejects_mismatched_input (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_bundle_preserves_pixels_and_rejects_mismatched_input) ... ok
+test_generated_compositions_keep_letters_and_expose_missed_detail (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_generated_compositions_keep_letters_and_expose_missed_detail) ... ok
+test_image_profiles_reused_without_changing_evidence (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_image_profiles_reused_without_changing_evidence) ... ok
+test_partial_panel_is_not_silently_complete (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_partial_panel_is_not_silently_complete) ... ok
+test_repeat_identity_and_changed_pixel_settings_guides (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_repeat_identity_and_changed_pixel_settings_guides) ... ok
+test_same_count_different_phase_near_tie_is_exposed (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_same_count_different_phase_near_tie_is_exposed) ... ok
+test_warning_counts_do_not_hide_multiple_causes_or_excluded_cuts (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_warning_counts_do_not_hide_multiple_causes_or_excluded_cuts) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 15.239s
+
+OK

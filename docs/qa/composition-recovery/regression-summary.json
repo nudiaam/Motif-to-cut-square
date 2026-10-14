@@ -1,0 +1,27 @@
+{
+  "controls": 21,
+  "counts": {
+    "generated\\customer_20261012\\alphabet_6x4.png": 24,
+    "generated\\customer_20261012\\christmas_6x4.png": 24,
+    "floral_patchwork_recovered.png": 24,
+    "pastel_panels_camera.png": 24,
+    "patchwork_camera.png": 22,
+    "transport_camera.png": 19,
+    "transport_dashed_shared.png": 24,
+    "transport_irregular_shadows.png": 24,
+    "vehicles_panels.png": 24,
+    "acceptance\\animal_accessories_4x3.png": 12,
+    "acceptance\\dark_leaves_5x3.png": 15,
+    "acceptance\\groups_4x3.png": 12,
+    "acceptance\\mixed_icons_6x4.png": 24,
+    "acceptance\\pastel_4x4.png": 16,
+    "acceptance\\patchwork_animals_5x4.png": 20,
+    "acceptance\\space_dark_3x5.png": 15,
+    "acceptance\\spanning_5x4.png": 19,
+    "acceptance\\thin_7x3.png": 21,
+    "generated\\straight\\dogs_6x4.png": 24,
+    "generated\\straight\\hearts_6x4.png": 24,
+    "generated\\straight\\pastel_6x4.png": 24
+  },
+  "note": "This run predates final regression repairs; tests-final.txt is the final full validation. Counts alone do not prove complete artwork ownership."
+}

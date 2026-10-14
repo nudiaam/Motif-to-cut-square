@@ -49,6 +49,7 @@ from app.geometry.units import (
 from app.imaging.detector import DetectorSettings
 from app.imaging.logical_layout import LogicalLayout
 from app.models import Detection
+from app.geometry.review_summary import LABELS, review_counts, physical_spacing
 from app.ui.help_widgets import InfoButton
 
 
@@ -107,8 +108,8 @@ HELP = {
     "detections_section": "Lists every automatically detected or manually added motif center. A row checkbox controls export inclusion.",
     "total": "The total number of detections currently present.",
     "valid": "Enabled cuts without known geometry or assignment problems. This does not confirm that every intended figure was found: compare the result with the image.",
-    "invalid": "Enabled cuts with overlap, outside-bed, clipped-artwork or assignment warnings. Every checked cut is still included in the SVG; review the warnings before exporting.",
-    "disabled": "Detections manually excluded from export. They remain visible and can be enabled again.",
+    "invalid": "Enabled cuts with overlap, clipped-artwork or assignment warnings. Cuts outside the bed or incomplete in the source image are excluded and cannot be exported.",
+    "disabled": "Cuts excluded manually or because they are outside the bed or incomplete in the photo. Blocked cuts must be corrected before they can be enabled.",
     "selected_section": "Shows pixel coordinates, physical coordinates, global cut geometry, boundary status, and export state for the selected detection.",
     "export_units": "SVG units normally follow the working units. Choosing another unit triggers a warning before export because downstream software may interpret unit conversions differently.",
 }
@@ -243,7 +244,7 @@ class SidePanel(QWidget):
         self.verification_label = QLabel("Round-trip verification not run")
         self.verification_label.setObjectName("verificationLabel")
         self.verification_label.setWordWrap(True)
-        export_options_layout.addWidget(self.verification_label)
+        layout.insertWidget(layout.indexOf(self.cut_section), self.verification_label)
         layout.addWidget(self.export_options)
         # Keep contextual controls packed at the top. Without this terminal
         # stretch, Qt distributes spare viewport height between labels and
@@ -544,11 +545,11 @@ class SidePanel(QWidget):
             ),
             "review": (
                 "3  REVIEW CUTS",
-                "Correct missing, false, clipped, or overlapping cut areas.",
+                "Adjust the cuts and review the output summary, then export the SVG.",
             ),
             "export": (
-                "4–5  CHECK AND EXPORT",
-                "Confirm exactly what will be saved before creating the SVG.",
+                "4  EXPORT SVG",
+                "Review the saved output or return to Review cuts to make changes.",
             ),
         }
         title, hint = titles[phase]
@@ -558,7 +559,7 @@ class SidePanel(QWidget):
             "setup": {"machine", "bed", "cut"},
             "grid": {"bed", "grid"},
             "detect": {"cut", "advanced", "detection_review", "detections"},
-            "review": {"cut", "detections", "selected", "actions"},
+            "review": {"cut", "detections", "selected", "actions", "export"},
             "export": {"detections", "export"},
         }[phase]
         self.machine_section.setVisible("machine" in visibility)
@@ -574,6 +575,7 @@ class SidePanel(QWidget):
         self.selected_section.setVisible("selected" in visibility)
         self.review_actions.setVisible("actions" in visibility)
         self.export_options.setVisible("export" in visibility)
+        self.verification_label.setVisible("export" in visibility)
         self._render_logical_layout()
         # Assignment warnings are visible before confirmation. Detailed guide
         # overlays remain optional in Review cuts.
@@ -722,6 +724,10 @@ class SidePanel(QWidget):
             "Keep the original photograph with this report when reporting a problem."
         )
         advanced_layout.addWidget(self.detection_report_button)
+        self.detection_bundle_button = QPushButton("Save diagnostic package…")
+        self.detection_bundle_button.setEnabled(False)
+        self.detection_bundle_button.setToolTip("Save the clean image, available bed reference and report together in a ZIP file.")
+        advanced_layout.addWidget(self.detection_bundle_button)
         return self._section(
             "ADVANCED DETECTION SETTINGS",
             self.advanced_detection_controls,
@@ -756,6 +762,12 @@ class SidePanel(QWidget):
             value.setAlignment(Qt.AlignmentFlag.AlignHCenter)
             stats_layout.addWidget(value, 1, column, Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(stats)
+        self.review_breakdown_label = QLabel()
+        self.review_breakdown_label.setWordWrap(True)
+        layout.addWidget(self.review_breakdown_label)
+        self.spacing_label = QLabel()
+        self.spacing_label.setWordWrap(True)
+        layout.addWidget(self.spacing_label)
 
         self.cut_color_legend = QLabel(
             f'<span style="color:{OVERLAP_COLOR}">■ Overlapping cuts</span><br>'
@@ -800,6 +812,7 @@ class SidePanel(QWidget):
 
     def set_detection_diagnostics(self, diagnostics: dict) -> None:
         self.detection_report_button.setEnabled(bool(diagnostics))
+        self.detection_bundle_button.setEnabled(bool(diagnostics.get('identity')))
         self.detection_reference_label.setVisible(bool(diagnostics))
         status = diagnostics.get("reference_status", "")
         if diagnostics.get("reference_applied"):
@@ -1102,7 +1115,10 @@ class SidePanel(QWidget):
         warning_ids = set()
         for detection in detections:
             match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
-            if not detection.enabled:
+            blocked = detection.cut_block_reason(self._mapper) if self._mapper else None
+            if blocked:
+                state = "BLOCKED"
+            elif not detection.enabled:
                 state = "EXCLUDED"
             elif detection.overlaps_cut:
                 state = "OVERLAP"
@@ -1140,6 +1156,9 @@ class SidePanel(QWidget):
                 item.setText(item.text() + " · check full artwork")
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            if blocked:
+                item.setToolTip(blocked + "\n" + item.toolTip())
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(
                 Qt.CheckState.Checked if detection.enabled else Qt.CheckState.Unchecked
             )
@@ -1161,6 +1180,31 @@ class SidePanel(QWidget):
         self.valid_value_label.setText(str(valid))
         self.invalid_value_label.setText(str(invalid))
         self.disabled_value_label.setText(str(disabled))
+        counts = review_counts(detections, self._mapper, self._logical_layout)
+        lines = [f'{LABELS[key]}: {count}' for key,count in counts.items() if count]
+        clipped=sum(d.enabled and d.artwork_clipped for d in detections)
+        if clipped and detections:
+            unit=self._working_unit
+            width=from_inches(detections[0].cut_width_inches,unit)
+            height=from_inches(detections[0].cut_height_inches,unit)
+            lines.insert(0,f'Selected {width:g} × {height:g} {unit.value} cuts do not contain {clipped} artwork groups. Adjust cut size or verify image scale.')
+        if detections:
+            lines.append('Dashed cyan: detected artwork. Solid outlines: cuts.')
+        blocked_count = sum(bool(d.cut_block_reason(self._mapper)) for d in detections) if self._mapper else 0
+        if blocked_count:
+            lines.append(f'Excluded — outside bed / incomplete image: {blocked_count}')
+        self.review_breakdown_label.setText('\n'.join(lines) + ('\nA cut can have several warnings.' if lines else ''))
+        self.review_breakdown_label.setVisible(bool(lines))
+        spacing = physical_spacing(self._mapper, self._logical_layout,
+                                   detections[0].cut_width_inches if detections else 0,
+                                   detections[0].cut_height_inches if detections else 0)
+        if spacing and spacing['column_pitch_inches'] is not None and spacing['row_pitch_inches'] is not None:
+            unit = self._working_unit
+            sx = from_inches(spacing['column_pitch_inches'], unit)
+            sy = from_inches(spacing['row_pitch_inches'], unit)
+            self.spacing_label.setText(f'Estimated centre spacing: {sx:.2f} × {sy:.2f} {unit.value}\nVerify image scale against a known measurement.')
+        else:
+            self.spacing_label.clear()
         self._render_logical_layout()
         self._update_details()
 
@@ -1241,7 +1285,8 @@ class SidePanel(QWidget):
             self.detail_label.setText("Select a cut area to inspect it.")
             del blocker
             return
-        self.include_checkbox.setEnabled(True)
+        blocked = detection.cut_block_reason(self._mapper) if self._mapper else None
+        self.include_checkbox.setEnabled(not blocked)
         self.include_checkbox.setChecked(detection.enabled)
         square = detection.square_inches
         unit = self._working_unit
@@ -1251,17 +1296,19 @@ class SidePanel(QWidget):
         y = from_inches(square.y, unit)
         width = from_inches(square.width, unit)
         height = from_inches(square.height, unit)
-        if not detection.enabled:
+        if blocked:
+            status = "Excluded from the SVG\n" + blocked
+        elif not detection.enabled:
             status = "Excluded from the SVG"
         elif detection.overlaps_cut:
-            status = "Overlap - touches another cut; not exported"
+            status = "Overlap - check separation before export"
         elif not detection.valid_cut:
             status = (
-                "Cut is too small for the drawing - not exported"
+                "Cut is too small for the drawing - review before export"
                 if self._mapper is not None
                 and not detection.contains_artwork(self._mapper)
                 and not detection.preserves_layout_position
-                else "Outside bed - not exported"
+                else "Outside bed - cannot export"
             )
         elif detection.review_reasons:
             status = "Review required\n" + "\n".join(detection.review_reasons)

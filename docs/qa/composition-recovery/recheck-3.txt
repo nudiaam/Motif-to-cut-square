@@ -1,0 +1,26 @@
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... [ERROR:0@0.648] global ocl.cpp:1006 cv::ocl::OpenCLExecutionContext::Impl::getInitializedExecutionContext OpenCL: Can't create default OpenCL queue
+FAIL
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... FAIL
+test_photographic_variants_keep_all_letters_with_their_illustrations (tests.test_alphabet_compositions.AlphabetCompositionTests.test_photographic_variants_keep_all_letters_with_their_illustrations) ... ok
+test_shared_background_recheck_respects_requested_cells (tests.test_alphabet_compositions.AlphabetCompositionTests.test_shared_background_recheck_respects_requested_cells) ... ok
+
+======================================================================
+FAIL: test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 58, in test_demo_detect_verify_and_manual_editing
+    self.assertLessEqual(len(window.detections), 12)
+AssertionError: 14 not less than or equal to 12
+
+======================================================================
+FAIL: test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 1007, in test_reliable_grid_is_used_in_first_detection_without_manual_step
+    self.assertTrue(all(d.grid_positioned for d in window.detections))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 4 tests in 50.304s
+
+FAILED (failures=2)

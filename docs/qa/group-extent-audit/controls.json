@@ -1,0 +1,170 @@
+[
+  {
+    "name": "alphabet",
+    "count": 24,
+    "quality": {
+      "whole_groups": 24,
+      "failed_groups": []
+    },
+    "source": "local_contrast",
+    "grid": [
+      6,
+      4
+    ],
+    "plans": [
+      {
+        "stage": "appearance_ownership_recheck",
+        "route": "shared_background",
+        "initial_evidence_count": 30,
+        "retained_regions_fraction": 1.0,
+        "corroborated": true,
+        "seam_support": 0.0,
+        "occupied_fraction": 1.0,
+        "aligned_fraction": 1.0,
+        "outside_fraction": 0.0,
+        "score": 0.6,
+        "unique_assignment_fraction": 1.0
+      },
+      {
+        "stage": "joint_appearance",
+        "selected_route": "shared_background",
+        "hypotheses": [
+          {
+            "route": "current",
+            "columns": 7,
+            "rows": 5,
+            "eligible": false,
+            "evidence_count": 35,
+            "evidence_source": "current",
+            "seam_support": 0.2090184386308087,
+            "occupied_fraction": 0.9428571428571428,
+            "aligned_fraction": 0.7058823529411765,
+            "outside_fraction": 0.02857142857142857,
+            "score": 0.581506535116189,
+            "unique_assignment_fraction": 0.9705882352941176,
+            "cross_checks": [
+              {
+                "against": "shared_background",
+                "contained_fraction": 0.041666666666666664,
+                "reference_contained_fraction": 0.9166666666666666,
+                "seam_support": 0.2090184386308087,
+                "occupied_fraction": 0.6857142857142857,
+                "aligned_fraction": 0.041666666666666664,
+                "outside_fraction": 0.0,
+                "score": 0.33402404211899017,
+                "unique_assignment_fraction": 1.0
+              }
+            ],
+            "rejection_reason": "Contradicts independently supported compositions from shared_background"
+          },
+          {
+            "route": "shared_background",
+            "columns": 6,
+            "rows": 4,
+            "eligible": true,
+            "evidence_count": 24,
+            "evidence_source": "shared_background",
+            "seam_support": 0.0,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 1.0,
+            "outside_fraction": 0.0,
+            "score": 0.6,
+            "unique_assignment_fraction": 1.0,
+            "competing_routes": [],
+            "selection_margin": 0.0
+          }
+        ],
+        "scene_resolved_before_refinement": true
+      }
+    ]
+  },
+  {
+    "name": "numbers",
+    "count": 20,
+    "quality": {
+      "whole_groups": 20,
+      "failed_groups": []
+    },
+    "source": "local_contrast",
+    "grid": [
+      5,
+      4
+    ],
+    "plans": [
+      {
+        "stage": "appearance_ownership_recheck",
+        "route": "shared_background",
+        "initial_evidence_count": 37,
+        "retained_regions_fraction": 0.8108108108108109,
+        "corroborated": false,
+        "seam_support": 0.1164523663632004,
+        "occupied_fraction": 1.0,
+        "aligned_fraction": 1.0,
+        "outside_fraction": 0.0,
+        "score": 0.6465809465452801,
+        "unique_assignment_fraction": 1.0
+      },
+      {
+        "stage": "joint_appearance",
+        "selected_route": "shared_background",
+        "hypotheses": [
+          {
+            "route": "shared_background",
+            "columns": 10,
+            "rows": 3,
+            "eligible": true,
+            "evidence_count": 37,
+            "evidence_source": "shared_background",
+            "seam_support": 0.1164523663632004,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 0.9393939393939394,
+            "outside_fraction": 0.10810810810810811,
+            "score": 0.5989969989613325,
+            "unique_assignment_fraction": 0.9090909090909091,
+            "competing_routes": [],
+            "selection_margin": 0.0
+          }
+        ],
+        "scene_resolved_before_refinement": false
+      },
+      {
+        "stage": "hierarchical_compositions",
+        "agreeing_readings": 5,
+        "thresholds": [
+          35,
+          45,
+          55
+        ],
+        "area_quantiles": [
+          0.87,
+          0.89,
+          0.91
+        ],
+        "columns": 5,
+        "rows": 4,
+        "foreground_parts": 211,
+        "retained_ink_fraction": 1.0,
+        "retained_parts_fraction": 1.0,
+        "spacing_refinement": [
+          1.04,
+          1.08
+        ],
+        "outside_border_parts": 0
+      }
+    ]
+  },
+  {
+    "name": "accessories",
+    "count": 12,
+    "quality": {
+      "whole_groups": 12,
+      "failed_groups": []
+    },
+    "source": "camera",
+    "grid": [
+      4,
+      3
+    ],
+    "plans": []
+  }
+]

@@ -1,0 +1,44 @@
+Fixture: transport_dashed_shared.png
+         2314839 function calls (2305569 primitive calls) in 3.349 seconds
+
+   Ordered by: cumulative time
+   List reduced from 427 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.004    0.004    3.353    3.353 detector.py:171(detect_with_layout)
+        1    0.019    0.019    1.641    1.641 detector.py:461(_detect_layout)
+        3    0.088    0.029    0.932    0.311 detector.py:920(_detect_once)
+        1    0.001    0.001    0.878    0.878 detector.py:282(_coordinate_appearance)
+    12624    0.024    0.000    0.758    0.000 _function_base_impl.py:3827(_ureduce)
+        1    0.013    0.013    0.729    0.729 contrast_grid.py:45(infer_contrast_geometry)
+       60    0.542    0.009    0.542    0.009 {GaussianBlur}
+     6881    0.005    0.000    0.532    0.000 _function_base_impl.py:4512(_quantile_unchecked)
+     6881    0.007    0.000    0.512    0.000 _function_base_impl.py:4651(_quantile_ureduce_func)
+        3    0.000    0.000    0.484    0.161 detector.py:996(_estimate_background)
+     6881    0.051    0.000    0.483    0.000 _function_base_impl.py:4726(_quantile)
+       33    0.071    0.002    0.473    0.014 logical_layout.py:212(fit_logical_layout)
+        1    0.069    0.069    0.418    0.418 scene_profile.py:23(illumination_view)
+   110630    0.382    0.000    0.382    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     3341    0.010    0.000    0.372    0.000 _function_base_impl.py:4064(percentile)
+    15101    0.086    0.000    0.352    0.000 _linalg.py:2598(norm)
+    12624    0.297    0.000    0.297    0.000 {method 'partition' of 'numpy.ndarray' objects}
+        1    0.022    0.022    0.291    0.291 camera_panel.py:95(infer_camera_panel)
+       35    0.042    0.001    0.285    0.008 pattern_grid.py:49(_regions)
+        3    0.164    0.055    0.264    0.088 detector.py:1053(_components)
+     5743    0.004    0.000    0.235    0.000 _function_base_impl.py:3914(median)
+        1    0.000    0.000    0.209    0.209 detector.py:422(finalize_compositions)
+        1    0.015    0.015    0.207    0.207 extent_review.py:13(review_extents)
+     5743    0.021    0.000    0.207    0.000 _function_base_impl.py:4003(_median)
+     3540    0.004    0.000    0.195    0.000 _function_base_impl.py:4267(quantile)
+        8    0.007    0.001    0.187    0.023 detection_plan.py:106(grid_evidence)
+        1    0.040    0.040    0.184    0.184 bed_reference.py:53(locate_fabric)
+        2    0.002    0.001    0.171    0.086 detection_plan.py:156(choose_grid)
+       24    0.047    0.002    0.168    0.007 scene_profile.py:113(background_evidence)
+        1    0.008    0.008    0.159    0.159 detector.py:1179(infer_panel_grid)
+        1    0.053    0.053    0.135    0.135 pattern_grid.py:108(infer_repeated_artwork)
+       66    0.027    0.000    0.114    0.002 logical_layout.py:161(_axis_fit)
+     5743    0.003    0.000    0.109    0.000 fromnumeric.py:732(partition)
+     5478    0.017    0.000    0.091    0.000 _linalg.py:2034(matrix_rank)
+     7960    0.029    0.000    0.090    0.000 _methods.py:115(_mean)
+
+

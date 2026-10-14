@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import asdict, dataclass, replace
+from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
 
 import cv2
 import numpy as np
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot, QTimer
 from PySide6.QtGui import QAction, QImage, QKeyEvent, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QAbstractSpinBox,
@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QPushButton,
+    QProgressBar,
     QSizePolicy,
     QToolButton,
     QVBoxLayout,
@@ -37,14 +38,15 @@ from app.config.machines import (
 )
 from app.demo.demo_image import create_demo_image
 from app.config.bed_references import BedReferences
-from app.export.debug_exporter import export_debug_json
+from app.export.debug_exporter import export_debug_json, export_detection_bundle
 from app.export.svg_exporter import SVGExporter
 from app.export.verifier import verify_export_geometry
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.units import LengthUnit
-from app.imaging.detector import DETECTOR_REVISION, MotifDetector, infer_panel_grid
+from app.imaging.detector import MotifDetector, infer_panel_grid
 from app.imaging.panel_grid import PanelGrid
 from app.imaging.logical_layout import LogicalLayout, LayoutObservation, fit_logical_layout, layout_from_panel_grid
+from app.geometry.composition_phase import contain_automatic_compositions
 from app.models import (
     Detection,
     apply_logical_layout,
@@ -56,6 +58,7 @@ from app.ui.canvas import BedCanvas
 from app.ui.help_widgets import DelayedHelpToolBar
 from app.ui.machine_dialog import AddMachineDialog
 from app.ui.side_panel import SidePanel
+from app.ui.detection_worker import DetectionWorker
 
 
 TOOLBAR_HELP = {
@@ -154,6 +157,8 @@ class MainWindow(QMainWindow):
         self._preflight_complete = False
         self._undo_stack: list[_HistorySnapshot] = []
         self._restoring_history = False
+        self._detection_worker = None
+        self._close_after_detection = False
 
         self.canvas = BedCanvas()
         self.panel = SidePanel()
@@ -166,14 +171,41 @@ class MainWindow(QMainWindow):
         )
         self._build_toolbar()
         self._build_central_widget()
+        self._build_analysis_status()
         self._build_review_shortcuts()
         self._connect_signals()
         self.panel.load_bed_reference_button.clicked.connect(self.load_bed_reference)
         self.panel.remove_bed_reference_button.clicked.connect(self.remove_bed_reference)
         self.panel.detection_report_button.clicked.connect(self.save_detection_report)
+        self.panel.detection_bundle_button.clicked.connect(self.save_diagnostic_package)
         self._load_machine_reference()
         self._update_review_controls()
         self.statusBar().showMessage("Ready — choose Demo Image to start")
+
+    def _build_analysis_status(self):
+        self.analysis_status = QWidget()
+        self.analysis_status.setObjectName("analysisStatus")
+        layout = QHBoxLayout(self.analysis_status)
+        layout.setContentsMargins(4, 0, 4, 0)
+        layout.setSpacing(12)
+        self.analysis_label = QLabel("Analysing image…")
+        self.analysis_label.setTextFormat(Qt.TextFormat.PlainText)
+        self.analysis_label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        self.analysis_progress = QProgressBar()
+        self.analysis_progress.setObjectName("analysisProgress")
+        self.analysis_progress.setAccessibleName("Image analysis in progress")
+        self.analysis_progress.setRange(0, 0)
+        self.analysis_progress.setTextVisible(False)
+        self.analysis_progress.setFixedSize(140, 4)
+        self.analysis_cancel = QPushButton("Cancel")
+        self.analysis_cancel.setObjectName("analysisCancel")
+        self.analysis_cancel.setToolTip("Cancel analysis and keep the previous cuts")
+        self.analysis_cancel.clicked.connect(self._cancel_detection)
+        layout.addWidget(self.analysis_label, 1)
+        layout.addWidget(self.analysis_progress)
+        layout.addWidget(self.analysis_cancel)
+        self.statusBar().addPermanentWidget(self.analysis_status, 1)
+        self.analysis_status.hide()
 
     def _load_machine_reference(self):
         self.detector.bed_reference = self.bed_references.load(self.current_machine.id)
@@ -217,7 +249,7 @@ class MainWindow(QMainWindow):
             "Paste Image", self.paste_image, QKeySequence.StandardKey.Paste
         )
         self.open_action = self._action("Open Image", self.open_image)
-        self.detect_action = self._action("Detect", self.detect_motifs)
+        self.detect_action = self._action("Detect", lambda: self.detect_motifs(background=True))
         self.undo_action = self._action("Undo", self.undo)
         self.undo_action.setEnabled(False)
         self.add_action = self._action("Add cut square", self._toggle_add_mode)
@@ -329,7 +361,7 @@ class MainWindow(QMainWindow):
         self.workflow_detect_button = QPushButton("2  Detect + check")
         self.workflow_detect_button.setObjectName("reviewAction")
         self.workflow_detect_button.setToolTip(TOOLBAR_HELP["detect"])
-        self.workflow_detect_button.clicked.connect(self.detect_motifs)
+        self.workflow_detect_button.clicked.connect(lambda: self.detect_motifs(background=True))
         layout.addWidget(self.workflow_detect_button, 1)
 
         self.workflow_review_button = QPushButton("3  Review cuts")
@@ -339,12 +371,7 @@ class MainWindow(QMainWindow):
         )
         layout.addWidget(self.workflow_review_button, 1)
 
-        self.workflow_check_button = QPushButton("4  Check output")
-        self.workflow_check_button.setObjectName("reviewAction")
-        self.workflow_check_button.clicked.connect(self.show_preflight)
-        layout.addWidget(self.workflow_check_button, 1)
-
-        self.workflow_export_button = QPushButton("5  Export SVG")
+        self.workflow_export_button = QPushButton("4  Export SVG")
         self.workflow_export_button.setObjectName("reviewAction")
         self.workflow_export_button.clicked.connect(self.export_svg)
         layout.addWidget(self.workflow_export_button, 1)
@@ -403,7 +430,7 @@ class MainWindow(QMainWindow):
             self.delete_key_shortcut,
             self.undo_shortcut,
         ):
-            shortcut.setEnabled(not editing_value)
+            shortcut.setEnabled(not editing_value and self._detection_worker is None)
 
     def _build_navigation_help(self) -> QFrame:
         container = QFrame()
@@ -462,8 +489,10 @@ class MainWindow(QMainWindow):
         ):
             phase = "detect"
         self._workflow_phase = phase
-        panel_phase = "export" if phase in {"preflight", "export"} else phase
-        self.panel.set_phase(panel_phase)
+        self.panel.set_phase(phase)
+        if phase == "review":
+            self._update_output_summary()
+            self.cut_preview_toggle.setChecked(True)
         self._sync_layout_display()
         self._update_review_controls()
 
@@ -487,7 +516,7 @@ class MainWindow(QMainWindow):
                    for d in self.detections)
 
     def show_preflight(self) -> None:
-        """Present an explicit export summary instead of silently dropping cuts."""
+        """Open the combined review, including its current output summary."""
         if not self._detection_review_complete:
             self._set_workflow_phase("detect")
             self.statusBar().showMessage(
@@ -499,6 +528,14 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(
                 "Detect and review at least one cut before checking the output", 5000
             )
+            return
+        self._set_workflow_phase("review")
+
+    def _update_output_summary(self) -> None:
+        """Refresh output checks in place without a separate workflow step."""
+        if not self._detection_review_complete or not self.detections or self.mapper is None:
+            self._preflight_complete = False
+            self.panel.verification_label.setText("Confirm the detection to review the output.")
             return
         recalculate_cut_overlaps(self.detections)
         exported = sum(item.enabled for item in self.detections)
@@ -516,7 +553,6 @@ class MainWindow(QMainWindow):
             self.mapper, self.detections, self.panel.export_unit()
         )
         self.canvas.set_verification_rectangles(result.overlay_rectangles_px)
-        self.cut_preview_toggle.setChecked(True)
         headline = (
             f"READY TO EXPORT: {exported} CUTS"
             if warnings == 0
@@ -533,12 +569,6 @@ class MainWindow(QMainWindow):
             f"{max(result.maximum_error_x_px, result.maximum_error_y_px):.6g} px"
         )
         self._preflight_complete = True
-        self._set_workflow_phase("preflight")
-        self.statusBar().showMessage(
-            f"Preflight complete — {exported} cuts will be saved; "
-            f"{skipped} unchecked cuts skipped",
-            8000,
-        )
 
     def _connect_signals(self) -> None:
         self.canvas.detection_selected.connect(self.select_detection)
@@ -557,6 +587,10 @@ class MainWindow(QMainWindow):
         self.panel.machine_changed.connect(self.change_machine)
         self.panel.add_machine_requested.connect(self.add_machine)
         self.panel.working_unit_changed.connect(self.change_working_unit)
+        self.panel.export_unit_combo.currentIndexChanged.connect(
+            lambda _index: self._update_output_summary()
+            if self._workflow_phase in {"review", "export"} else None
+        )
         self.panel.cut_size_changed.connect(self.change_cut_size)
         self.panel.image_lock_changed.connect(self.canvas.set_image_locked)
         self.canvas.image_placement_changed.connect(
@@ -612,6 +646,9 @@ class MainWindow(QMainWindow):
         return action
 
     def keyPressEvent(self, event: QKeyEvent) -> None:  # noqa: N802 - Qt API
+        if self._detection_worker is not None:
+            event.ignore()
+            return
         if (
             event.key() == Qt.Key.Key_Z
             and event.modifiers() & Qt.KeyboardModifier.ControlModifier
@@ -792,7 +829,9 @@ class MainWindow(QMainWindow):
         self._update_logical_layout()
         self.statusBar().showMessage(f"{message} — {width} × {height} px", 6000)
 
-    def detect_motifs(self, replace_confirmed: bool = False) -> None:
+    def detect_motifs(self, replace_confirmed: bool = False, *, background: bool = False) -> None:
+        if self._detection_worker is not None:
+            return
         if self.image_bgr is None or self.mapper is None:
             self._request_image()
             return
@@ -802,8 +841,10 @@ class MainWindow(QMainWindow):
             and not self._confirm_redetection()
         ):
             return
+        if background:
+            self._start_detection_worker()
+            return
         if self.panel_grid is not None and self._grid_review_complete:
-            self._push_history("Detect figures")
             self.detect_in_current_grid()
             self._set_workflow_phase("detect")
             return
@@ -813,14 +854,17 @@ class MainWindow(QMainWindow):
             result = self.detector.detect_with_layout(
                 self.image_bgr, settings
             )
-            candidates = list(result.candidates)
         except Exception as exc:  # present processing failures as UI errors
             QMessageBox.critical(self, "Detection failed", str(exc))
             return
         finally:
             QApplication.restoreOverrideCursor()
+        self._apply_detection_result(result, self.detector.last_diagnostics)
+
+    def _apply_detection_result(self, result, diagnostics):
         self._push_history("Detect motifs")
-        self.detection_diagnostics = copy.deepcopy(self.detector.last_diagnostics)
+        self.detection_diagnostics = copy.deepcopy(diagnostics)
+        candidates = result.candidates
         self.panel_grid = result.panel_grid
         self.detection_panel_grid = result.panel_grid
         self.detections = [
@@ -834,6 +878,7 @@ class MainWindow(QMainWindow):
                 cut_height_inches=self.cut_height_inches,
                 layout_observation_px=candidate.layout_center_px,
                 review_reasons=candidate.review_reasons,
+                source_incomplete=candidate.source_incomplete,
             )
             for index, candidate in enumerate(candidates, start=1)
         ]
@@ -850,7 +895,7 @@ class MainWindow(QMainWindow):
         self._refresh()
         self._sync_panel_grid_ui()
         self._set_workflow_phase("detect")
-        valid = sum(item.exportable for item in self.detections)
+        valid = sum(item.enabled for item in self.detections) - self._cut_warning_count()
         detection_summary = (
             f"Detected {len(self.detections)} figures in "
             f"{self.panel_grid.columns} × {self.panel_grid.rows} panels"
@@ -861,6 +906,78 @@ class MainWindow(QMainWindow):
             f"{detection_summary} — check the result before continuing",
             7000,
         )
+
+    def _start_detection_worker(self):
+        settings = self.panel.detector_settings(self.mapper)
+        guides = self.panel_grid if self._grid_review_complete else None
+        job = DetectionWorker(self.image_bgr, self.detector.bed_reference, settings, guides, self)
+        self._detection_worker = job
+        self._update_review_shortcuts(None, QApplication.focusWidget())
+        self._busy_actions = [(a, a.isEnabled()) for a in self.findChildren(QAction)]
+        for action, _ in self._busy_actions:
+            action.setEnabled(False)
+        self.centralWidget().setEnabled(False)
+        self.statusBar().clearMessage()
+        self.analysis_label.setText('Analysing image…')
+        self.analysis_label.setToolTip('Analysing image…')
+        self.analysis_cancel.setEnabled(True)
+        self.analysis_status.show()
+        job.progress.connect(self._detection_progress_changed)
+        job.completed.connect(self._detection_completed)
+        job.failed.connect(self._detection_failed)
+        job.finished.connect(self._detection_finished)
+        job.start()
+
+    @Slot()
+    def _cancel_detection(self):
+        if self._detection_worker is not None:
+            self._detection_worker.cancel()
+            self.analysis_label.setText('Cancelling analysis…')
+            self.analysis_label.setToolTip('Cancelling analysis…')
+            self.analysis_cancel.setEnabled(False)
+
+    @Slot(str)
+    def _detection_progress_changed(self, message):
+        if self._detection_worker and not self._detection_worker.cancelled.is_set():
+            self.analysis_label.setText(message)
+            self.analysis_label.setToolTip(message)
+
+    @Slot(object)
+    def _detection_completed(self, payload):
+        if self._detection_worker and not self._detection_worker.cancelled.is_set():
+            result, diagnostics = payload
+            self.detector.last_diagnostics = copy.deepcopy(diagnostics)
+            self._apply_detection_result(result, diagnostics)
+
+    @Slot(str)
+    def _detection_failed(self, message):
+        self.analysis_status.hide()
+        QMessageBox.critical(self, 'Detection failed', message)
+
+    @Slot()
+    def _detection_finished(self):
+        job = self._detection_worker
+        self._detection_worker = None
+        self.analysis_status.hide()
+        self.centralWidget().setEnabled(True)
+        self._update_review_shortcuts(None, QApplication.focusWidget())
+        for action, enabled in self._busy_actions:
+            action.setEnabled(enabled)
+        self._update_review_controls()
+        self.undo_action.setEnabled(bool(self._undo_stack))
+        if job.cancelled.is_set():
+            self.statusBar().showMessage('Detection cancelled; previous cuts retained', 7000)
+        job.deleteLater()
+        if self._close_after_detection:
+            QTimer.singleShot(0, self.close)
+
+    def closeEvent(self, event):
+        if self._detection_worker is not None:
+            self._close_after_detection = True
+            self._detection_worker.cancel()
+            event.ignore()
+            return
+        super().closeEvent(event)
 
     def activate_grid_step(self) -> None:
         """Open fallback grid editing while preserving the current cut result."""
@@ -986,65 +1103,11 @@ class MainWindow(QMainWindow):
             return
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            if self.panel_grid.source in {"pattern", "camera", "reference", "fabric"}:
-                settings = replace(self.panel.detector_settings(self.mapper), layout_mode="auto")
-                candidates = self.detector.detect_with_layout(self.image_bgr, settings).candidates
-                self.detection_diagnostics = copy.deepcopy(self.detector.last_diagnostics)
-            else:
-                settings = self.panel.detector_settings(self.mapper)
-                candidates = self.detector.detect_in_grid(
-                    self.image_bgr,
-                    settings,
-                    self.panel_grid,
-                )
-                before = len(candidates)
-                candidates = self.detector.reconcile_grid_artwork(
-                    self.image_bgr, settings, self.panel_grid, candidates,
-                )
-                candidates = self.detector.finalize_compositions(self.image_bgr, candidates, self.panel_grid)
-                self.detection_diagnostics = {
-                    "detector_revision": DETECTOR_REVISION,
-                    "reference_status": "Not used for detection inside confirmed panel guides",
-                    "reference_applied": False,
-                    "fabric_status": "Confirmed panel guides used",
-                    "settings": asdict(settings),
-                    "grid": asdict(self.panel_grid),
-                    "grid_notes": (["Preserved whole artwork spanning adjacent cells."]
-                                   if len(candidates) < before else []),
-                    "candidates_after_cleanup": len(candidates),
-                }
+            result = self.detector.detect_with_guides(
+                self.image_bgr, self.panel.detector_settings(self.mapper), self.panel_grid)
         finally:
             QApplication.restoreOverrideCursor()
-        self.detection_panel_grid = self.panel_grid
-        self.detections = [
-            Detection.from_pixel_center(
-                index,
-                candidate.center_px,
-                self.mapper,
-                candidate.bounding_box_px,
-                candidate.score,
-                cut_width_inches=self.cut_width_inches,
-                cut_height_inches=self.cut_height_inches,
-                layout_observation_px=candidate.layout_center_px,
-                review_reasons=candidate.review_reasons,
-            )
-            for index, candidate in enumerate(candidates, start=1)
-        ]
-        self._suppressed_grid_cells.clear()
-        self._layout_signature = None
-        self.selected_id = None
-        self.selected_ids = set()
-        self._review_centering_complete = False
-        self._detection_review_complete = False
-        self._preflight_complete = False
-        self._refresh()
-        self._sync_panel_grid_ui()
-        empty = self.panel_grid.columns * self.panel_grid.rows - len(self.detections)
-        self.statusBar().showMessage(
-            f"Grid detection updated · {len(self.detections)} figures · "
-            f"{empty} empty cells · check the result before continuing",
-            7000,
-        )
+        self._apply_detection_result(result, self.detector.last_diagnostics)
 
     def change_grid_dimensions(self, columns: int, rows: int) -> None:
         if self.image_bgr is None:
@@ -1224,6 +1287,10 @@ class MainWindow(QMainWindow):
         detection = self._find_detection(detection_id)
         if detection is None or detection.enabled == enabled:
             return
+        if enabled and self.mapper is not None and detection.cut_block_reason(self.mapper):
+            self.statusBar().showMessage(detection.cut_block_reason(self.mapper), 7000)
+            self.panel.set_detections(self.detections, self.selected_ids, self.selected_id)
+            return
         self._push_history("Change export inclusion")
         detection.enabled = enabled
         self._refresh()
@@ -1385,6 +1452,24 @@ class MainWindow(QMainWindow):
             return
         self.statusBar().showMessage(f"Detection report saved: {path}", 7000)
 
+    def save_diagnostic_package(self) -> None:
+        if self.mapper is None or not self.detection_diagnostics.get('identity'):
+            return
+        filename, _ = QFileDialog.getSaveFileName(self, 'Save diagnostic package',
+            str(Path.cwd()/'detection-package.zip'), 'ZIP package (*.zip)')
+        if not filename:
+            return
+        path = Path(filename).with_suffix('.zip')
+        try:
+            export_detection_bundle(path, self.image_bgr, self.detector.bed_reference,
+                self.mapper, self.detections, working_unit=self.working_unit,
+                machine_name=self.current_machine.name, logical_layout=self.logical_layout,
+                detection_run=self.detection_diagnostics)
+        except (OSError, ValueError, cv2.error) as exc:
+            QMessageBox.critical(self, 'Package failed', str(exc))
+            return
+        self.statusBar().showMessage(f'Diagnostic package saved: {path}', 7000)
+
     def verify_export(self) -> None:
         if self.mapper is None:
             self._request_image()
@@ -1407,13 +1492,15 @@ class MainWindow(QMainWindow):
         if self.mapper is None:
             self._request_image()
             return
-        if not self._preflight_complete:
-            self.show_preflight()
-            self.statusBar().showMessage(
-                "Review the preflight summary, then choose Export SVG again",
-                7000,
-            )
+        blocked = [d for d in self.detections if d.enabled and d.cut_block_reason(self.mapper)]
+        if blocked:
+            QMessageBox.warning(self, "Cuts cannot be exported", "\n".join(
+                f"#{d.id}: {d.cut_block_reason(self.mapper)}" for d in blocked))
             return
+        if not self._detection_review_complete:
+            self.show_preflight()
+            return
+        self._update_output_summary()
         exported = sum(item.enabled for item in self.detections)
         warnings = self._cut_warning_count()
         if exported == 0:
@@ -1428,8 +1515,8 @@ class MainWindow(QMainWindow):
                 self,
                 "Some cuts have warnings",
                 f"All {exported} checked cuts will be exported, but {warnings} "
-                "have warnings (clipped artwork, outside the bed, overlap, or grid assignment). "
-                "The preflight summary shows the reasons. Continue?",
+                "have warnings (clipped artwork, overlap, or grid assignment). "
+                "The review summary shows the reasons. Continue?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
                 QMessageBox.StandardButton.Cancel,
             )
@@ -1478,15 +1565,14 @@ class MainWindow(QMainWindow):
                     logical_layout=self.logical_layout,
                     detection_run=self.detection_diagnostics,
                 )
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             QMessageBox.critical(self, "Export failed", str(exc))
             return
         details = f"SVG saved with {result.rectangle_count} cuts:\n{result.path}"
         if json_path is not None:
             details += f"\n\nDebug JSON:\n{json_path}"
         QMessageBox.information(self, "Export complete", details)
-        self._workflow_phase = "export"
-        self._update_review_controls()
+        self._set_workflow_phase("export")
         self.statusBar().showMessage(
             f"Exported {result.rectangle_count} cuts in {result.unit.value} to "
             f"{result.path.name}",
@@ -1608,7 +1694,7 @@ class MainWindow(QMainWindow):
         # Inferred cuts cannot contribute evidence to their own grid.
         evidence = [item for item in self.detections
                     if item.bounding_box_px is not None and not item.inferred]
-        signature = (self.detection_panel_grid,
+        signature = (self.detection_panel_grid,self.cut_width_inches,self.cut_height_inches,
                      tuple((item.id, item.bounding_box_px, item.layout_observation_px,
                             item.enabled) for item in evidence))
         if signature != self._layout_signature:
@@ -1626,6 +1712,9 @@ class MainWindow(QMainWindow):
             self.logical_layout = (layout_from_panel_grid(observations, grid)
                                    if grid is not None and (grid.confidence >= .78 or grid.source == "manual")
                                    else fit_logical_layout(observations))
+            if self.mapper is not None:
+                self.logical_layout=contain_automatic_compositions(self.logical_layout,self.detections,self.mapper,
+                    self.cut_width_inches,self.cut_height_inches)
             self._layout_signature = signature
             if not self._restoring_history:
                 for item in self.detections:
@@ -1653,14 +1742,20 @@ class MainWindow(QMainWindow):
         """Fill grid gaps, but never cut again through a spanning illustration."""
         if self.mapper is None:
             return
+        disputed = bool(self.detection_panel_grid and any(
+            'Competing panel layouts' in reason or 'Insufficient independent' in reason
+            or 'Sparse composition layout' in reason
+            for reason in self.detection_panel_grid.review_reasons))
         desired = ({(gap.column, gap.row) for gap in self.logical_layout.missing
                     if not gap.covered_by_artwork}
-                   if self.logical_layout.reliable else set())
+                   if self.logical_layout.reliable and not disputed else set())
         # A moved inferred square becomes an explicit manual choice and is no
         # longer managed by the automatic grid synchronizer.
         managed = [item for item in self.detections if item.inferred and not item.manual]
         for item in managed:
             if item.layout_cell in desired:
+                item.source_incomplete = not self.logical_layout.cell_inside_image(
+                    *item.layout_cell, self.mapper.image_width_px, self.mapper.image_height_px)
                 item.place_on_grid(
                     self.logical_layout.position(*item.layout_cell),
                     item.layout_cell,
@@ -1680,6 +1775,8 @@ class MainWindow(QMainWindow):
                 cut_height_inches=self.cut_height_inches,
             )
             detection.inferred = True
+            detection.source_incomplete = not self.logical_layout.cell_inside_image(
+                *cell, self.mapper.image_width_px, self.mapper.image_height_px)
             detection.review_reasons = ("No artwork detected here; verify this proposed position",)
             detection.original_center_px = None
             detection.place_on_grid(position, cell, self.mapper)
@@ -1690,6 +1787,12 @@ class MainWindow(QMainWindow):
         self.panel.set_detection_diagnostics(self.detection_diagnostics)
         self._preflight_complete = False
         self._update_logical_layout()
+        # Retain excluded observations for inspection; never offer an unusable
+        # boundary cut or regenerate it as an empty grid cell.
+        if self.mapper is not None:
+            for detection in self.detections:
+                if detection.cut_block_reason(self.mapper):
+                    detection.enabled = False
         active = [d for d in self.detections if d.enabled]
         if any(d.grid_positioned for d in active) and all(d.preserves_layout_position for d in active):
             self._review_centering_complete = True
@@ -1710,6 +1813,9 @@ class MainWindow(QMainWindow):
             self.detections, self.selected_ids, self.selected_id
         )
         self.panel.verification_label.setText("Round-trip verification not run")
+        if self._workflow_phase in {"review", "export"}:
+            self._update_output_summary()
+            self._update_review_controls()
 
     def _update_review_controls(self) -> None:
         collision_count = sum(
@@ -1730,9 +1836,6 @@ class MainWindow(QMainWindow):
         self.workflow_grid_button.setEnabled(True)
         self.workflow_detect_button.setEnabled(has_image)
         self.workflow_review_button.setEnabled(
-            has_detections and self._detection_review_complete
-        )
-        self.workflow_check_button.setEnabled(
             has_detections and self._detection_review_complete
         )
         self.workflow_export_button.setEnabled(
@@ -1803,7 +1906,7 @@ class MainWindow(QMainWindow):
             )
         else:
             self.review_guidance.setText(
-                "Review complete · Check exactly what will be exported"
+                "Review the output summary · Export SVG when ready"
             )
 
         self._set_workflow_state(
@@ -1848,16 +1951,6 @@ class MainWindow(QMainWindow):
             if review_complete
             else "available"
             if self._detection_review_complete
-            else "locked",
-        )
-        self._set_workflow_state(
-            self.workflow_check_button,
-            "active"
-            if self._workflow_phase == "preflight"
-            else "complete"
-            if self._preflight_complete
-            else "available"
-            if has_detections and self._detection_review_complete
             else "locked",
         )
         self._set_workflow_state(

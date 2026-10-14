@@ -1,0 +1,27 @@
+test_blank_or_striped_background_cannot_supply_a_grid (tests.test_irregular_shadows.IrregularShadowTests.test_blank_or_striped_background_cannot_supply_a_grid) ... ok
+test_coarse_grid_is_rejected_even_without_an_alternative (tests.test_irregular_shadows.IrregularShadowTests.test_coarse_grid_is_rejected_even_without_an_alternative) ... ok
+test_geometry_accepts_different_row_and_column_counts (tests.test_irregular_shadows.IrregularShadowTests.test_geometry_accepts_different_row_and_column_counts) ... ok
+test_original_shadowed_transport_preserves_distinct_complete_motifs (tests.test_irregular_shadows.IrregularShadowTests.test_original_shadowed_transport_preserves_distinct_complete_motifs) ... ok
+test_resized_shadowed_original_keeps_geometry_and_extent (tests.test_irregular_shadows.IrregularShadowTests.test_resized_shadowed_original_keeps_geometry_and_extent) ... 
+  test_resized_shadowed_original_keeps_geometry_and_extent (tests.test_irregular_shadows.IrregularShadowTests.test_resized_shadowed_original_keeps_geometry_and_extent) (scale=1.5) ... FAIL
+test_shadow_fields_across_three_collections (tests.test_irregular_shadows.IrregularShadowTests.test_shadow_fields_across_three_collections) ... ok
+test_common_translation_contains_bounds_without_deforming_rows_or_columns (tests.test_composition_content.CommonCompositionPhaseTests.test_common_translation_contains_bounds_without_deforming_rows_or_columns) ... ok
+test_conflicting_containment_intervals_do_not_move_cuts_independently (tests.test_composition_content.CommonCompositionPhaseTests.test_conflicting_containment_intervals_do_not_move_cuts_independently) ... ok
+test_impossible_size_or_manual_guides_keep_the_layout (tests.test_composition_content.CommonCompositionPhaseTests.test_impossible_size_or_manual_guides_keep_the_layout) ... ok
+test_mixed_colour_and_monochrome_groups_survive_photographic_variations (tests.test_composition_content.CompositionContentTests.test_mixed_colour_and_monochrome_groups_survive_photographic_variations) ... ok
+test_one_reference_cannot_be_certified_by_separate_text_and_decoration_boxes (tests.test_composition_content.CompositionContentTests.test_one_reference_cannot_be_certified_by_separate_text_and_decoration_boxes) ... ok
+test_source_edge_fragment_is_not_discarded_by_an_empty_cloth_mask (tests.test_composition_content.CompositionContentTests.test_source_edge_fragment_is_not_discarded_by_an_empty_cloth_mask) ... ok
+test_ui_keeps_whole_groups_and_reports_insufficient_cut_size (tests.test_composition_content.CompositionContentTests.test_ui_keeps_whole_groups_and_reports_insufficient_cut_size) ... ok
+
+======================================================================
+FAIL: test_resized_shadowed_original_keeps_geometry_and_extent (tests.test_irregular_shadows.IrregularShadowTests.test_resized_shadowed_original_keeps_geometry_and_extent) (scale=1.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_irregular_shadows.py", line 113, in test_resized_shadowed_original_keeps_geometry_and_extent
+    self.assertTrue(any(x <= px*scale <= x+w and y <= py*scale <= y+h
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 13 tests in 167.273s
+
+FAILED (failures=1)

@@ -1,0 +1,99 @@
+test_bed_reference_completes_missing_row_in_detection (tests.test_ui_smoke.UISmokeTests.test_bed_reference_completes_missing_row_in_detection) ... ok
+test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo) ... FAIL
+test_camera_patchwork_materializes_missing_grid_cells_without_extra_ui (tests.test_ui_smoke.UISmokeTests.test_camera_patchwork_materializes_missing_grid_cells_without_extra_ui) ... ok
+test_canvas_zoom_keeps_anchor_and_space_drag_pans (tests.test_ui_smoke.UISmokeTests.test_canvas_zoom_keeps_anchor_and_space_drag_pans) ... ok
+test_center_and_overlap_fix_leave_nothing_selected (tests.test_ui_smoke.UISmokeTests.test_center_and_overlap_fix_leave_nothing_selected) ... ok
+test_center_step_preserves_collision_free_layout (tests.test_ui_smoke.UISmokeTests.test_center_step_preserves_collision_free_layout) ... ok
+test_clicking_selected_square_toggles_it_off (tests.test_ui_smoke.UISmokeTests.test_clicking_selected_square_toggles_it_off) ... ok
+test_combined_review_updates_output_and_exports_in_one_click (tests.test_ui_smoke.UISmokeTests.test_combined_review_updates_output_and_exports_in_one_click) ... ok
+test_contextual_actions_run_the_review_workflow (tests.test_ui_smoke.UISmokeTests.test_contextual_actions_run_the_review_workflow) ... ok
+test_contextual_help_is_registered (tests.test_ui_smoke.UISmokeTests.test_contextual_help_is_registered) ... ok
+test_ctrl_z_steps_back_through_overlap_fix_and_centering (tests.test_ui_smoke.UISmokeTests.test_ctrl_z_steps_back_through_overlap_fix_and_centering) ... ok
+test_cut_can_move_while_grid_is_visible_and_editable (tests.test_ui_smoke.UISmokeTests.test_cut_can_move_while_grid_is_visible_and_editable) ... ok
+test_cut_collisions_update_status_and_counts (tests.test_ui_smoke.UISmokeTests.test_cut_collisions_update_status_and_counts) ... ok
+test_cut_preview_dims_the_bed_outside_exportable_cuts (tests.test_ui_smoke.UISmokeTests.test_cut_preview_dims_the_bed_outside_exportable_cuts) ... ok
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... ok
+test_detect_and_redetect_show_grid_centres_before_confirmation (tests.test_ui_smoke.UISmokeTests.test_detect_and_redetect_show_grid_centres_before_confirmation) ... ok
+test_detection_controls_reset_on_double_click (tests.test_ui_smoke.UISmokeTests.test_detection_controls_reset_on_double_click) ... ok
+test_detection_requires_explicit_result_confirmation (tests.test_ui_smoke.UISmokeTests.test_detection_requires_explicit_result_confirmation) ... ok
+test_empty_canvas_click_preserves_multi_selection (tests.test_ui_smoke.UISmokeTests.test_empty_canvas_click_preserves_multi_selection) ... ok
+test_empty_detection_can_open_create_and_retry_a_grid (tests.test_ui_smoke.UISmokeTests.test_empty_detection_can_open_create_and_retry_a_grid) ... ok
+test_fix_overlaps_action_preserves_manual_repositioning (tests.test_ui_smoke.UISmokeTests.test_fix_overlaps_action_preserves_manual_repositioning) ... ok
+test_grid_and_advanced_detection_are_separate_sections (tests.test_ui_smoke.UISmokeTests.test_grid_and_advanced_detection_are_separate_sections) ... ok
+test_grid_can_be_hidden_and_dimensions_apply_immediately (tests.test_ui_smoke.UISmokeTests.test_grid_can_be_hidden_and_dimensions_apply_immediately) ... ok
+test_grid_changes_preserve_review_until_user_redetects (tests.test_ui_smoke.UISmokeTests.test_grid_changes_preserve_review_until_user_redetects) ... ok
+test_grid_line_drag_updates_geometry_and_is_undoable (tests.test_ui_smoke.UISmokeTests.test_grid_line_drag_updates_geometry_and_is_undoable) ... ok
+test_image_placement_is_proportional_and_updates_detection_geometry (tests.test_ui_smoke.UISmokeTests.test_image_placement_is_proportional_and_updates_detection_geometry) ... ok
+test_logical_layout_is_automatic_and_manual_override_does_not_deform_it (tests.test_ui_smoke.UISmokeTests.test_logical_layout_is_automatic_and_manual_override_does_not_deform_it) ... ok
+test_low_confidence_holes_are_pending_without_cut_proposals (tests.test_ui_smoke.UISmokeTests.test_low_confidence_holes_are_pending_without_cut_proposals) ... ok
+test_manual_grid_dimensions_and_distribution_update_canvas (tests.test_ui_smoke.UISmokeTests.test_manual_grid_dimensions_and_distribution_update_canvas) ... ok
+test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected (tests.test_ui_smoke.UISmokeTests.test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected) ... ok
+test_panel_width_and_spin_buttons_stay_visible_after_size_change (tests.test_ui_smoke.UISmokeTests.test_panel_width_and_spin_buttons_stay_visible_after_size_change) ... ok
+test_preflight_reports_automatic_and_manual_exclusions (tests.test_ui_smoke.UISmokeTests.test_preflight_reports_automatic_and_manual_exclusions) ... ok
+test_prototype_assumption_banner_is_not_present (tests.test_ui_smoke.UISmokeTests.test_prototype_assumption_banner_is_not_present) ... ok
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... ok
+test_review_bar_has_distinct_complete_state_and_no_toolbar_duplicates (tests.test_ui_smoke.UISmokeTests.test_review_bar_has_distinct_complete_state_and_no_toolbar_duplicates) ... ok
+test_selected_cut_uses_cyan_square_fill_border_and_center_without_halo (tests.test_ui_smoke.UISmokeTests.test_selected_cut_uses_cyan_square_fill_border_and_center_without_halo) ... ok
+test_shift_select_deletes_many_and_ctrl_z_restores_them (tests.test_ui_smoke.UISmokeTests.test_shift_select_deletes_many_and_ctrl_z_restores_them) ... ok
+test_side_panel_is_contextual_and_canvas_is_dominant (tests.test_ui_smoke.UISmokeTests.test_side_panel_is_contextual_and_canvas_is_dominant) ... ok
+test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid) ... FAIL
+test_square_size_can_be_edited_from_either_dimension (tests.test_ui_smoke.UISmokeTests.test_square_size_can_be_edited_from_either_dimension) ... ok
+test_transport_image_has_grid_before_review_and_keeps_spanning_artwork (tests.test_ui_smoke.UISmokeTests.test_transport_image_has_grid_before_review_and_keeps_spanning_artwork) ... ok
+test_unlocked_image_can_be_moved_and_scaled_from_canvas (tests.test_ui_smoke.UISmokeTests.test_unlocked_image_can_be_moved_and_scaled_from_canvas) ... ok
+test_vehicle_panels_keep_the_full_six_by_four_grid (tests.test_ui_smoke.UISmokeTests.test_vehicle_panels_keep_the_full_six_by_four_grid)
+A strong panel style must not regress when robust anchors are used. ... ok
+test_workflow_is_horizontal_and_preview_stays_on_canvas (tests.test_ui_smoke.UISmokeTests.test_workflow_is_horizontal_and_preview_stays_on_canvas) ... ok
+test_working_units_cut_size_and_physical_minimum_area (tests.test_ui_smoke.UISmokeTests.test_working_units_cut_size_and_physical_minimum_area) ... ok
+test_artwork_extent_does_not_limit_grid_target (tests.test_logical_layout.LayoutCutIntegrationTests.test_artwork_extent_does_not_limit_grid_target) ... ok
+test_collision_is_reported_without_deforming_grid (tests.test_logical_layout.LayoutCutIntegrationTests.test_collision_is_reported_without_deforming_grid) ... ok
+test_exact_grid_centres_preserve_observations_size_and_export_round_trip (tests.test_logical_layout.LayoutCutIntegrationTests.test_exact_grid_centres_preserve_observations_size_and_export_round_trip) ... ok
+test_existing_cut_displacement_has_no_limit_and_packing_cannot_move_grid (tests.test_logical_layout.LayoutCutIntegrationTests.test_existing_cut_displacement_has_no_limit_and_packing_cannot_move_grid) ... ok
+test_grid_centre_outside_bed_is_reported_without_clamping (tests.test_logical_layout.LayoutCutIntegrationTests.test_grid_centre_outside_bed_is_reported_without_clamping) ... ok
+test_low_confidence_does_not_change_any_cut (tests.test_logical_layout.LayoutCutIntegrationTests.test_low_confidence_does_not_change_any_cut) ... ok
+test_manual_and_disabled_preserved_but_oversized_artwork_cannot_override_grid (tests.test_logical_layout.LayoutCutIntegrationTests.test_manual_and_disabled_preserved_but_oversized_artwork_cannot_override_grid) ... ok
+test_rotated_sheared_grid_is_exact_after_every_geometry_action (tests.test_logical_layout.LayoutCutIntegrationTests.test_rotated_sheared_grid_is_exact_after_every_geometry_action) ... ok
+test_auto_dimensions_rotation_shear_and_noise (tests.test_logical_layout.LogicalLayoutTests.test_auto_dimensions_rotation_shear_and_noise) ... ok
+test_duplicate_has_no_second_assignment (tests.test_logical_layout.LogicalLayoutTests.test_duplicate_has_no_second_assignment) ... ok
+test_larger_bbox_centre_offsets_remain_assignable_without_lowering_reliability_gate (tests.test_logical_layout.LogicalLayoutTests.test_larger_bbox_centre_offsets_remain_assignable_without_lowering_reliability_gate) ... ok
+test_misaligned_edge_outlier_cannot_create_a_new_row (tests.test_logical_layout.LogicalLayoutTests.test_misaligned_edge_outlier_cannot_create_a_new_row) ... ok
+test_missing_entire_row_is_not_invented_without_row_evidence (tests.test_logical_layout.LogicalLayoutTests.test_missing_entire_row_is_not_invented_without_row_evidence) ... ok
+test_missing_is_explicit_and_outlier_cannot_extend_grid (tests.test_logical_layout.LogicalLayoutTests.test_missing_is_explicit_and_outlier_cannot_extend_grid) ... ok
+test_one_aligned_outer_detection_confirms_the_next_row (tests.test_logical_layout.LogicalLayoutTests.test_one_aligned_outer_detection_confirms_the_next_row) ... ok
+test_real_detector_on_uniform_fabric_needs_no_visible_panel_lines (tests.test_logical_layout.LogicalLayoutTests.test_real_detector_on_uniform_fabric_needs_no_visible_panel_lines) ... ok
+test_robust_edge_anchor_can_extend_grid_without_refitting_the_core (tests.test_logical_layout.LogicalLayoutTests.test_robust_edge_anchor_can_extend_grid_without_refitting_the_core) ... ok
+test_shape_dependent_centres_missing_cell_and_outliers_keep_consensus (tests.test_logical_layout.LogicalLayoutTests.test_shape_dependent_centres_missing_cell_and_outliers_keep_consensus)
+BBox-centre variation must not count as a broken panel geometry. ... ok
+test_sparse_irregular_and_single_line_do_not_authorize_correction (tests.test_logical_layout.LogicalLayoutTests.test_sparse_irregular_and_single_line_do_not_authorize_correction) ... ok
+test_unassignable_outlier_does_not_acquire_a_grid_cut (tests.test_logical_layout.LogicalLayoutTests.test_unassignable_outlier_does_not_acquire_a_grid_cut) ... ok
+test_extension_requires_distinct_cells_and_stricter_image_evidence (tests.test_grid_guidance.GridGuidanceTests.test_extension_requires_distinct_cells_and_stricter_image_evidence) ... ok
+test_extension_respects_fabric_bounds_and_manual_guides (tests.test_grid_guidance.GridGuidanceTests.test_extension_respects_fabric_bounds_and_manual_guides) ... ok
+test_generated_panels_recover_each_occupied_cell (tests.test_grid_guidance.GridGuidanceTests.test_generated_panels_recover_each_occupied_cell) ... ok
+test_generated_spanning_artwork_is_whole_and_does_not_occupy_twice (tests.test_grid_guidance.GridGuidanceTests.test_generated_spanning_artwork_is_whole_and_does_not_occupy_twice) ... ok
+test_neighbours_are_not_joined_without_an_unmerged_spanning_region (tests.test_grid_guidance.GridGuidanceTests.test_neighbours_are_not_joined_without_an_unmerged_spanning_region) ... ok
+test_wide_background_cluster_cannot_merge_four_cells (tests.test_grid_guidance.GridGuidanceTests.test_wide_background_cluster_cannot_merge_four_cells) ... ok
+test_generated_giraffe_stays_one_cut_after_confirmation_and_guided_redetection (tests.test_grid_guidance.GuidedCutsUITests.test_generated_giraffe_stays_one_cut_after_confirmation_and_guided_redetection) ... ok
+test_stale_automatic_cut_removed_but_explicit_manual_choice_preserved (tests.test_grid_guidance.GuidedCutsUITests.test_stale_automatic_cut_removed_but_explicit_manual_choice_preserved) ... ok
+
+======================================================================
+FAIL: test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 259, in test_camera_grid_controls_cuts_through_review_resize_and_undo
+    self.assertEqual(window.logical_layout.source, "visual")
+AssertionError: 'local_contrast' != 'visual'
+- local_contrast
++ visual
+
+
+======================================================================
+FAIL: test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 179, in test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid
+    self.assertEqual(len(window.detections), 19)
+AssertionError: 24 != 19
+
+----------------------------------------------------------------------
+Ran 73 tests in 97.038s
+
+FAILED (failures=2)

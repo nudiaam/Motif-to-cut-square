@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
+from time import perf_counter
 
 import cv2
 import numpy as np
@@ -16,13 +17,16 @@ from .grid_guidance import extend_visual_grid, preserve_spanning_artwork
 from .analysis_frame import fabric_analysis_bounds, translate_grid
 from .extent_review import review_extents
 from .scene_profile import POLICY, profile_scene, illumination_view
-from .detection_plan import choose_grid, grid_evidence, plan_zones, stable_artwork_grid
+from .detection_plan import choose_grid, grid_evidence, grid_distance, plan_zones, stable_artwork_grid
+from .run_diagnostics import run_identity, result_identity
 from .region_analysis import segment_zone
 from .contrast_grid import infer_contrast_geometry
 from .seam_grid import infer_seam_grid
+from .composition_evidence import shared_compositions
+from .content_preservation import foreground_mask, preservation
 
 
-DETECTOR_REVISION = "2026-09-23-accessory-ownership-corroboration"
+DETECTOR_REVISION = "2026-10-14-whole-ink-layout-validation"
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +48,7 @@ class MotifCandidate:
     area_px: int
     layout_center_px: tuple[float, float] | None = None
     review_reasons: tuple[str, ...] = ()
+    source_incomplete: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,6 +149,7 @@ def _consolidate_grid_candidates(
             sum(item.area_px for item in merged),
             primary.layout_center_px,
             tuple(dict.fromkeys(reason for item in merged for reason in item.review_reasons)),
+            any(item.source_incomplete for item in merged),
         ))
     return tuple(sorted(consolidated + unresolved, key=lambda item: (
         item.center_px[1], item.center_px[0],
@@ -167,13 +173,24 @@ class MotifDetector:
         self.last_diagnostics = {}
         self._grid_notes = []
         self._plans = []
+        self._ambiguous_grids = []
+        self.progress_callback = None
+
+    def _progress(self, stage):
+        if self.progress_callback is not None:
+            self.progress_callback(stage)
 
     def detect_with_layout(self, image_bgr, settings):
         from .bed_reference import locate_fabric, locate_bright_fabric, extend_to_fabric
         from .logical_layout import LayoutObservation, fit_logical_layout, layout_from_panel_grid
         self._validate_image(image_bgr)
+        started = perf_counter()
+        timings = {}
+        self._progress('Analysing image and bed reference')
+        identity = run_identity(image_bgr, self.bed_reference, asdict(settings))
         self._grid_notes = []
         self._plans = []
+        self._ambiguous_grids = []
         scene = profile_scene(image_bgr) if settings.adaptive_planning else None
         evidence = (locate_fabric(image_bgr, self.bed_reference)
                     if self.bed_reference is not None else None)
@@ -194,6 +211,9 @@ class MotifDetector:
                     # either view's evidence, never intersect away dark artwork.
                     mask = cv2.bitwise_or(mask, expanded.mask)
         analysis_bounds = None
+        timings['reference_and_illumination'] = perf_counter()-started
+        phase = perf_counter()
+        self._progress('Comparing panel layouts')
         if mask is not None and not np.any(mask):
             result = DetectionResult(())
         elif matched_reference:
@@ -207,7 +227,10 @@ class MotifDetector:
                 left, top, right, bottom = fabric_analysis_bounds(mask)
                 analysis_bounds = [left, top, right, bottom]
                 local = self._detect_layout(detection_image[top:bottom, left:right], settings,
-                                            fabric_mask=mask[top:bottom, left:right])
+                                            fabric_mask=mask[top:bottom, left:right],
+                                            geometry_image=(image_bgr[top:bottom, left:right]
+                                                            if illumination is not None else None))
+                self._ambiguous_grids = [translate_grid(g, left, top) for g in self._ambiguous_grids]
                 candidates = tuple(replace(c,
                     center_px=(c.center_px[0]+left, c.center_px[1]+top),
                     bounding_box_px=(c.bounding_box_px[0]+left, c.bounding_box_px[1]+top,
@@ -217,13 +240,57 @@ class MotifDetector:
                 ) for c in local.candidates)
                 result = DetectionResult(candidates, translate_grid(local.panel_grid, left, top))
             else:
-                result = self._detect_layout(detection_image, settings, fabric_mask=mask)
+                result = self._detect_layout(detection_image, settings, fabric_mask=mask,
+                                             geometry_image=image_bgr if illumination is not None else None)
+        timings['layout'] = perf_counter()-phase
+        phase = perf_counter()
+        self._progress('Checking composition ownership')
         if settings.adaptive_planning and settings.layout_mode == 'auto' and not matched_reference:
             result, recovered = self._coordinate_appearance(image_bgr, settings, result, mask)
+            result,whole_recovered=self._compare_whole_layout(image_bgr,settings,result)
+            recovered=recovered or whole_recovered
+            from .compound_grid import infer_compound_grid
+            compound=infer_compound_grid(image_bgr,result)
+            if compound is not None:
+                grid,groups,support=compound
+                issues=(('Illumination compensation used; check small and faint artwork',)
+                    if support.get('illumination_compensated') else ())
+                whole=tuple(MotifCandidate((x+w/2,y+h/2),(x,y,w,h),grid.confidence,area,anchor,issues)
+                    for (x,y,w,h),area,anchor in groups)
+                content=foreground_mask(image_bgr)
+                if content is None and support.get('illumination_compensated'):
+                    # Two supported lighting views agreed. Require containment
+                    # of the entire original boxes, a stronger geometric veto.
+                    content=np.ones(image_bgr.shape[:2],bool)
+                kept=preservation(result.candidates,whole,content)
+                accepted=kept is not None and kept['approved']
+                self._plans.append({'stage':'compound_grid_comparison','accepted':accepted,
+                    'content_preservation':kept,**support})
+                if accepted:
+                    result=DetectionResult(whole,grid);recovered=True
+                    self._grid_notes.append('Repeated primary/cluster roles and wider between-group corridors agree')
+            if not recovered and result.panel_grid is None:
+                from .hierarchical_compositions import infer_hierarchical_compositions
+                hierarchy=infer_hierarchical_compositions(image_bgr)
+                if hierarchy is not None:
+                    grid,groups,support=hierarchy
+                    issues=(('Illumination compensation used; check small and faint artwork',)
+                            if support.get('illumination_compensated') else ())
+                    whole=tuple(MotifCandidate((x+w/2,y+h/2),(x,y,w,h),grid.confidence,area,anchor,issues)
+                                for (x,y,w,h),area,anchor in groups)
+                    # Small-scale repetition has already been checked against
+                    # all ink and multiple independent primary-anchor readings.
+                    result=DetectionResult(whole,grid)
+                    recovered=True
+                    self._plans.append({'stage':'hierarchical_compositions',**support})
+                    self._grid_notes.append('Repeated primary anchors and complete small-part ownership agree')
             if recovered:
                 # Original-pixel local support supersedes a tentative bright mask.
                 mask = None
                 analysis_bounds = None
+        timings['appearance'] = perf_counter()-phase
+        phase = perf_counter()
+        self._progress('Checking complete artwork and image boundaries')
         candidates = tuple(c for c in result.candidates if _inside_fabric(c, mask))
         observations = [LayoutObservation(i, (x+bw/2, y+bh/2), c.bounding_box_px,
                                           c.layout_center_px)
@@ -248,6 +315,11 @@ class MotifDetector:
                     layout.confidence, "fabric", (origin, col, row), layout.projection,
                 )
         final_grid = extended or grid
+        for ambiguous in self._ambiguous_grids:
+            if final_grid is not None and grid_distance(final_grid, ambiguous) < .08:
+                final_grid = replace(final_grid, review_reasons=tuple(dict.fromkeys((
+                    *final_grid.review_reasons,
+                    'Competing panel layouts have similar support; verify grid position'))))
         candidates = self.finalize_compositions(image_bgr, candidates, final_grid)
         if illumination is not None:
             first,last=illumination['affected_y_px']
@@ -259,7 +331,12 @@ class MotifDetector:
             candidates = tuple(replace(c, review_reasons=tuple(dict.fromkeys(
                 (*c.review_reasons, "No reliable panel layout; check which regions form each composition"))))
                 for c in candidates)
+        timings['final_review'] = perf_counter()-phase
+        timings['total'] = perf_counter()-started
         self.last_diagnostics = {
+            "identity": identity,
+            "result_sha256": result_identity(candidates, final_grid),
+            "timings_seconds": timings,
             "detector_revision": DETECTOR_REVISION,
             "image_size_px": [image_bgr.shape[1], image_bgr.shape[0]],
             "settings": asdict(settings),
@@ -279,13 +356,75 @@ class MotifDetector:
         }
         return DetectionResult(candidates, final_grid)
 
+    def _compare_whole_layout(self,image,settings,current):
+        """Compare source-wide ink groups, including unresolved or extra parts."""
+        from .ink_lattice import infer_ink_lattice
+        from .camera_panel import infer_fabric_partition
+        grid=current.panel_grid
+        proposal=infer_ink_lattice(image)
+        if proposal is not None:
+            candidate_grid,groups,support,ink=proposal
+            whole=tuple(MotifCandidate((x+w/2,y+h/2),(x,y,w,h),candidate_grid.confidence,area,anchor)
+                for (x,y,w,h),area,anchor in groups)
+            trusted=tuple(c for c in current.candidates if grid is not None and not any(
+                'neighbouring cell' in reason or 'check ownership' in reason
+                for reason in c.review_reasons))
+            before=preservation(trusted,whole,ink)
+            reverse=preservation(whole,current.candidates,ink)
+            improvement=(grid is None or len(current.candidates)!=len(whole)
+                or (reverse is not None and not reverse['approved']))
+            accepted=improvement and (before is None or before['approved'])
+            self._plans.append({'stage':'whole_layout_comparison','accepted':accepted,
+                'existing_content_preserved':before,'proposal_already_preserved':reverse,**support})
+            if accepted:return DetectionResult(whole,candidate_grid),True
+        # Colour-panel evidence is measured even if the camera proposal failed.
+        # A complete established layout remains intact; this recovers fragments.
+        printed=infer_fabric_partition(image)
+        if printed is not None:
+            candidate_grid,support=printed
+            if grid is not None:
+                if (grid.columns,grid.rows)==(candidate_grid.columns,candidate_grid.rows) and len(current.candidates)==grid.columns*grid.rows:
+                    return current,False
+                pitch_x=float(np.median(np.diff(grid.x_lines_px)));pitch_y=float(np.median(np.diff(grid.y_lines_px)))
+                if any(c.bounding_box_px[2]>pitch_x*1.35 or c.bounding_box_px[3]>pitch_y*1.35 for c in current.candidates):
+                    return current,False
+            whole=tuple(self.detect_in_grid(image,settings,candidate_grid,preserve_detached=True))
+            evidence=grid_evidence(image,candidate_grid,whole)
+            accepted=(len(whole)==candidate_grid.columns*candidate_grid.rows
+                and evidence['occupied_fraction']>=.90 and evidence['unique_assignment_fraction']>=.90)
+            self._plans.append({'stage':'sustained_fabric_recovery','accepted':accepted,**support,**evidence})
+            if accepted:return DetectionResult(whole,candidate_grid),True
+        return current,False
+
     def _coordinate_appearance(self, image, settings, current, fabric_mask=None):
         """Compare geometry with its own artwork evidence before materializing cuts.
 
-        Original-pixel local analysis is a bounded second pass. It cannot change
+        Whole-composition analysis is a bounded second pass. It cannot change
         the global ownership/extent validation shared by all routes.
         """
         grid=current.panel_grid
+        content_mask=foreground_mask(image)
+        original_compositions=current.candidates
+        def preservation_reference(proposal):
+            # A provisional extraction can itself join neighbours or background.
+            # Certify its groups only with unique, complete spatial assignments.
+            if len(original_compositions)==proposal.columns*proposal.rows:
+                support=grid_evidence(image,proposal,original_compositions)
+                if (support['occupied_fraction']>=.85 and support['aligned_fraction']>=.70
+                        and support['unique_assignment_fraction']>=.85
+                        and support['outside_fraction']<=.10):return original_compositions
+            ih,iw=image.shape[:2]
+            def ink_at_source_edge(candidate):
+                if candidate.source_incomplete:return True
+                if content_mask is None:return False
+                x,y,w,h=candidate.bounding_box_px
+                # Provisional cell boxes may touch the frame simply because
+                # they contain bed texture. Require cloth ink at that edge.
+                return bool((x<=0 and np.any(content_mask[max(0,y):min(ih,y+h),:2]))
+                    or (y<=0 and np.any(content_mask[:2,max(0,x):min(iw,x+w)]))
+                    or (x+w>=iw and np.any(content_mask[max(0,y):min(ih,y+h),-2:]))
+                    or (y+h>=ih and np.any(content_mask[-2:,max(0,x):min(iw,x+w)])))
+            return tuple(c for c in original_compositions if ink_at_source_edge(c))
         measures=grid_evidence(image,grid,current.candidates) if grid else None
         complete=bool(measures and measures['occupied_fraction'] >= .85
                       and measures['aligned_fraction'] >= .70
@@ -294,6 +433,41 @@ class MotifDetector:
         # Keep established light/chroma routing, but allow shared-background
         # evidence to challenge an otherwise self-confirming coarse partition.
         corroborated=bool(complete and grid.source in ('pattern','observations'))
+        shared_image=image
+        def shared_geometry():
+            nonlocal shared_image
+            proposal=infer_contrast_geometry(image,channel='shared_background')
+            if proposal is not None:return proposal
+            if fabric_mask is None or not np.any(fabric_mask):return None
+            x,y,w,h=cv2.boundingRect(fabric_mask)
+            def from_view(view):
+                geometry=infer_contrast_geometry(view[y:y+h,x:x+w],channel='shared_background')
+                if geometry is None:return None
+                regions=tuple(replace(r,center_px=(r.center_px[0]+x,r.center_px[1]+y),
+                    bounding_box_px=(r.bounding_box_px[0]+x,r.bounding_box_px[1]+y,
+                                     *r.bounding_box_px[2:])) for r in geometry.regions)
+                return replace(geometry,grid=translate_grid(geometry.grid,x,y),regions=regions)
+            proposal=from_view(image)
+            if proposal is not None:return proposal
+            if illumination_view(image,fabric_mask) is None:return None
+            # Two independent neighbourhood sizes must recover the same lattice.
+            # This analysis view changes neither displayed pixels nor calibration.
+            gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY).astype(np.float32)
+            readings=[]
+            for fraction in (.15,.20):
+                size=round(min(h,w)*fraction)|1
+                field=cv2.morphologyEx(gray,cv2.MORPH_CLOSE,np.ones((size,size),np.uint8))
+                field=cv2.GaussianBlur(field,(0,0),min(h,w)*.025)
+                target=np.percentile(field[fabric_mask>0],85)
+                gain=np.clip(target/np.maximum(field,30),.75,1.8)
+                view=np.clip(image.astype(np.float32)*gain[:,:,None],0,255).astype(np.uint8)
+                geometry=from_view(view)
+                if geometry is None:return None
+                readings.append((geometry,view))
+            if grid_distance(readings[0][0].grid,readings[1][0].grid)>=.10:return None
+            shared_image=readings[0][1]
+            self._plans.append({'stage':'spatial_illumination_geometry','agreement':True})
+            return readings[0][0]
         geometries=[]
         dark=infer_contrast_geometry(image)
         if dark is not None: geometries.append(dark)
@@ -303,8 +477,11 @@ class MotifDetector:
             for channel in ('light','chroma'):
                 proposal=infer_contrast_geometry(image,channel=channel)
                 if proposal is not None: geometries.append(proposal)
-        if not corroborated and not geometries:
-            proposal=infer_contrast_geometry(image,channel='shared_background')
+        # A filled grid must also account for monochrome and coloured ink.
+        # A second channel may otherwise confirm only decoration, not text.
+        fixed_guides=bool(complete and grid.source in ('manual','visual','camera','reference'))
+        if (content_mask is not None and not fixed_guides) or (not corroborated and not geometries):
+            proposal=shared_geometry()
             if proposal is not None: geometries.append(proposal)
         if not geometries:
             self._plans.append({'stage':'contrast_geometry','accepted':False,
@@ -325,14 +502,17 @@ class MotifDetector:
         selected,rows=choose_grid(image,proposals,current.candidates,
                                  stable_routes=(*stable,*by_name),route_evidence=evidence)
         local_probes={};failed_probes=set()
-        if not complete and not stable:
+        # A filled camera grid still needs independent ownership checks: its
+        # extra cells may just contain detached accessories of larger motifs.
+        if not corroborated and not stable:
             def needs_ownership(row,geometry):
-                return (selected!=row['route'] and row['eligible'] and geometry.grid.confidence>=.80
+                return ((selected!=row['route'] or row['route']=='shared_background') and row['eligible'] and geometry.grid.confidence>=.80
                         and row['occupied_fraction']>=.85 and row['aligned_fraction']>=.65
-                        and .65<=row['unique_assignment_fraction']<.85)
+                        and row['unique_assignment_fraction']>=.65
+                        and (row['unique_assignment_fraction']<.85 or row['route']=='shared_background'))
             if 'shared_background' not in by_name and any(
                     needs_ownership(r,by_name[r['route']]) for r in rows if r['route'] in by_name):
-                shared=infer_contrast_geometry(image,channel='shared_background')
+                shared=shared_geometry()
                 if shared is not None:
                     by_name['shared_background']=shared
                     proposals.append(('shared_background',shared.grid))
@@ -342,7 +522,10 @@ class MotifDetector:
                         stable_routes=(*stable,*by_name),route_evidence=evidence)
             # Check recovery against every independent appearance reading, not
             # only the fragments that happened to propose its own partition.
-            regions=tuple(r for g in by_name.values() for r in g.regions)
+            # Background-like readings outside their own proposed field cannot
+            # certify composition extents or veto a coherent all-ink reading.
+            trusted_routes={r['route'] for r in rows if r['eligible'] and r['outside_fraction']<=.10}
+            regions=tuple(r for name,g in by_name.items() if name in trusted_routes for r in g.regions)
             for name,geometry in by_name.items():
                 row=next(r for r in rows if r['route']==name)
                 # Several nearby components may belong to one composition.
@@ -353,7 +536,8 @@ class MotifDetector:
                     continue
                 model=((geometry.diagnostics['background_lab'],geometry.diagnostics['background_noise_lab'])
                        if name=='shared_background' else None)
-                local=self.detect_in_grid(image,settings,geometry.grid,background_model=model)
+                local=self.detect_in_grid(shared_image if name=='shared_background' else image,
+                                          settings,geometry.grid,background_model=model)
                 support=grid_evidence(image,geometry.grid,local)
                 retained=[]
                 for region in regions:
@@ -364,9 +548,13 @@ class MotifDetector:
                 coverage=float(np.mean(np.array(retained)>=.85)) if retained else 0.
                 accepted=(support['occupied_fraction']>=.85 and support['aligned_fraction']>=.85
                           and support['unique_assignment_fraction']>=.85 and coverage>=.90)
+                preserved=preservation(preservation_reference(geometry.grid),local,content_mask)
+                if preserved is not None:
+                    accepted=accepted and preserved['approved']
                 self._plans.append({'stage':'appearance_ownership_recheck','route':name,
                                     'initial_evidence_count':len(evidence[name]),
-                                    'retained_regions_fraction':coverage,'corroborated':accepted,**support})
+                                    'retained_regions_fraction':coverage,'corroborated':accepted,
+                                    'content_preservation':preserved,**support})
                 if accepted:
                     evidence[name]=tuple(local);local_probes[name]=local
                 else:
@@ -380,6 +568,14 @@ class MotifDetector:
                 rows.extend(rejected)
         self._plans.append({'stage':'joint_appearance','selected_route':selected,
                             'hypotheses':rows,'scene_resolved_before_refinement':complete})
+        if (selected=='current' and grid is not None and measures['occupied_fraction']<.85
+                and any(not r['eligible'] and (r['columns'],r['rows'])!=(grid.columns,grid.rows)
+                        for r in rows)):
+            grid=replace(grid,review_reasons=tuple(dict.fromkeys((*grid.review_reasons,
+                'Sparse composition layout; verify missing positions'))))
+            current=DetectionResult(current.candidates,grid)
+        if any(r['route']==selected and r.get('competing_routes') for r in rows):
+            self._ambiguous_grids.append(dict(proposals)[selected])
         recovered=False
         for name,geometry in by_name.items():
             proposal=geometry.grid
@@ -388,15 +584,29 @@ class MotifDetector:
                               np.max(abs(np.array(grid.y_lines_px)-proposal.y_lines_px)))
                       < min(np.median(np.diff(proposal.x_lines_px)),
                             np.median(np.diff(proposal.y_lines_px)))*.15)
+            independent_support = grid_evidence(image, proposal, evidence[name])
+            if (same and complete and selected in ('current', name)
+                    and grid_distance(grid, proposal) < .08
+                    and independent_support['occupied_fraction'] >= .85
+                    and independent_support['aligned_fraction'] >= .80
+                    and independent_support['unique_assignment_fraction'] >= .80):
+                unresolved = [g for g in self._ambiguous_grids if grid_distance(grid, g) >= .08]
+                if len(unresolved) != len(self._ambiguous_grids):
+                    self._plans.append({'stage': 'layout_ambiguity_resolved', 'route': name,
+                                        'reason': 'Independent appearance agrees with selected spacing and phase'})
+                self._ambiguous_grids = unresolved
             accepted=False
             visible=sum(_inside_fabric(c,fabric_mask) for c in current.candidates)
             missing_support=(geometry.diagnostics['occupancy'] >
                              visible/(proposal.columns*proposal.rows)+.02)
             refine_agreement=(same and missing_support and selected in ('current',name))
-            if refine_agreement or (selected==name and not (same and complete)):
+            ownership_agrees=(same and name=='shared_background' and name in local_probes
+                              and selected in ('current',name))
+            if name not in failed_probes and (refine_agreement or ownership_agrees or
+                    (selected==name and (not (same and complete) or name in local_probes))):
                 background_model=((geometry.diagnostics['background_lab'],geometry.diagnostics['background_noise_lab'])
                                   if name=='shared_background' else None)
-                if refine_agreement:
+                if refine_agreement and name not in local_probes:
                     retained=[c for c in current.candidates if _inside_fabric(c,fabric_mask)]
                     occupied={(col,row) for col,row,(x,y,w,h) in proposal.cells()
                               if any(x<=c.center_px[0]<x+w and y<=c.center_px[1]<y+h for c in retained)}
@@ -407,17 +617,52 @@ class MotifDetector:
                                         'reason':'Appearance support disagrees with provisional fabric mask or missing extraction'})
                 else:
                     local=(local_probes[name] if name in local_probes else
-                           self.detect_in_grid(image,settings,proposal,background_model=background_model))
+                           self.detect_in_grid(shared_image if name=='shared_background' else image,
+                                               settings,proposal,background_model=background_model))
                 support=grid_evidence(image,proposal,local)
                 # Do not certify a repeated texture merely for fitting a lattice.
-                if (support['occupied_fraction'] >= .85 and support['aligned_fraction'] >= .65):
+                preserved=preservation(preservation_reference(proposal),local,content_mask)
+                self._plans.append({'stage':'composition_content_preservation','route':name,
+                                    'evidence':preserved})
+                if (support['occupied_fraction'] >= .85 and support['aligned_fraction'] >= .65
+                        and (preserved is None or preserved['approved'])):
                     current=DetectionResult(tuple(local),proposal)
                     recovered=accepted=True
-                    self._grid_notes.append('Joint '+name+' evidence corroborated by original-pixel local analysis')
+                    self._grid_notes.append('Joint '+name+' evidence corroborated by whole-composition analysis')
             self._plans.append({'stage':'contrast_geometry',**geometry.diagnostics,
                                 'columns':proposal.columns,'rows':proposal.rows,
                                 'accepted':accepted,'existing_geometry_agrees':same})
         return current,recovered
+
+    def detect_with_guides(self, image, settings, grid):
+        """Same confirmed-guide contract for interactive and background jobs."""
+        started = perf_counter()
+        if grid.source in {'pattern', 'camera', 'reference', 'fabric'}:
+            settings = replace(settings, layout_mode='auto')
+            result = self.detect_with_layout(image, settings)
+            candidates = result.candidates
+            identity = run_identity(image, self.bed_reference, asdict(settings),
+                                    route='confirmed_guides_reanalysis', guides=asdict(grid))
+        else:
+            self._plans = []
+            self._grid_notes = []
+            self._progress('Analysing confirmed panel guides')
+            candidates = self.detect_in_grid(image, settings, grid)
+            candidates = self.reconcile_grid_artwork(image, settings, grid, candidates)
+            candidates = self.finalize_compositions(image, candidates, grid)
+            identity = run_identity(image, None, asdict(settings),
+                                    route='confirmed_guides', guides=asdict(grid))
+            self.last_diagnostics = {
+                'detector_revision': DETECTOR_REVISION, 'reference_applied': False,
+                'reference_status': 'Not used for detection inside confirmed panel guides',
+                'fabric_status': 'Confirmed panel guides used', 'settings': asdict(settings),
+                'detection_plans': self._plans, 'grid_notes': self._grid_notes,
+            }
+        self.last_diagnostics.update(identity=identity, grid=asdict(grid),
+            result_sha256=result_identity(candidates, grid), candidates_after_cleanup=len(candidates),
+            timings_seconds={**self.last_diagnostics.get('timings_seconds', {}),
+                             'total': perf_counter()-started})
+        return DetectionResult(tuple(candidates), grid)
 
     def finalize_compositions(self, image_bgr, candidates, grid):
         """Every automatic/manual grid uses one ownership and review contract."""
@@ -461,6 +706,7 @@ class MotifDetector:
     def _detect_layout(
         self, image_bgr: np.ndarray, settings: DetectorSettings,
         *, fabric_mask: np.ndarray | None = None,
+        geometry_image: np.ndarray | None = None,
     ) -> DetectionResult:
         self._validate_image(image_bgr)
         primary = [c for c in self._detect_once(image_bgr, settings) if _inside_fabric(c, fabric_mask)]
@@ -474,6 +720,16 @@ class MotifDetector:
         pattern = (infer_repeated_artwork(image_bgr, settings.sensitivity, settings.minimum_area_px)
                    if layout_mode == "auto" else None)
         camera = infer_camera_panel(image_bgr) if layout_mode == "auto" else None
+        if camera is None and geometry_image is not None and layout_mode == 'auto':
+            original_camera = infer_camera_panel(geometry_image)
+            # Row-wise illumination compensation can obscure diagonal seams.
+            # Recover only independently corroborated boundaries in source pixels.
+            if original_camera is not None and original_camera.partition_evidence:
+                camera = original_camera
+                self._plans.append({'stage':'original_pixel_geometry',
+                                    'reason':'Illumination view lost sustained panel divisions'})
+        if camera is not None and camera.partition_evidence:
+            self._plans.append({'stage':'camera_partition', **camera.partition_evidence})
         camera_candidates = None
         preferred = None
         artwork_grid = None
@@ -546,6 +802,10 @@ class MotifDetector:
                         preferred,hypotheses=choose_grid(image_bgr,proposals,primary,
                             stable_routes=('pattern','observations'),route_evidence=evidence_by_route)
                 self._plans.append({'stage':'grid','selected_route':preferred,'hypotheses':hypotheses})
+                if any(h['route']==preferred and h.get('competing_routes') for h in hypotheses):
+                    # This call can analyse a fabric crop. Translate this record
+                    # along with the selected result at the caller boundary.
+                    self._ambiguous_grids.append(dict(proposals)[preferred])
                 eligible_routes = {h['route'] for h in hypotheses if h['eligible']}
                 if 'panels' not in eligible_routes: panel_grid = None
                 if 'camera' not in eligible_routes: camera = None
@@ -762,11 +1022,22 @@ class MotifDetector:
         region_segmentation: bool = False,
         cell_filter: set[tuple[int,int]] | None = None,
         background_model=None,
+        preserve_detached: bool = False,
     ) -> list[MotifCandidate]:
         """Detect at most one locally separated motif inside each panel."""
 
         self._validate_image(image_bgr)
         image_height, image_width = image_bgr.shape[:2]
+        if background_model is not None:
+            compositions = shared_compositions(image_bgr, panel_grid, background_model,
+                                               settings.minimum_area_px)
+            if compositions is not None:
+                self._plans.append({'stage':'whole_image_parts', 'components':sum(c['parts'] for c in compositions),
+                                    'compositions':len(compositions)})
+                return [MotifCandidate((x+w/2,y+h/2),(x,y,w,h),.8,c['area'],
+                                       c['anchor'],c['issues'])
+                        for c in compositions if cell_filter is None or c['cell'] in cell_filter
+                        for x,y,w,h in [c['box']]]
         results: list[MotifCandidate] = []
         zones = {(z.column,z.row):z for z in plan_zones(image_bgr,panel_grid)} if settings.adaptive_planning else {}
         plan_log={'stage':'zones','image_size_px':[image_width,image_height],
@@ -781,6 +1052,7 @@ class MotifDetector:
         )
 
         for _column, _row, (cell_x, cell_y, cell_width, cell_height) in panel_grid.cells():
+            self._progress(f'Checking panel {_row+1}, {_column+1}')
             if cell_filter is not None and (_column,_row) not in cell_filter:
                 continue
             left = min(max(cell_x, 0), image_width - 1)
@@ -802,7 +1074,7 @@ class MotifDetector:
             if zone is not None and (zone.strategy == 'local_palette' or background_model is not None):
                 analysed=segment_zone(crop,settings.minimum_area_px,
                     (left-crop_left,top-crop_top,right-crop_left,bottom-crop_top),
-                    shadow_gain=zone.shadow_gain,background_model=background_model)
+                    shadow_gain=zone.shadow_gain,background_model=background_model,preserve_detached=preserve_detached)
                 if analysed is not None:
                     x,y,w,h=analysed['box']
                     cx,cy=x+w/2+crop_left,y+h/2+crop_top

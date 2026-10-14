@@ -1,0 +1,18 @@
+[
+  {
+    "image": "alphabet_6x4",
+    "comparable": true,
+    "changed_inputs": [],
+    "same_detection_result": true,
+    "same_reviewed_cuts": true,
+    "note": "Equal counts alone do not establish equal artwork or cut positions."
+  },
+  {
+    "image": "christmas_6x4",
+    "comparable": true,
+    "changed_inputs": [],
+    "same_detection_result": true,
+    "same_reviewed_cuts": true,
+    "note": "Equal counts alone do not establish equal artwork or cut positions."
+  }
+]

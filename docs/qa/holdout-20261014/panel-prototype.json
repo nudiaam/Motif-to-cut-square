@@ -1,0 +1,235 @@
+{
+  "grid": {
+    "x_lines_px": [
+      126.66666666666663,
+      446.66666666666674,
+      766.6666666666667,
+      1086.666666666667,
+      1406.666666666667
+    ],
+    "y_lines_px": [
+      105.5,
+      366.0,
+      626.5,
+      887.0
+    ],
+    "confidence": 0.94,
+    "source": "camera",
+    "lattice": null,
+    "projection": null,
+    "review_reasons": []
+  },
+  "candidates": [
+    {
+      "center_px": [
+        938.0,
+        232.5
+      ],
+      "bounding_box_px": [
+        819,
+        125,
+        238,
+        215
+      ],
+      "score": 0.43210965394973755,
+      "area_px": 19789,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        283.0,
+        233.5
+      ],
+      "bounding_box_px": [
+        142,
+        129,
+        282,
+        209
+      ],
+      "score": 0.6858503222465515,
+      "area_px": 31724,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1251.0,
+        235.0
+      ],
+      "bounding_box_px": [
+        1114,
+        135,
+        274,
+        200
+      ],
+      "score": 0.5696764588356018,
+      "area_px": 26747,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        610.0,
+        238.5
+      ],
+      "bounding_box_px": [
+        466,
+        142,
+        288,
+        193
+      ],
+      "score": 0.4383919835090637,
+      "area_px": 31797,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        933.0,
+        493.5
+      ],
+      "bounding_box_px": [
+        803,
+        385,
+        260,
+        217
+      ],
+      "score": 0.949999988079071,
+      "area_px": 33254,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        612.5,
+        497.0
+      ],
+      "bounding_box_px": [
+        469,
+        397,
+        287,
+        200
+      ],
+      "score": 0.7815249562263489,
+      "area_px": 30751,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        282.5,
+        499.0
+      ],
+      "bounding_box_px": [
+        146,
+        401,
+        273,
+        196
+      ],
+      "score": 0.7509369254112244,
+      "area_px": 27582,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1252.5,
+        502.5
+      ],
+      "bounding_box_px": [
+        1111,
+        406,
+        283,
+        193
+      ],
+      "score": 0.949999988079071,
+      "area_px": 28021,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        280.5,
+        763.0
+      ],
+      "bounding_box_px": [
+        145,
+        641,
+        271,
+        244
+      ],
+      "score": 0.7815249562263489,
+      "area_px": 28566,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1260.0,
+        766.0
+      ],
+      "bounding_box_px": [
+        1111,
+        653,
+        298,
+        226
+      ],
+      "score": 0.5079062581062317,
+      "area_px": 32684,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        614.0,
+        768.0
+      ],
+      "bounding_box_px": [
+        475,
+        653,
+        278,
+        230
+      ],
+      "score": 0.949999988079071,
+      "area_px": 23869,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        935.5,
+        768.0
+      ],
+      "bounding_box_px": [
+        799,
+        659,
+        273,
+        218
+      ],
+      "score": 0.693496584892273,
+      "area_px": 32537,
+      "layout_center_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    }
+  ],
+  "evidence": {
+    "method": "sustained_colour_seams",
+    "columns": 4,
+    "rows": 3,
+    "agreeing_views": 6,
+    "minimum_separation": 0.43026263092710754
+  }
+}

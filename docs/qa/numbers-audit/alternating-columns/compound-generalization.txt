@@ -1,0 +1,7 @@
+test_independent_butterflies_and_flowers_keep_their_own_cuts (tests.test_compound_grid.CompoundGridTests.test_independent_butterflies_and_flowers_keep_their_own_cuts) ... ok
+test_other_counts_preserve_complete_primary_and_cluster_groups (tests.test_compound_grid.CompoundGridTests.test_other_counts_preserve_complete_primary_and_cluster_groups) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 11.511s
+
+OK

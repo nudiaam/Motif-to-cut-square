@@ -1,0 +1,76 @@
+test_close_waits_for_worker_cancellation (tests.test_detection_worker.DetectionWorkerTests.test_close_waits_for_worker_cancellation) ... ok
+test_completed_job_applies_on_gui_thread_and_can_be_undone (tests.test_detection_worker.DetectionWorkerTests.test_completed_job_applies_on_gui_thread_and_can_be_undone) ... ok
+test_ui_remains_live_and_cancellation_preserves_previous_job (tests.test_detection_worker.DetectionWorkerTests.test_ui_remains_live_and_cancellation_preserves_previous_job) ... ok
+test_worker_failure_keeps_previous_state_and_restores_controls (tests.test_detection_worker.DetectionWorkerTests.test_worker_failure_keeps_previous_state_and_restores_controls) ... ok
+test_bundle_preserves_pixels_and_rejects_mismatched_input (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_bundle_preserves_pixels_and_rejects_mismatched_input) ... ok
+test_generated_compositions_keep_letters_and_expose_missed_detail (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_generated_compositions_keep_letters_and_expose_missed_detail) ... ok
+test_image_profiles_reused_without_changing_evidence (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_image_profiles_reused_without_changing_evidence) ... ok
+test_partial_panel_is_not_silently_complete (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_partial_panel_is_not_silently_complete) ... ok
+test_repeat_identity_and_changed_pixel_settings_guides (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_repeat_identity_and_changed_pixel_settings_guides) ... ok
+test_same_count_different_phase_near_tie_is_exposed (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_same_count_different_phase_near_tie_is_exposed) ... ok
+test_warning_counts_do_not_hide_multiple_causes_or_excluded_cuts (tests.test_customer_diagnostics.CustomerDiagnosticsTests.test_warning_counts_do_not_hide_multiple_causes_or_excluded_cuts) ... ok
+test_enabled_boundary_cuts_cannot_bypass_export_validation (tests.test_export.SVGExporterTests.test_enabled_boundary_cuts_cannot_bypass_export_validation) ... ok
+test_svg_can_export_in_millimetres (tests.test_export.SVGExporterTests.test_svg_can_export_in_millimetres) ... ok
+test_svg_physical_size_exports_enabled_unblocked_rectangles (tests.test_export.SVGExporterTests.test_svg_physical_size_exports_enabled_unblocked_rectangles) ... ok
+test_bed_reference_completes_missing_row_in_detection (tests.test_ui_smoke.UISmokeTests.test_bed_reference_completes_missing_row_in_detection) ... ok
+test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo) ... FAIL
+test_camera_patchwork_materializes_missing_grid_cells_without_extra_ui (tests.test_ui_smoke.UISmokeTests.test_camera_patchwork_materializes_missing_grid_cells_without_extra_ui) ... ok
+test_canvas_zoom_keeps_anchor_and_space_drag_pans (tests.test_ui_smoke.UISmokeTests.test_canvas_zoom_keeps_anchor_and_space_drag_pans) ... ok
+test_center_and_overlap_fix_leave_nothing_selected (tests.test_ui_smoke.UISmokeTests.test_center_and_overlap_fix_leave_nothing_selected) ... ok
+test_center_step_preserves_collision_free_layout (tests.test_ui_smoke.UISmokeTests.test_center_step_preserves_collision_free_layout) ... ok
+test_clicking_selected_square_toggles_it_off (tests.test_ui_smoke.UISmokeTests.test_clicking_selected_square_toggles_it_off) ... ok
+test_combined_review_updates_output_and_exports_in_one_click (tests.test_ui_smoke.UISmokeTests.test_combined_review_updates_output_and_exports_in_one_click) ... ok
+test_contextual_actions_run_the_review_workflow (tests.test_ui_smoke.UISmokeTests.test_contextual_actions_run_the_review_workflow) ... ok
+test_contextual_help_is_registered (tests.test_ui_smoke.UISmokeTests.test_contextual_help_is_registered) ... ok
+test_ctrl_z_steps_back_through_overlap_fix_and_centering (tests.test_ui_smoke.UISmokeTests.test_ctrl_z_steps_back_through_overlap_fix_and_centering) ... ok
+test_cut_can_move_while_grid_is_visible_and_editable (tests.test_ui_smoke.UISmokeTests.test_cut_can_move_while_grid_is_visible_and_editable) ... ok
+test_cut_collisions_update_status_and_counts (tests.test_ui_smoke.UISmokeTests.test_cut_collisions_update_status_and_counts) ... ok
+test_cut_preview_dims_the_bed_outside_exportable_cuts (tests.test_ui_smoke.UISmokeTests.test_cut_preview_dims_the_bed_outside_exportable_cuts) ... ok
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... ok
+test_detect_and_redetect_show_grid_centres_before_confirmation (tests.test_ui_smoke.UISmokeTests.test_detect_and_redetect_show_grid_centres_before_confirmation) ... ok
+test_detection_controls_reset_on_double_click (tests.test_ui_smoke.UISmokeTests.test_detection_controls_reset_on_double_click) ... ok
+test_detection_requires_explicit_result_confirmation (tests.test_ui_smoke.UISmokeTests.test_detection_requires_explicit_result_confirmation) ... ok
+test_empty_canvas_click_preserves_multi_selection (tests.test_ui_smoke.UISmokeTests.test_empty_canvas_click_preserves_multi_selection) ... ok
+test_empty_detection_can_open_create_and_retry_a_grid (tests.test_ui_smoke.UISmokeTests.test_empty_detection_can_open_create_and_retry_a_grid) ... ok
+test_fix_overlaps_action_preserves_manual_repositioning (tests.test_ui_smoke.UISmokeTests.test_fix_overlaps_action_preserves_manual_repositioning) ... ok
+test_grid_and_advanced_detection_are_separate_sections (tests.test_ui_smoke.UISmokeTests.test_grid_and_advanced_detection_are_separate_sections) ... ok
+test_grid_can_be_hidden_and_dimensions_apply_immediately (tests.test_ui_smoke.UISmokeTests.test_grid_can_be_hidden_and_dimensions_apply_immediately) ... ok
+test_grid_changes_preserve_review_until_user_redetects (tests.test_ui_smoke.UISmokeTests.test_grid_changes_preserve_review_until_user_redetects) ... ok
+test_grid_line_drag_updates_geometry_and_is_undoable (tests.test_ui_smoke.UISmokeTests.test_grid_line_drag_updates_geometry_and_is_undoable) ... ok
+test_image_placement_is_proportional_and_updates_detection_geometry (tests.test_ui_smoke.UISmokeTests.test_image_placement_is_proportional_and_updates_detection_geometry) ... ok
+test_logical_layout_is_automatic_and_manual_override_does_not_deform_it (tests.test_ui_smoke.UISmokeTests.test_logical_layout_is_automatic_and_manual_override_does_not_deform_it) ... ok
+test_low_confidence_holes_are_pending_without_cut_proposals (tests.test_ui_smoke.UISmokeTests.test_low_confidence_holes_are_pending_without_cut_proposals) ... ok
+test_manual_grid_dimensions_and_distribution_update_canvas (tests.test_ui_smoke.UISmokeTests.test_manual_grid_dimensions_and_distribution_update_canvas) ... ok
+test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected (tests.test_ui_smoke.UISmokeTests.test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected) ... ok
+test_panel_width_and_spin_buttons_stay_visible_after_size_change (tests.test_ui_smoke.UISmokeTests.test_panel_width_and_spin_buttons_stay_visible_after_size_change) ... ok
+test_preflight_reports_automatic_and_manual_exclusions (tests.test_ui_smoke.UISmokeTests.test_preflight_reports_automatic_and_manual_exclusions) ... ok
+test_prototype_assumption_banner_is_not_present (tests.test_ui_smoke.UISmokeTests.test_prototype_assumption_banner_is_not_present) ... ok
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... ok
+test_review_bar_has_distinct_complete_state_and_no_toolbar_duplicates (tests.test_ui_smoke.UISmokeTests.test_review_bar_has_distinct_complete_state_and_no_toolbar_duplicates) ... ok
+test_selected_cut_uses_cyan_square_fill_border_and_center_without_halo (tests.test_ui_smoke.UISmokeTests.test_selected_cut_uses_cyan_square_fill_border_and_center_without_halo) ... ok
+test_shift_select_deletes_many_and_ctrl_z_restores_them (tests.test_ui_smoke.UISmokeTests.test_shift_select_deletes_many_and_ctrl_z_restores_them) ... ok
+test_side_panel_is_contextual_and_canvas_is_dominant (tests.test_ui_smoke.UISmokeTests.test_side_panel_is_contextual_and_canvas_is_dominant) ... ok
+test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid) ... ok
+test_square_size_can_be_edited_from_either_dimension (tests.test_ui_smoke.UISmokeTests.test_square_size_can_be_edited_from_either_dimension) ... ok
+test_transport_image_has_grid_before_review_and_keeps_spanning_artwork (tests.test_ui_smoke.UISmokeTests.test_transport_image_has_grid_before_review_and_keeps_spanning_artwork) ... ok
+test_unlocked_image_can_be_moved_and_scaled_from_canvas (tests.test_ui_smoke.UISmokeTests.test_unlocked_image_can_be_moved_and_scaled_from_canvas) ... ok
+test_vehicle_panels_keep_the_full_six_by_four_grid (tests.test_ui_smoke.UISmokeTests.test_vehicle_panels_keep_the_full_six_by_four_grid)
+A strong panel style must not regress when robust anchors are used. ... ok
+test_workflow_is_horizontal_and_preview_stays_on_canvas (tests.test_ui_smoke.UISmokeTests.test_workflow_is_horizontal_and_preview_stays_on_canvas) ... ok
+test_working_units_cut_size_and_physical_minimum_area (tests.test_ui_smoke.UISmokeTests.test_working_units_cut_size_and_physical_minimum_area) ... ok
+
+======================================================================
+FAIL: test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 259, in test_camera_grid_controls_cuts_through_review_resize_and_undo
+    self.assertEqual(window.logical_layout.source, "visual")
+AssertionError: 'ink_lattice' != 'visual'
+- ink_lattice
++ visual
+
+
+----------------------------------------------------------------------
+Ran 59 tests in 102.377s
+
+FAILED (failures=1)

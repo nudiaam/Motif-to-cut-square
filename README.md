@@ -28,7 +28,7 @@ The documentation is split so that non-technical users do not have to read devel
 
 ## Quick start for Windows users
 
-[Instrucciones de actualización en español](docs/ACTUALIZACION_2026-09-23.md).
+[Instrucciones de actualización en español](docs/ACTUALIZACION_2026-10-14.md).
 
 **Known limitation:** black/dark-background detection remains unreliable for
 some collections despite passing specific regression examples. It is not
@@ -109,10 +109,12 @@ does not open after successful setup.
    drawing. Centring is constrained by the current layout: it approaches the
    true artwork centre without recreating avoidable collisions. If a drawing is
    genuinely larger than the configured cut, that size conflict remains visible.
-10. Select **Check output**. The preflight reports ready cuts, cuts with warnings
-   (overlapping, clipped, or outside the bed), and cuts skipped because they are unchecked.
+10. Check the output summary inside **Review cuts**. It updates automatically with ready cuts, cuts with warnings
+   (overlapping or clipped), and excluded cuts, including those outside the bed
+   or incomplete in the source image.
 11. Select **Export SVG**. Every checked cut is saved; if any carries a warning the
-    application asks for confirmation and then exports it anyway.
+    application asks for confirmation. Outside-bed and incomplete-image cuts
+    are blocked and cannot be exported.
 
 ## Zooming and panning like Illustrator
 
@@ -149,6 +151,36 @@ Epilog explains that **Copy Background Image** uses the IRIS camera system to ca
 
 ## Colour meanings
 
+The cut summary now lists the reasons separately: overlap, artwork exceeding its
+cut, outside-bed geometry, layout or detail review, inferred positions and partial
+image panels. One cut can have several warnings, so these counts can exceed the
+number of cuts with problems. Estimated centre spacing helps compare the detected
+layout with the requested physical cut size; verify image scale against a known
+measurement.
+
+The main **Detect + check** action runs in the background and shows progress by
+phase in a compact bottom status bar, without a progress popup. **Cancel** retains
+the previous cuts; it finishes the current bounded
+processing operation before stopping.
+
+For support, open **Show advanced detection settings** and select **Save diagnostic
+package…** after each run. The ZIP includes the original decoded image without
+overlays, the report, and the selected bed reference if it is still available.
+The report distinguishes automatic detection from confirmed-guide reanalysis and
+records effective settings, versions and input/result fingerprints. It also
+contains the current reviewed cuts, which may differ from the initial result.
+Nothing is uploaded automatically.
+
+Developers can compare two packages or JSON reports locally:
+
+```powershell
+.venv/Scripts/python.exe -m app.compare_detection_reports first.zip second.zip
+```
+
+If input identities differ, the comparison lists the changes before drawing any
+conclusion about repeatability. For older reports without fingerprints, it states
+that the comparison cannot establish identical inputs.
+
 | Colour | State | Action |
 |---|---|---|
 | Green | Ready | Ready for export. |
@@ -175,8 +207,8 @@ there is not enough free space on the bed, the remaining cuts stay orange and ca
 be dragged manually or disabled. Automatic placement never prevents later manual
 editing.
 
-The horizontal **WORKFLOW** above the canvas has five user goals: Prepare image,
-Detect + check, Review cuts, Check output, and Export SVG. The canvas keeps the main
+The horizontal **WORKFLOW** above the canvas has four user goals: Prepare image,
+Detect + check, Review cuts (including output checks), and Export SVG. The canvas keeps the main
 working area, while the narrower right panel shows only controls belonging to the
 current goal. Review commands such as Add cut square, Delete selected, Fix overlaps,
 Center drawings, and Clear all appear together in the contextual review panel.
@@ -287,19 +319,27 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 ## Export and verification
 
-The SVG contains every **checked** (enabled) cut, even if it overlaps, is clipped,
-or lies outside the bed. Those states raise a warning at export time but do not
-remove the cut. The only cuts left out are the ones you uncheck in the list.
+The SVG contains **checked** (enabled) cuts. Cuts or artwork outside the configured
+bed, and compositions incomplete in the source image, are automatically excluded
+and cannot be re-enabled until the boundary problem is resolved. The exporter
+also rejects these cuts directly; a confirmation cannot bypass this check.
+Incomplete source images need a new, complete photo. Moving or shrinking a cut
+does not restore missing artwork. Excluded observations remain available to inspect.
+
+Overlaps, artwork larger than the selected cut, and uncertain ownership still
+require review and confirmation. Detection never silently shrinks the physical
+cut size or changes image calibration to make these warnings disappear.
 
 It does not include the photograph, text, centres, labels, or detection bounding boxes.
 
 By default, **Export units** uses the same unit as **Working units**. The app displays a warning if you choose a different unit. Always verify the bed size in the receiving software.
 
-**Check output** runs the geometry verification, enables the visual cut preview, and
-states how many cuts are ready, how many carry warnings (overlapping, clipped, or
-outside the bed), and how many are skipped because they are unchecked. **Export SVG**
-is unlocked only after this preflight has been reviewed; if any checked cut carries a
-warning, the app asks for confirmation and then exports it anyway.
+**Review cuts** also runs the geometry verification, enables the visual cut preview, and
+states how many cuts are ready, how many carry warnings (overlapping or clipped),
+and how many are excluded. **Export SVG**
+is available from this combined review, with the summary updated after edits and
+rechecked on export. There is no separate check step or second export click; if any checked cut carries a
+review warning, the app asks for confirmation. Hard boundary blocks cannot be overridden.
 
 The internal debug JSON option is hidden and disabled by default for normal users.
 
@@ -327,6 +367,23 @@ than silently removed. Correct the panel guides if necessary, and save a detecti
 report from advanced settings. Send the original photograph and report together;
 screenshots with coloured squares cannot reproduce the original detection.
 
+Automatic refinement now checks complete compositions using both luminance and
+colour, so detached words, illustrations and ingredients can stay in one group.
+If every group fits the selected cut size, the automatic grid can move together
+to contain them while preserving row and column spacing. A drawing that does not
+fit still requires review; detection does not enlarge the physical cut size.
+See [composition preservation validation](docs/qa/group-extent-audit/fixed/README.md)
+for the supplied examples, photographic variants and regression results.
+An accepted automatic grid can also be checked for recurring primary marks and
+small accessory clusters, supported by larger spaces between full compositions.
+The [focused compound-group validation](docs/qa/numbers-audit/alternating-columns/fixed/README.md)
+records the compact number example and checks on the collections most at risk.
+The [new-source validation](docs/qa/holdout-20261014/README.md) records five further
+originals that exposed failures beyond those earlier fixtures, their corrected
+group ownership, image variations and actual workflow checks. Cyan dashed boxes
+show detected artwork; solid outlines show physical cuts. An insufficient selected
+cut size remains a separate warning even when grouping is correct.
+
 ### Ctrl+V does not load the image
 
 Return to Epilog Dashboard, select **Copy Background Image**, and paste immediately. You can also use **Open Image** with a PNG, JPG, JPEG, or BMP file.
@@ -340,6 +397,13 @@ Run `run_console.bat`. The terminal will remain open and display the technical e
 Match **Export units** to **Working units** and verify the page size during import.
 
 ## Current limitations
+
+- The current catalogue coverage and outstanding original-image tests are listed
+  in [the collection audit](docs/qa/composition-recovery/catalogue-coverage.md).
+  Hexagonal cutting is not supported. Mini-charms require their actual size to
+  be configured and validated; the default five-inch square does not apply to
+  every product. [Ten image prompts](docs/qa/composition-recovery/10-prompts.md)
+  provide further development tests, not physical calibration.
 
 - There is no direct connection to the cameras, Epilog Dashboard, PrintAPI, or laser cutter.
 - The detector uses OpenCV, not YOLO or a trained model.

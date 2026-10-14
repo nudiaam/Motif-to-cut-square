@@ -1,0 +1,21 @@
+test_blank_pattern_does_not_become_a_motif (tests.test_adaptive_planning.AdaptivePlanningTests.test_blank_pattern_does_not_become_a_motif) ... ok
+test_coloured_printed_row_is_not_a_neutral_shadow (tests.test_adaptive_planning.AdaptivePlanningTests.test_coloured_printed_row_is_not_a_neutral_shadow) ... ok
+test_different_neighbour_background_does_not_prevent_full_body (tests.test_adaptive_planning.AdaptivePlanningTests.test_different_neighbour_background_does_not_prevent_full_body) ... ok
+test_full_cell_review_finds_body_far_beyond_head (tests.test_adaptive_planning.AdaptivePlanningTests.test_full_cell_review_finds_body_far_beyond_head) ... ok
+test_global_shadow_analysis_preserves_a_coloured_printed_band (tests.test_adaptive_planning.AdaptivePlanningTests.test_global_shadow_analysis_preserves_a_coloured_printed_band) ... ok
+test_patterned_background_is_not_an_extension_of_complete_artwork (tests.test_adaptive_planning.AdaptivePlanningTests.test_patterned_background_is_not_an_extension_of_complete_artwork) ... ok
+test_plans_are_exportable_and_original_pixels_unchanged (tests.test_adaptive_planning.AdaptivePlanningTests.test_plans_are_exportable_and_original_pixels_unchanged) ... ok
+test_recovered_floral_panel_keeps_all_compositions (tests.test_adaptive_planning.AdaptivePlanningTests.test_recovered_floral_panel_keeps_all_compositions) ... ok
+test_row_shadow_requires_agreement_across_columns (tests.test_adaptive_planning.AdaptivePlanningTests.test_row_shadow_requires_agreement_across_columns) ... ok
+test_strong_lower_shadow_keeps_the_fourth_row (tests.test_adaptive_planning.AdaptivePlanningTests.test_strong_lower_shadow_keeps_the_fourth_row) ... ok
+test_accessories_remain_with_their_compositions (tests.test_joint_coordinator.JointCoordinatorTests.test_accessories_remain_with_their_compositions) ... ok
+test_blank_and_stripes_do_not_become_light_or_colour_artwork (tests.test_joint_coordinator.JointCoordinatorTests.test_blank_and_stripes_do_not_become_light_or_colour_artwork) ... ok
+test_complete_evidence_is_not_replaced_by_a_fragment_count (tests.test_joint_coordinator.JointCoordinatorTests.test_complete_evidence_is_not_replaced_by_a_fragment_count) ... ok
+test_dark_ink_on_dark_fabric_can_use_colour_at_equal_luminance (tests.test_joint_coordinator.JointCoordinatorTests.test_dark_ink_on_dark_fabric_can_use_colour_at_equal_luminance) ... ok
+test_originals_have_distinct_owners_and_preserve_witnesses (tests.test_joint_coordinator.JointCoordinatorTests.test_originals_have_distinct_owners_and_preserve_witnesses) ... ok
+test_seams_keep_spacing_after_resizing_and_adding_surround (tests.test_joint_coordinator.JointCoordinatorTests.test_seams_keep_spacing_after_resizing_and_adding_surround) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 31.608s
+
+OK

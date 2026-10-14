@@ -1,0 +1,6 @@
+test_actual_workflow_separates_artwork_groups_from_cut_size_warnings (tests.test_holdout_groups.HoldoutGroupTests.test_actual_workflow_separates_artwork_groups_from_cut_size_warnings) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 30.994s
+
+OK

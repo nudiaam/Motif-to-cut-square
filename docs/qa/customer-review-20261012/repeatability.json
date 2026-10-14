@@ -1,0 +1,161 @@
+{
+  "revision": "2026-09-23-accessory-ownership-corroboration",
+  "python": "3.12.13 (main, Aug  7 2026, 02:26:41) [MSC v.1944 64 bit (AMD64)]",
+  "opencv": "4.14.0",
+  "numpy": "2.5.2",
+  "settings": {
+    "sensitivity": 65,
+    "minimum_area_px": 500,
+    "morphological_cleanup": 0.25,
+    "merge_distance_px_x": 14.0,
+    "merge_distance_px_y": 14.0,
+    "layout_mode": "auto",
+    "adaptive_planning": true
+  },
+  "cases": [
+    {
+      "fixture": "generated/straight/dogs_6x4.png",
+      "source_sha256": "6b5e62f0e3243288c69900afdc817db5ca1d201c67a1fdd92b2026b5b3df6efd",
+      "input_unchanged": true,
+      "same_results": true,
+      "same_diagnostics": true,
+      "runs": [
+        {
+          "fresh_instance": true,
+          "seconds": 5.59,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "e42933faea0975e5696fc9018ab67912ab3e9c27d116644fdc0f214c1461e5a7",
+          "diagnostics_sha256": "44b8f955cf4a96d381dad92cedc05917f9d7075f7e47c3b1c678ac0e9a257efd",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 4
+        },
+        {
+          "fresh_instance": false,
+          "seconds": 4.67,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "e42933faea0975e5696fc9018ab67912ab3e9c27d116644fdc0f214c1461e5a7",
+          "diagnostics_sha256": "44b8f955cf4a96d381dad92cedc05917f9d7075f7e47c3b1c678ac0e9a257efd",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 4
+        },
+        {
+          "fresh_instance": true,
+          "seconds": 4.742,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "e42933faea0975e5696fc9018ab67912ab3e9c27d116644fdc0f214c1461e5a7",
+          "diagnostics_sha256": "44b8f955cf4a96d381dad92cedc05917f9d7075f7e47c3b1c678ac0e9a257efd",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 4
+        }
+      ]
+    },
+    {
+      "fixture": "floral_patchwork_recovered.png",
+      "source_sha256": "48d92672e5e5040c51b0f10dbbae72f2a0e5cb5c6e44806c57cda109b0824b03",
+      "input_unchanged": true,
+      "same_results": true,
+      "same_diagnostics": true,
+      "runs": [
+        {
+          "fresh_instance": true,
+          "seconds": 4.273,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "f305970dcf1d7d5f26ef67850d8c173ac82f5eaa36a76b6572280ef1735b4a3e",
+          "diagnostics_sha256": "cf89fbd3ad9253b387f7979e87bf55aa1395de60ad4cea99df0a1952ae3243a2",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 0
+        },
+        {
+          "fresh_instance": false,
+          "seconds": 5.238,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "f305970dcf1d7d5f26ef67850d8c173ac82f5eaa36a76b6572280ef1735b4a3e",
+          "diagnostics_sha256": "cf89fbd3ad9253b387f7979e87bf55aa1395de60ad4cea99df0a1952ae3243a2",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 0
+        },
+        {
+          "fresh_instance": true,
+          "seconds": 5.399,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "f305970dcf1d7d5f26ef67850d8c173ac82f5eaa36a76b6572280ef1735b4a3e",
+          "diagnostics_sha256": "cf89fbd3ad9253b387f7979e87bf55aa1395de60ad4cea99df0a1952ae3243a2",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 0
+        }
+      ]
+    },
+    {
+      "fixture": "transport_dashed_shared.png",
+      "source_sha256": "e78b6128aaa210ce2649275e89c1c23821df47047a06e1fd75ac156e43061962",
+      "input_unchanged": true,
+      "same_results": true,
+      "same_diagnostics": true,
+      "runs": [
+        {
+          "fresh_instance": true,
+          "seconds": 3.051,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "83fd60ec0f3e9718435b7c946d42b7d15e1b4acbef63416e924477618eae4813",
+          "diagnostics_sha256": "69edc10d913ce6cbc82280073c6b4510df14d4c2216d1fee7cdc082c991024c1",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 1
+        },
+        {
+          "fresh_instance": false,
+          "seconds": 3.066,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "83fd60ec0f3e9718435b7c946d42b7d15e1b4acbef63416e924477618eae4813",
+          "diagnostics_sha256": "69edc10d913ce6cbc82280073c6b4510df14d4c2216d1fee7cdc082c991024c1",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 1
+        },
+        {
+          "fresh_instance": true,
+          "seconds": 3.094,
+          "count": 24,
+          "grid": [
+            6,
+            4
+          ],
+          "result_sha256": "83fd60ec0f3e9718435b7c946d42b7d15e1b4acbef63416e924477618eae4813",
+          "diagnostics_sha256": "69edc10d913ce6cbc82280073c6b4510df14d4c2216d1fee7cdc082c991024c1",
+          "reference_status": "Reference could not be matched to the visible bed",
+          "review_count": 1
+        }
+      ]
+    }
+  ]
+}

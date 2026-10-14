@@ -1,0 +1,236 @@
+[
+  {
+    "threshold": 35,
+    "quantile": 0.75,
+    "parts": 56,
+    "anchors": 14,
+    "shape": [
+      8,
+      3
+    ],
+    "confidence": 0.457649064702659,
+    "occupancy": 0.4166666666666667,
+    "matched": 0.7142857142857143
+  },
+  {
+    "threshold": 35,
+    "quantile": 0.8,
+    "parts": 56,
+    "anchors": 12,
+    "shape": [
+      2,
+      3
+    ],
+    "confidence": 0.49278525321161887,
+    "occupancy": 1.0,
+    "matched": 0.5
+  },
+  {
+    "threshold": 35,
+    "quantile": 0.85,
+    "parts": 56,
+    "anchors": 9,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 35,
+    "quantile": 0.87,
+    "parts": 56,
+    "anchors": 8,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 35,
+    "quantile": 0.89,
+    "parts": 56,
+    "anchors": 7,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 35,
+    "quantile": 0.91,
+    "parts": 56,
+    "anchors": 5,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.75,
+    "parts": 64,
+    "anchors": 16,
+    "shape": [
+      5,
+      3
+    ],
+    "confidence": 0.39022336592271545,
+    "occupancy": 0.5333333333333333,
+    "matched": 0.5
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.8,
+    "parts": 64,
+    "anchors": 13,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.85,
+    "parts": 64,
+    "anchors": 10,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.87,
+    "parts": 64,
+    "anchors": 9,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.89,
+    "parts": 64,
+    "anchors": 7,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 45,
+    "quantile": 0.91,
+    "parts": 64,
+    "anchors": 6,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.75,
+    "parts": 72,
+    "anchors": 18,
+    "shape": [
+      10,
+      2
+    ],
+    "confidence": 0.6853774384016577,
+    "occupancy": 0.7,
+    "matched": 0.7777777777777778
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.8,
+    "parts": 72,
+    "anchors": 15,
+    "shape": [
+      5,
+      2
+    ],
+    "confidence": 0.31329646706276326,
+    "occupancy": 0.6,
+    "matched": 0.4
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.85,
+    "parts": 72,
+    "anchors": 11,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.87,
+    "parts": 72,
+    "anchors": 10,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.89,
+    "parts": 72,
+    "anchors": 8,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  },
+  {
+    "threshold": 55,
+    "quantile": 0.91,
+    "parts": 72,
+    "anchors": 7,
+    "shape": [
+      0,
+      0
+    ],
+    "confidence": 0.0,
+    "occupancy": 0.0,
+    "matched": 0.0
+  }
+]

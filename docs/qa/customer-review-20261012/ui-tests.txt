@@ -1,0 +1,17 @@
+test_artwork_review_and_overlap_have_distinct_consistent_colours (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_artwork_review_and_overlap_have_distinct_consistent_colours) ... ok
+test_clipped_grid_artwork_is_a_warning_even_when_cut_is_inside_bed (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_clipped_grid_artwork_is_a_warning_even_when_cut_is_inside_bed) ... ok
+test_diagnostics_follow_undo_and_clear_for_new_image (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_diagnostics_follow_undo_and_clear_for_new_image) ... ok
+test_duplicate_warning_is_visible_before_detection_confirmation (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_duplicate_warning_is_visible_before_detection_confirmation) ... ok
+test_extent_uncertainty_is_not_ready_even_when_detected_box_fits (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_extent_uncertainty_is_not_ready_even_when_detected_box_fits) ... Timeout (0:01:00)!
+Thread 0x00005dcc (most recent call first):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\app\ui\main_window.py", line 1384 in save_detection_report
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_detection_diagnostics_ui.py", line 139 in test_extent_uncertainty_is_not_ready_even_when_detected_box_fits
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\case.py", line 589 in _callTestMethod
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\case.py", line 634 in run
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\case.py", line 690 in __call__
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\suite.py", line 122 in run
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\suite.py", line 84 in __call__
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\suite.py", line 122 in run
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\suite.py", line 84 in __call__
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\.runtime\Lib\unittest\runner.py", line 240 in run
+  File "<string>", line 1 in <module>

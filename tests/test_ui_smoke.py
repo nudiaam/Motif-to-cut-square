@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import numpy as np
@@ -161,7 +163,7 @@ class UISmokeTests(unittest.TestCase):
         finally:
             window.close()
 
-    def test_single_outer_anchor_completes_grid_and_squares_without_user_step(self) -> None:
+    def test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid(self) -> None:
         import cv2
         from tests.test_visual_grid import printed_fabric
         missing = tuple((column, 3) for column in range(6) if column != 2)
@@ -174,8 +176,10 @@ class UISmokeTests(unittest.TestCase):
 
             self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
             self.assertTrue(window.logical_layout.reliable)
-            self.assertEqual(len(window.detections), 24)
-            self.assertEqual(sum(item.inferred for item in window.detections), 5)
+            self.assertEqual(len(window.detections), 19)
+            self.assertEqual(sum(item.inferred for item in window.detections), 0)
+            self.assertTrue(any('Competing panel layouts' in reason or 'Sparse composition layout' in reason
+                                for reason in window.detection_panel_grid.review_reasons))
             self.assertFalse(hasattr(window.panel, "inferred_positions_list"))
             for item in window.detections:
                 self.assertEqual(item.center_px, window.logical_layout.position(*item.layout_cell))
@@ -252,7 +256,8 @@ class UISmokeTests(unittest.TestCase):
             window.change_cut_size(4., 4.)
             window.detect_motifs()
             self.assertEqual(window._workflow_phase, "detect")
-            self.assertEqual(window.logical_layout.source, "visual")
+            # Whole-content comparison now corroborates this camera input.
+            self.assertEqual(window.logical_layout.source, "ink_lattice")
             self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
             self.assertEqual(len(window.detections), 24)
             self.assertTrue(all(d.grid_positioned and d.valid_cut and not d.overlaps_cut
@@ -677,7 +682,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertTrue(window.center_cuts_button.isEnabled())
         window.center_cuts()
         self.assertFalse(window.center_cuts_button.isEnabled())
-        self.assertIn("Review complete", window.review_guidance.text())
+        self.assertIn("Export SVG when ready", window.review_guidance.text())
         moved = window.detections[1]
         manual_position = window.mapper.inches_to_pixel(22.0, 15.0)
         window.move_detection(moved.id, *manual_position)
@@ -708,7 +713,7 @@ class UISmokeTests(unittest.TestCase):
         window.center_cuts_button.click()
         self.application.processEvents()
         self.assertFalse(any(item.overlaps_cut for item in window.detections))
-        self.assertIn("Review complete", window.review_guidance.text())
+        self.assertIn("Export SVG when ready", window.review_guidance.text())
 
         window.select_detection(window.detections[0].id)
         QTest.keyClick(window, Qt.Key.Key_Delete)
@@ -850,7 +855,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(
             window.remove_detection_button.property("workflowState"), "neutral"
         )
-        self.assertIn("Review complete", window.review_guidance.text())
+        self.assertIn("Export SVG when ready", window.review_guidance.text())
         toolbar = window.findChild(DelayedHelpToolBar, "mainToolbar")
         assert toolbar is not None
         toolbar_texts = {action.text() for action in toolbar.actions()}
@@ -884,15 +889,13 @@ class UISmokeTests(unittest.TestCase):
                 window.workflow_grid_button.text(),
                 window.workflow_detect_button.text(),
                 window.workflow_review_button.text(),
-                window.workflow_check_button.text(),
                 window.workflow_export_button.text(),
             ],
             [
                 "1  Prepare image",
                 "2  Detect + check",
                 "3  Review cuts",
-                "4  Check output",
-                "5  Export SVG",
+                "4  Export SVG",
             ],
         )
         window.close()
@@ -1061,7 +1064,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertFalse(window.workflow_review_button.isEnabled())
         window.close()
 
-    def test_preflight_only_skips_unchecked_cuts(self) -> None:
+    def test_preflight_reports_automatic_and_manual_exclusions(self) -> None:
         window = MainWindow()
         window.load_demo_image()
         window.detect_motifs()
@@ -1072,18 +1075,47 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(window._workflow_phase, "detect")
         window.confirm_detection()
 
-        # Unchecking one cut is the only thing that removes it from the export.
-        skipped_id = window.detections[0].id
+        automatically_excluded = sum(not d.enabled for d in window.detections)
+        skipped_id = next(d.id for d in window.detections if d.enabled)
         window.set_detection_enabled(skipped_id, False)
         window.show_preflight()
 
         self.assertTrue(window._preflight_complete)
-        self.assertEqual(window._workflow_phase, "preflight")
+        self.assertEqual(window._workflow_phase, "review")
         label = window.panel.verification_label.text()
         self.assertIn("EXPORT", label.upper())
-        self.assertIn("Skipped (unchecked): 1", label)
+        self.assertIn(f"Skipped (unchecked): {automatically_excluded + 1}", label)
         self.assertTrue(window.cut_preview_toggle.isChecked())
         window.close()
+
+    def test_combined_review_updates_output_and_exports_in_one_click(self) -> None:
+        window = MainWindow()
+        self.addCleanup(window.close)
+        window.load_demo_image()
+        window.add_center(*window.mapper.inches_to_pixel(10., 10.))
+        window.confirm_detection()
+        self.assertEqual(window._workflow_phase, "review")
+        self.assertTrue(window._preflight_complete)
+        self.assertFalse(window.panel.review_actions.isHidden())
+        self.assertFalse(window.panel.export_options.isHidden())
+        self.assertFalse(window.panel.verification_label.isHidden())
+        self.assertTrue(window.workflow_export_button.isEnabled())
+        self.assertIn("READY TO EXPORT: 1 CUTS", window.panel.verification_label.text())
+        window.change_cut_size(4., 4.)
+        self.assertTrue(window._preflight_complete)
+        window.set_detection_enabled(window.detections[0].id, False)
+        self.assertIn("Skipped (unchecked): 1", window.panel.verification_label.text())
+        self.assertFalse(window.workflow_export_button.isEnabled())
+        window.set_detection_enabled(window.detections[0].id, True)
+        self.assertIn("Skipped (unchecked): 0", window.panel.verification_label.text())
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "cuts.svg"
+            with patch("app.ui.main_window.QFileDialog.getSaveFileName", return_value=(str(path), "SVG files (*.svg)")) as save, patch("app.ui.main_window.QMessageBox.information"), patch("app.ui.main_window.QMessageBox.warning") as warning:
+                window.workflow_export_button.click()
+            save.assert_called_once()
+            warning.assert_not_called()
+            self.assertTrue(path.is_file())
+        self.assertEqual(window._workflow_phase, "export")
 
     def test_manual_grid_dimensions_and_distribution_update_canvas(self) -> None:
         window = MainWindow()

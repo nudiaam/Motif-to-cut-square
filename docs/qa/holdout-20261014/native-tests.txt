@@ -1,0 +1,42 @@
+test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) ... 
+  test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) (source='numbers_flat') ... FAIL
+  test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) (source='quotes') ... FAIL
+
+======================================================================
+FAIL: test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) (source='numbers_flat')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 31, in test_native_originals_keep_each_complete_group_exactly_once
+    self.assertEqual(assess(r,np.eye(3),points),(len(points),[]))
+AssertionError: Tuples differ: (18, [13, 17]) != (20, [])
+
+First differing element 0:
+18
+20
+
+- (18, [13, 17])
++ (20, [])
+
+======================================================================
+FAIL: test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) (source='quotes')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 31, in test_native_originals_keep_each_complete_group_exactly_once
+    self.assertEqual(assess(r,np.eye(3),points),(len(points),[]))
+AssertionError: Tuples differ: (15, [2]) != (16, [])
+
+First differing element 0:
+15
+16
+
+- (15, [2])
+?   ^   -
+
++ (16, [])
+?   ^
+
+
+----------------------------------------------------------------------
+Ran 1 test in 25.227s
+
+FAILED (failures=2)

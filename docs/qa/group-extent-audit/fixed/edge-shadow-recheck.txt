@@ -1,0 +1,12 @@
+test_resized_shadowed_original_keeps_geometry_and_extent (tests.test_irregular_shadows.IrregularShadowTests.test_resized_shadowed_original_keeps_geometry_and_extent) ... ok
+test_animals_keep_all_twelve_animals_with_their_accessories (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_animals_keep_all_twelve_animals_with_their_accessories) ... ok
+test_customer_birds_keep_eighteen_complete_and_exclude_six_partial (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_customer_birds_keep_eighteen_complete_and_exclude_six_partial) ... ok
+test_missing_partial_grid_cells_cannot_become_enabled_inferred_cuts (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_missing_partial_grid_cells_cannot_become_enabled_inferred_cuts) ... ok
+test_outside_cut_is_excluded_and_can_be_enabled_only_after_moving_inside (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_outside_cut_is_excluded_and_can_be_enabled_only_after_moving_inside) ... ok
+test_partial_cells_are_blocked_on_every_image_edge (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_partial_cells_are_blocked_on_every_image_edge) ... ok
+test_partial_row_stays_excluded_even_with_a_small_cut_or_manual_move (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_partial_row_stays_excluded_even_with_a_small_cut_or_manual_move) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 34.145s
+
+OK

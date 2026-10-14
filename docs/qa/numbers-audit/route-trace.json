@@ -1,0 +1,24 @@
+[
+  {
+    "return_line": 41,
+    "selected_components": 201,
+    "pitch": 136.31394419993023,
+    "grid": [
+      10,
+      3
+    ],
+    "unexplained": null,
+    "large_components": [
+      [
+        [
+          1320,
+          701,
+          167,
+          206
+        ],
+        19680
+      ]
+    ],
+    "returned": null
+  }
+]

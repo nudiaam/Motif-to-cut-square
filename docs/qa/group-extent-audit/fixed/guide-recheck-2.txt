@@ -1,0 +1,7 @@
+test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo) ... ok
+test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 5.771s
+
+OK

@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from .scene_profile import POLICY, background_evidence
-from .logical_layout import LayoutObservation, fit_logical_layout
+from .logical_layout import LayoutObservation, fit_logical_layout, layout_from_panel_grid
 from .panel_grid import PanelGrid
 
 
@@ -103,17 +103,26 @@ def plan_zones(image, grid):
     return result
 
 
-def grid_evidence(image, grid, candidates):
-    """Score the same pixel and occupancy evidence for every grid producer."""
+def seam_profiles(image):
+    """Compute image-only evidence once per comparison, never cache across images."""
     h,w=image.shape[:2]
     scale=min(1.,POLICY.max_scene_side/max(h,w))
     small=cv2.resize(image,(max(1,round(w*scale)),max(1,round(h*scale))))
     lab=cv2.cvtColor(small,cv2.COLOR_BGR2LAB).astype(np.float32)
+    profiles = []
+    for axis in (1, 0):
+        signal = np.linalg.norm(np.diff(lab, axis=axis), axis=2)
+        profile = np.percentile(signal, 65, axis=1-axis)
+        baseline, high = np.percentile(profile, [50, 95])
+        profiles.append((profile, baseline, high))
+    return scale, profiles
+
+
+def grid_evidence(image, grid, candidates, *, profiles=None):
+    """Score the same pixel and occupancy evidence for every grid producer."""
+    scale, profiles = seam_profiles(image) if profiles is None else profiles
     seams=[]
-    for axis,lines in ((1,grid.x_lines_px),(0,grid.y_lines_px)):
-        signal=np.linalg.norm(np.diff(lab,axis=axis),axis=2)
-        profile=np.percentile(signal,65,axis=1-axis)
-        baseline,high=np.percentile(profile,[50,95])
+    for lines,(profile,baseline,high) in zip((grid.x_lines_px,grid.y_lines_px),profiles):
         radius=max(1,round(np.median(np.diff(lines))*scale*.025))
         for line in lines[1:-1]:
             p=round(line*scale)
@@ -158,13 +167,14 @@ def choose_grid(image, proposals, candidates, *, stable_routes=(), route_evidenc
     rows=[]
     route_evidence=route_evidence or {}
     grids=dict(proposals)
+    profiles = seam_profiles(image)
     reference=candidates
     reference_name='primary'
     for route in stable_routes:
         own=route_evidence.get(route)
         grid=grids.get(route)
         if own and grid is not None:
-            support=grid_evidence(image,grid,own)
+            support=grid_evidence(image,grid,own,profiles=profiles)
             if (support['occupied_fraction'] >= .85 and support['aligned_fraction'] >= .8
                     and support['unique_assignment_fraction'] >= .85):
                 reference=own
@@ -173,7 +183,7 @@ def choose_grid(image, proposals, candidates, *, stable_routes=(), route_evidenc
     for name,grid in proposals:
         if grid is None:continue
         evidence=route_evidence.get(name,reference)
-        measures=grid_evidence(image,grid,evidence)
+        measures=grid_evidence(image,grid,evidence,profiles=profiles)
         rows.append({'route':name,'columns':grid.columns,'rows':grid.rows,
                      'eligible':grid.confidence >= .78,'evidence_count':len(evidence),
                      'evidence_source':name if name in route_evidence else reference_name,**measures})
@@ -187,7 +197,7 @@ def choose_grid(image, proposals, candidates, *, stable_routes=(), route_evidenc
         for alternative in independent:
             own=route_evidence.get(alternative['route'])
             if own is not None and row is not alternative:
-                support=grid_evidence(image,grids[row['route']],own)
+                support=grid_evidence(image,grids[row['route']],own,profiles=profiles)
                 baseline=_contained_fraction(grids[alternative['route']],own)
                 retained=_contained_fraction(grids[row['route']],own)
                 row.setdefault('cross_checks',[]).append({
@@ -196,6 +206,8 @@ def choose_grid(image, proposals, candidates, *, stable_routes=(), route_evidenc
                 if (support['unique_assignment_fraction'] < .70 or
                         support['outside_fraction'] > alternative['outside_fraction']+.12 or
                         support['aligned_fraction'] < alternative['aligned_fraction']-.25 or
+                        (baseline >= .95 and retained < baseline-.03
+                         and grids[row['route']].source not in ('manual','visual','camera','reference')) or
                         (baseline >= .8 and retained < baseline-.25)):
                     row['eligible']=False
                     row['rejection_reason']='Contradicts independently supported compositions from '+alternative['route']
@@ -209,9 +221,27 @@ def choose_grid(image, proposals, candidates, *, stable_routes=(), route_evidenc
     eligible=[r for r in rows if r['eligible']]
     if not eligible:return None,rows
     winner=max(eligible,key=lambda r:r['score'])
-    # Near ties retain the simpler original route; confidence from different
-    # producers is deliberately not compared as a probability.
+    # Preserve established routing for equivalent geometry. Do not present a
+    # materially different near-tie as independently confirmed geometry.
     for row in eligible:
         if row['score'] >= winner['score']-.06:
+            alternatives = [r['route'] for r in eligible if r is not row
+                and r['score'] >= winner['score']-.06
+                and grid_distance(grids[row['route']], grids[r['route']]) > .15]
+            row['competing_routes'] = alternatives
+            row['selection_margin'] = row['score'] - max(
+                (r['score'] for r in eligible if r is not row), default=row['score'])
             return row['route'],rows
     return winner['route'],rows
+
+
+def grid_distance(first, second):
+    """Largest centre displacement, in cells, including affine/projective phase."""
+    if (first.columns, first.rows) != (second.columns, second.rows):
+        return float('inf')
+    from .logical_layout import layout_from_panel_grid
+    a, b = layout_from_panel_grid([], first), layout_from_panel_grid([], second)
+    spacing = min(np.median(np.diff(first.x_lines_px)), np.median(np.diff(first.y_lines_px)))
+    return max(np.linalg.norm(np.array(a.position(c,r))-b.position(c,r))
+               for c,r in ((0,0),(first.columns-1,0),(0,first.rows-1),
+                           (first.columns-1,first.rows-1))) / max(1., spacing)

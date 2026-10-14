@@ -1,0 +1,12 @@
+test_artwork_review_and_overlap_have_distinct_consistent_colours (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_artwork_review_and_overlap_have_distinct_consistent_colours) ... ok
+test_clipped_grid_artwork_is_a_warning_even_when_cut_is_inside_bed (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_clipped_grid_artwork_is_a_warning_even_when_cut_is_inside_bed) ... ok
+test_diagnostics_follow_undo_and_clear_for_new_image (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_diagnostics_follow_undo_and_clear_for_new_image) ... ok
+test_duplicate_warning_is_visible_before_detection_confirmation (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_duplicate_warning_is_visible_before_detection_confirmation) ... ok
+test_extent_uncertainty_is_not_ready_even_when_detected_box_fits (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_extent_uncertainty_is_not_ready_even_when_detected_box_fits) ... ok
+test_manual_redetection_does_not_claim_a_reference_was_used (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_manual_redetection_does_not_claim_a_reference_was_used) ... ok
+test_report_available_before_acceptance_includes_failed_reference_and_settings (tests.test_detection_diagnostics_ui.DetectionDiagnosticsUITests.test_report_available_before_acceptance_includes_failed_reference_and_settings) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 13.211s
+
+OK

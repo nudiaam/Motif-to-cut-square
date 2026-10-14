@@ -29,6 +29,11 @@ class SVGExporter:
         detections: list[Detection],
         unit: LengthUnit = LengthUnit.INCHES,
     ) -> ET.ElementTree:
+        blocked = [(d.id, d.cut_block_reason(mapper)) for d in detections if d.enabled]
+        blocked = [(identifier, reason) for identifier, reason in blocked if reason]
+        if blocked:
+            raise ValueError("Cannot export blocked cuts: " + "; ".join(
+                f"#{identifier}: {reason}" for identifier, reason in blocked))
         recalculate_cut_overlaps(detections)
         bed_width = from_inches(mapper.bed_width_in, unit)
         bed_height = from_inches(mapper.bed_height_in, unit)

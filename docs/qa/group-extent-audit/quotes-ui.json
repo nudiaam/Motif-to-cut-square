@@ -1,0 +1,1609 @@
+{
+  "detections": [
+    {
+      "id": 1,
+      "center_px": [
+        894.012305123653,
+        212.97350187682716
+      ],
+      "preferred_center_px": [
+        888.0,
+        209.0
+      ],
+      "center_inches": [
+        20.953413401335617,
+        4.991566450238136
+      ],
+      "bounding_box_px": [
+        825,
+        142,
+        132,
+        135
+      ],
+      "score": 0.6320111081379377,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        888.0,
+        209.0
+      ],
+      "layout_anchor_px": [
+        894.012305123653,
+        212.97350187682716
+      ],
+      "layout_cell": [
+        2,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 2,
+      "center_px": [
+        654.3638700160311,
+        213.31680503194735
+      ],
+      "preferred_center_px": [
+        657.0,
+        212.0
+      ],
+      "center_inches": [
+        15.33665320350073,
+        4.9996126179362665
+      ],
+      "bounding_box_px": [
+        589,
+        138,
+        138,
+        143
+      ],
+      "score": 0.5937846676736049,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        657.0,
+        212.0
+      ],
+      "layout_anchor_px": [
+        654.3638700160311,
+        213.31680503194735
+      ],
+      "layout_cell": [
+        1,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 3,
+      "center_px": [
+        1133.6607402312748,
+        212.630198721707
+      ],
+      "preferred_center_px": [
+        1124.5,
+        213.5
+      ],
+      "center_inches": [
+        26.570173599170502,
+        4.983520282540008
+      ],
+      "bounding_box_px": [
+        1044,
+        141,
+        159,
+        138
+      ],
+      "score": 0.5696109408338981,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        1124.5,
+        213.5
+      ],
+      "layout_anchor_px": [
+        1133.6607402312748,
+        212.630198721707
+      ],
+      "layout_cell": [
+        3,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 4,
+      "center_px": [
+        414.7154349084093,
+        213.66010818706752
+      ],
+      "preferred_center_px": [
+        423.5,
+        222.0
+      ],
+      "center_inches": [
+        9.719893005665842,
+        5.007658785634395
+      ],
+      "bounding_box_px": [
+        336,
+        144,
+        176,
+        148
+      ],
+      "score": 0.5697129094599824,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        423.5,
+        222.0
+      ],
+      "layout_anchor_px": [
+        414.7154349084093,
+        213.66010818706752
+      ],
+      "layout_cell": [
+        0,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 5,
+      "center_px": [
+        417.4662859657007,
+        413.2957624521583
+      ],
+      "preferred_center_px": [
+        418.5,
+        415.5
+      ],
+      "center_inches": [
+        9.784366077321112,
+        9.686619432472462
+      ],
+      "bounding_box_px": [
+        335,
+        346,
+        171,
+        136
+      ],
+      "score": 0.5660183454607702,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        418.5,
+        415.5
+      ],
+      "layout_anchor_px": [
+        417.4662859657007,
+        413.2957624521583
+      ],
+      "layout_cell": [
+        0,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 6,
+      "center_px": [
+        1136.4115912885661,
+        412.26585298679777
+      ],
+      "preferred_center_px": [
+        1133.5,
+        416.0
+      ],
+      "center_inches": [
+        26.634646670825767,
+        9.662480929378074
+      ],
+      "bounding_box_px": [
+        1039,
+        343,
+        194,
+        140
+      ],
+      "score": 0.5660077698647085,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        1133.5,
+        416.0
+      ],
+      "layout_anchor_px": [
+        1136.4115912885661,
+        412.26585298679777
+      ],
+      "layout_cell": [
+        3,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 7,
+      "center_px": [
+        657.1147210733226,
+        412.95245929703816
+      ],
+      "preferred_center_px": [
+        657.0,
+        417.0
+      ],
+      "center_inches": [
+        15.401126275155997,
+        9.678573264774332
+      ],
+      "bounding_box_px": [
+        575,
+        339,
+        165,
+        150
+      ],
+      "score": 0.5606033993479576,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        657.0,
+        417.0
+      ],
+      "layout_anchor_px": [
+        657.1147210733226,
+        412.95245929703816
+      ],
+      "layout_cell": [
+        1,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 8,
+      "center_px": [
+        896.7631561809445,
+        412.609156141918
+      ],
+      "preferred_center_px": [
+        890.0,
+        418.0
+      ],
+      "center_inches": [
+        21.017886472990885,
+        9.670527097076203
+      ],
+      "bounding_box_px": [
+        822,
+        345,
+        142,
+        143
+      ],
+      "score": 0.544874241056772,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        890.0,
+        418.0
+      ],
+      "layout_anchor_px": [
+        896.7631561809445,
+        412.609156141918
+      ],
+      "layout_cell": [
+        2,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 9,
+      "center_px": [
+        899.5140072382359,
+        612.2448104070088
+      ],
+      "preferred_center_px": [
+        897.0,
+        614.0
+      ],
+      "center_inches": [
+        21.082359544646156,
+        14.349487743914269
+      ],
+      "bounding_box_px": [
+        814,
+        539,
+        168,
+        146
+      ],
+      "score": 0.5891077497781659,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        897.0,
+        614.0
+      ],
+      "layout_anchor_px": [
+        899.5140072382359,
+        612.2448104070088
+      ],
+      "layout_cell": [
+        2,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 10,
+      "center_px": [
+        659.8655721306139,
+        612.5881135621289
+      ],
+      "preferred_center_px": [
+        656.5,
+        616.0
+      ],
+      "center_inches": [
+        15.465599346811263,
+        14.357533911612396
+      ],
+      "bounding_box_px": [
+        572,
+        538,
+        173,
+        149
+      ],
+      "score": 0.5732386590626053,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        656.5,
+        616.0
+      ],
+      "layout_anchor_px": [
+        659.8655721306139,
+        612.5881135621289
+      ],
+      "layout_cell": [
+        1,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 11,
+      "center_px": [
+        1139.1624423458577,
+        611.9015072518886
+      ],
+      "preferred_center_px": [
+        1145.0,
+        618.0
+      ],
+      "center_inches": [
+        26.69911974248104,
+        14.341441576216138
+      ],
+      "bounding_box_px": [
+        1069,
+        539,
+        154,
+        150
+      ],
+      "score": 0.5713463919202267,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        1145.0,
+        618.0
+      ],
+      "layout_anchor_px": [
+        1139.1624423458577,
+        611.9015072518886
+      ],
+      "layout_cell": [
+        3,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 12,
+      "center_px": [
+        420.2171370229921,
+        612.9314167172491
+      ],
+      "preferred_center_px": [
+        419.0,
+        627.5
+      ],
+      "center_inches": [
+        9.848839148976378,
+        14.365580079310526
+      ],
+      "bounding_box_px": [
+        331,
+        539,
+        175,
+        153
+      ],
+      "score": 0.5814742548698579,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        419.0,
+        627.5
+      ],
+      "layout_anchor_px": [
+        420.2171370229921,
+        612.9314167172491
+      ],
+      "layout_cell": [
+        0,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 13,
+      "center_px": [
+        422.9679880802836,
+        812.5670709823399
+      ],
+      "preferred_center_px": [
+        416.5,
+        811.0
+      ],
+      "center_inches": [
+        9.913312220631646,
+        19.044540726148593
+      ],
+      "bounding_box_px": [
+        335,
+        731,
+        164,
+        154
+      ],
+      "score": 0.5652571881293289,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        416.5,
+        811.0
+      ],
+      "layout_anchor_px": [
+        422.9679880802836,
+        812.5670709823399
+      ],
+      "layout_cell": [
+        0,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 14,
+      "center_px": [
+        902.2648582955273,
+        811.8804646720996
+      ],
+      "preferred_center_px": [
+        904.0,
+        813.5
+      ],
+      "center_inches": [
+        21.146832616301424,
+        19.028448390752335
+      ],
+      "bounding_box_px": [
+        834,
+        734,
+        144,
+        156
+      ],
+      "score": 0.6085078295210757,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        904.0,
+        813.5
+      ],
+      "layout_anchor_px": [
+        902.2648582955273,
+        811.8804646720996
+      ],
+      "layout_cell": [
+        2,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 15,
+      "center_px": [
+        662.6164231879054,
+        812.2237678272197
+      ],
+      "preferred_center_px": [
+        651.5,
+        814.0
+      ],
+      "center_inches": [
+        15.530072418466533,
+        19.036494558450464
+      ],
+      "bounding_box_px": [
+        570,
+        734,
+        172,
+        153
+      ],
+      "score": 0.5630475271033277,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        651.5,
+        814.0
+      ],
+      "layout_anchor_px": [
+        662.6164231879054,
+        812.2237678272197
+      ],
+      "layout_cell": [
+        1,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "id": 16,
+      "center_px": [
+        1141.913293403149,
+        811.5371615169794
+      ],
+      "preferred_center_px": [
+        1148.5,
+        815.0
+      ],
+      "center_inches": [
+        26.763592814136306,
+        19.020402223054205
+      ],
+      "bounding_box_px": [
+        1062,
+        732,
+        175,
+        161
+      ],
+      "score": 0.5501265647005529,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": false,
+      "manual": false,
+      "cut_width_inches": 4,
+      "cut_height_inches": 4,
+      "original_center_px": [
+        1148.5,
+        815.0
+      ],
+      "layout_anchor_px": [
+        1141.913293403149,
+        811.5371615169794
+      ],
+      "layout_cell": [
+        3,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [],
+      "source_incomplete": false
+    }
+  ],
+  "layout": {
+    "columns": 4,
+    "rows": 4,
+    "origin_px": [
+      414.7154349084093,
+      213.66010818706752
+    ],
+    "column_vector_px": [
+      239.64843510762188,
+      -0.3433031551201806
+    ],
+    "row_vector_px": [
+      2.7508510572914258,
+      199.6356542650908
+    ],
+    "confidence": 0.9967120463525972,
+    "mean_residual_px": 4.998741646912525,
+    "occupancy": 1.0,
+    "matches": [
+      {
+        "detection_id": 1,
+        "observed_px": [
+          891.0,
+          209.5
+        ],
+        "proposed_px": [
+          894.012305123653,
+          212.97350187682716
+        ],
+        "column": 2,
+        "row": 0,
+        "residual_px": 4.597738296848593,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 2,
+        "observed_px": [
+          658.0,
+          209.5
+        ],
+        "proposed_px": [
+          654.3638700160311,
+          213.31680503194735
+        ],
+        "column": 1,
+        "row": 0,
+        "residual_px": 5.271569207761215,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 3,
+        "observed_px": [
+          1123.5,
+          210.0
+        ],
+        "proposed_px": [
+          1133.6607402312748,
+          212.630198721707
+        ],
+        "column": 3,
+        "row": 0,
+        "residual_px": 10.495646114609357,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 4,
+        "observed_px": [
+          424.0,
+          218.0
+        ],
+        "proposed_px": [
+          414.7154349084093,
+          213.66010818706752
+        ],
+        "column": 0,
+        "row": 0,
+        "residual_px": 10.248795533522127,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 5,
+        "observed_px": [
+          420.5,
+          414.0
+        ],
+        "proposed_px": [
+          417.4662859657007,
+          413.2957624521583
+        ],
+        "column": 0,
+        "row": 1,
+        "residual_px": 3.1143813776887614,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 6,
+        "observed_px": [
+          1136.0,
+          413.0
+        ],
+        "proposed_px": [
+          1136.4115912885661,
+          412.26585298679777
+        ],
+        "column": 3,
+        "row": 1,
+        "residual_px": 0.8416526752867083,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 7,
+        "observed_px": [
+          657.5,
+          414.0
+        ],
+        "proposed_px": [
+          657.1147210733226,
+          412.95245929703816
+        ],
+        "column": 1,
+        "row": 1,
+        "residual_px": 1.1161457681250626,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 8,
+        "observed_px": [
+          893.0,
+          416.5
+        ],
+        "proposed_px": [
+          896.7631561809445,
+          412.609156141918
+        ],
+        "column": 2,
+        "row": 1,
+        "residual_px": 5.412948398992496,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 9,
+        "observed_px": [
+          898.0,
+          612.0
+        ],
+        "proposed_px": [
+          899.5140072382359,
+          612.2448104070088
+        ],
+        "column": 2,
+        "row": 2,
+        "residual_px": 1.5336720812515432,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 10,
+        "observed_px": [
+          658.5,
+          612.5
+        ],
+        "proposed_px": [
+          659.8655721306139,
+          612.5881135621289
+        ],
+        "column": 1,
+        "row": 2,
+        "residual_px": 1.368411942267585,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 11,
+        "observed_px": [
+          1146.0,
+          614.0
+        ],
+        "proposed_px": [
+          1139.1624423458577,
+          611.9015072518886
+        ],
+        "column": 3,
+        "row": 2,
+        "residual_px": 7.152332940208825,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 12,
+        "observed_px": [
+          418.5,
+          615.5
+        ],
+        "proposed_px": [
+          420.2171370229921,
+          612.9314167172491
+        ],
+        "column": 0,
+        "row": 2,
+        "residual_px": 3.089689245888241,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 13,
+        "observed_px": [
+          417.0,
+          808.0
+        ],
+        "proposed_px": [
+          422.9679880802836,
+          812.5670709823399
+        ],
+        "column": 0,
+        "row": 3,
+        "residual_px": 7.514986299664061,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 14,
+        "observed_px": [
+          906.0,
+          812.0
+        ],
+        "proposed_px": [
+          902.2648582955273,
+          811.8804646720996
+        ],
+        "column": 2,
+        "row": 3,
+        "residual_px": 3.737053952929651,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 15,
+        "observed_px": [
+          656.0,
+          810.5
+        ],
+        "proposed_px": [
+          662.6164231879054,
+          812.2237678272197
+        ],
+        "column": 1,
+        "row": 3,
+        "residual_px": 6.837282451647744,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 16,
+        "observed_px": [
+          1149.5,
+          812.5
+        ],
+        "proposed_px": [
+          1141.913293403149,
+          811.5371615169794
+        ],
+        "column": 3,
+        "row": 3,
+        "residual_px": 7.647560063908429,
+        "status": "matched",
+        "review_reason": ""
+      }
+    ],
+    "missing": [],
+    "reason": "Cut centres follow the panel grid; artwork is assigned to its cells.",
+    "source": "fabric",
+    "projection": null
+  },
+  "mapper": {
+    "image_width_px": 1536,
+    "image_height_px": 1024,
+    "bed_width_in": 36.0,
+    "bed_height_in": 24.0,
+    "image_x_in": 0.0,
+    "image_y_in": 0.0,
+    "image_width_in": 36.0,
+    "image_height_in": 24.0
+  },
+  "cut_ownership": [
+    {
+      "group": 1,
+      "owners": [
+        3
+      ]
+    },
+    {
+      "group": 2,
+      "owners": [
+        1
+      ]
+    },
+    {
+      "group": 3,
+      "owners": [
+        0
+      ]
+    },
+    {
+      "group": 4,
+      "owners": [
+        2
+      ]
+    },
+    {
+      "group": 5,
+      "owners": [
+        4
+      ]
+    },
+    {
+      "group": 6,
+      "owners": [
+        6
+      ]
+    },
+    {
+      "group": 7,
+      "owners": [
+        7
+      ]
+    },
+    {
+      "group": 8,
+      "owners": [
+        5
+      ]
+    },
+    {
+      "group": 9,
+      "owners": [
+        11
+      ]
+    },
+    {
+      "group": 10,
+      "owners": [
+        9
+      ]
+    },
+    {
+      "group": 11,
+      "owners": [
+        8
+      ]
+    },
+    {
+      "group": 12,
+      "owners": [
+        10
+      ]
+    },
+    {
+      "group": 13,
+      "owners": [
+        12
+      ]
+    },
+    {
+      "group": 14,
+      "owners": [
+        14
+      ]
+    },
+    {
+      "group": 15,
+      "owners": [
+        13
+      ]
+    },
+    {
+      "group": 16,
+      "owners": [
+        15
+      ]
+    }
+  ],
+  "cuts": [
+    [
+      808.6789717903196,
+      127.64016854349381,
+      170.66666666666674,
+      170.66666666666669
+    ],
+    [
+      569.0305366826979,
+      127.98347169861404,
+      170.66666666666674,
+      170.66666666666669
+    ],
+    [
+      1048.3274068979415,
+      127.29686538837366,
+      170.66666666666652,
+      170.66666666666669
+    ],
+    [
+      329.3821015750759,
+      128.32677485373418,
+      170.66666666666663,
+      170.66666666666666
+    ],
+    [
+      332.13295263236745,
+      327.962429118825,
+      170.66666666666669,
+      170.66666666666669
+    ],
+    [
+      1051.0782579552329,
+      326.93251965346445,
+      170.66666666666652,
+      170.66666666666669
+    ],
+    [
+      571.7813877399892,
+      327.61912596370485,
+      170.66666666666663,
+      170.66666666666669
+    ],
+    [
+      811.4298228476111,
+      327.2758228085847,
+      170.66666666666652,
+      170.66666666666663
+    ],
+    [
+      814.1806739049027,
+      526.9114770736754,
+      170.66666666666652,
+      170.66666666666663
+    ],
+    [
+      574.5322387972806,
+      527.2547802287955,
+      170.66666666666663,
+      170.66666666666674
+    ],
+    [
+      1053.8291090125244,
+      526.5681739185552,
+      170.66666666666674,
+      170.66666666666663
+    ],
+    [
+      334.8838036896588,
+      527.5980833839158,
+      170.66666666666669,
+      170.66666666666663
+    ],
+    [
+      337.6346547469502,
+      727.2337376490067,
+      170.66666666666663,
+      170.66666666666663
+    ],
+    [
+      816.9315249621941,
+      726.5471313387662,
+      170.66666666666674,
+      170.66666666666674
+    ],
+    [
+      577.283089854572,
+      726.8904344938865,
+      170.66666666666663,
+      170.66666666666663
+    ],
+    [
+      1056.5799600698156,
+      726.2038281836461,
+      170.66666666666697,
+      170.66666666666663
+    ]
+  ],
+  "diagnostics": {
+    "identity": {
+      "image": {
+        "pixel_sha256": "d0aa88a4e16941154e97f16197c934324a5723540d5b53c586965ce0d47c4481",
+        "shape": [
+          1024,
+          1536,
+          3
+        ],
+        "dtype": "|u1"
+      },
+      "reference": {
+        "pixel_sha256": "bee571f9615d001b69ae3c170a5c4d26a456326869e7dae9562cf126ebcb4d06",
+        "shape": [
+          481,
+          719,
+          3
+        ],
+        "dtype": "|u1"
+      },
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.933333333333332,
+        "merge_distance_px_y": 14.933333333333332,
+        "layout_mode": "auto",
+        "adaptive_planning": true
+      },
+      "route": "automatic",
+      "confirmed_guides": null,
+      "input_sha256": "67943c70cf6d4dc012f9f88eb20b9b34dbdad70f3e5af6174ecf26649f4c7e84",
+      "runtime": {
+        "python": "3.12.13",
+        "opencv": "4.14.0",
+        "numpy": "2.5.2"
+      }
+    },
+    "result_sha256": "f324df9cca782f822c43b5bc57083f3db41b062804067031b0c7cbab7c1e7acb",
+    "timings_seconds": {
+      "reference_and_illumination": 0.30710520001593977,
+      "layout": 3.3816500999964774,
+      "appearance": 2.409329299989622,
+      "final_review": 0.07602999999653548,
+      "total": 6.174117200018372
+    },
+    "detector_revision": "2026-10-14-composition-content-preservation",
+    "image_size_px": [
+      1536,
+      1024
+    ],
+    "settings": {
+      "sensitivity": 65,
+      "minimum_area_px": 500,
+      "morphological_cleanup": 0.25,
+      "merge_distance_px_x": 14.933333333333332,
+      "merge_distance_px_y": 14.933333333333332,
+      "layout_mode": "auto",
+      "adaptive_planning": true
+    },
+    "reference_status": "Reference could not be matched to the visible bed",
+    "reference_applied": false,
+    "fabric_status": "Visible fabric boundary applied (without bed matching)",
+    "analysis_bounds_px": [
+      215,
+      68,
+      1320,
+      987
+    ],
+    "grid": {
+      "x_lines_px": [
+        299.0174939405355,
+        538.6659290481574,
+        778.3143641557792,
+        1017.9627992634012,
+        1257.611234371023
+      ],
+      "y_lines_px": [
+        113.32732632184185,
+        312.96298058693264,
+        512.5986348520235,
+        712.2342891171143,
+        911.8699433822051
+      ],
+      "confidence": 0.9967120463525972,
+      "source": "fabric",
+      "lattice": [
+        [
+          414.7154349084093,
+          213.66010818706752
+        ],
+        [
+          239.64843510762188,
+          -0.3433031551201806
+        ],
+        [
+          2.7508510572914258,
+          199.6356542650908
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "grid_notes": [],
+    "scene_profile": {
+      "analysis_size_px": [
+        960,
+        640
+      ],
+      "source_scale": 0.625,
+      "luminance_percentiles": [
+        18.0,
+        197.0,
+        229.0
+      ],
+      "fine_detail_fraction": 0.3656233723958333,
+      "original_preserved": true
+    },
+    "illumination": null,
+    "analysis_policy": {
+      "max_scene_side": 960,
+      "context_fraction": 0.15,
+      "sample_inset": 0.035,
+      "sample_band": 0.06,
+      "palette_radius": 16.0,
+      "max_background_colours": 4,
+      "max_region_side": 320,
+      "max_shadow_gain": 1.6
+    },
+    "detection_plans": [
+      {
+        "stage": "grid",
+        "selected_route": "regular",
+        "hypotheses": [
+          {
+            "route": "regular",
+            "columns": 4,
+            "rows": 4,
+            "eligible": true,
+            "evidence_count": 16,
+            "evidence_source": "primary",
+            "seam_support": 0.08824104044452409,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 0.75,
+            "outside_fraction": 0.0,
+            "score": 0.5727964161778096,
+            "unique_assignment_fraction": 1.0,
+            "competing_routes": [],
+            "selection_margin": 0.0
+          }
+        ]
+      },
+      {
+        "stage": "whole_image_parts",
+        "components": 114,
+        "compositions": 16
+      },
+      {
+        "stage": "appearance_ownership_recheck",
+        "route": "shared_background",
+        "initial_evidence_count": 16,
+        "retained_regions_fraction": 0.8888888888888888,
+        "corroborated": false,
+        "content_preservation": {
+          "approved": true,
+          "reference_compositions": 16,
+          "lost_compositions": [],
+          "minimum_ink_retained": 1.0,
+          "ink_retained_fraction": 1.0
+        },
+        "seam_support": 0.0,
+        "occupied_fraction": 1.0,
+        "aligned_fraction": 1.0,
+        "outside_fraction": 0.0,
+        "score": 0.6,
+        "unique_assignment_fraction": 1.0
+      },
+      {
+        "stage": "joint_appearance",
+        "selected_route": "shared_background",
+        "hypotheses": [
+          {
+            "route": "light",
+            "columns": 4,
+            "rows": 4,
+            "eligible": true,
+            "evidence_count": 22,
+            "evidence_source": "light",
+            "seam_support": 0.0,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 1.0,
+            "outside_fraction": 0.2727272727272727,
+            "score": 0.5181818181818182,
+            "unique_assignment_fraction": 1.0,
+            "cross_checks": [
+              {
+                "against": "chroma",
+                "contained_fraction": 1.0,
+                "reference_contained_fraction": 1.0,
+                "seam_support": 0.0,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 0.8125,
+                "outside_fraction": 0.0,
+                "score": 0.553125,
+                "unique_assignment_fraction": 1.0
+              },
+              {
+                "against": "shared_background",
+                "contained_fraction": 1.0,
+                "reference_contained_fraction": 1.0,
+                "seam_support": 0.0,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 1.0,
+                "outside_fraction": 0.0,
+                "score": 0.6,
+                "unique_assignment_fraction": 1.0
+              }
+            ]
+          },
+          {
+            "route": "chroma",
+            "columns": 4,
+            "rows": 4,
+            "eligible": false,
+            "evidence_count": 16,
+            "evidence_source": "chroma",
+            "seam_support": 0.07450427569525339,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 1.0,
+            "outside_fraction": 0.0,
+            "score": 0.6298017102781013,
+            "unique_assignment_fraction": 1.0,
+            "cross_checks": [
+              {
+                "against": "light",
+                "contained_fraction": 0.36363636363636365,
+                "reference_contained_fraction": 0.7272727272727273,
+                "seam_support": 0.07450427569525339,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 1.0,
+                "outside_fraction": 0.2727272727272727,
+                "score": 0.5479835284599195,
+                "unique_assignment_fraction": 1.0
+              },
+              {
+                "against": "shared_background",
+                "contained_fraction": 0.3125,
+                "reference_contained_fraction": 1.0,
+                "seam_support": 0.07450427569525339,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 0.875,
+                "outside_fraction": 0.0,
+                "score": 0.5985517102781013,
+                "unique_assignment_fraction": 1.0
+              }
+            ],
+            "rejection_reason": "Contradicts independently supported compositions from shared_background"
+          },
+          {
+            "route": "shared_background",
+            "columns": 4,
+            "rows": 4,
+            "eligible": true,
+            "evidence_count": 16,
+            "evidence_source": "shared_background",
+            "seam_support": 0.0,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 1.0,
+            "outside_fraction": 0.0,
+            "score": 0.6,
+            "unique_assignment_fraction": 1.0,
+            "cross_checks": [
+              {
+                "against": "light",
+                "contained_fraction": 0.7272727272727273,
+                "reference_contained_fraction": 0.7272727272727273,
+                "seam_support": 0.0,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 1.0,
+                "outside_fraction": 0.2727272727272727,
+                "score": 0.5181818181818182,
+                "unique_assignment_fraction": 1.0
+              },
+              {
+                "against": "chroma",
+                "contained_fraction": 1.0,
+                "reference_contained_fraction": 1.0,
+                "seam_support": 0.0,
+                "occupied_fraction": 1.0,
+                "aligned_fraction": 0.8125,
+                "outside_fraction": 0.0,
+                "score": 0.553125,
+                "unique_assignment_fraction": 1.0
+              }
+            ],
+            "competing_routes": [],
+            "selection_margin": 0.08181818181818179
+          }
+        ],
+        "scene_resolved_before_refinement": false
+      },
+      {
+        "stage": "contrast_geometry",
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "agreeing_passes": 6,
+        "scales": [
+          0.025,
+          0.03535533905932738
+        ],
+        "thresholds": [
+          35,
+          65,
+          75
+        ],
+        "occupancy": 1.0,
+        "confidence": 0.9016461094773428,
+        "source_pixels_preserved": true,
+        "channel": "light",
+        "columns": 4,
+        "rows": 4,
+        "accepted": false,
+        "existing_geometry_agrees": false
+      },
+      {
+        "stage": "contrast_geometry",
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "agreeing_passes": 6,
+        "scales": [
+          0.05,
+          0.07071067811865477,
+          0.1
+        ],
+        "thresholds": [
+          55,
+          65,
+          75
+        ],
+        "occupancy": 1.0,
+        "confidence": 0.9959740203511412,
+        "source_pixels_preserved": true,
+        "channel": "chroma",
+        "columns": 4,
+        "rows": 4,
+        "accepted": false,
+        "existing_geometry_agrees": false
+      },
+      {
+        "stage": "contrast_geometry",
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "agreeing_passes": 21,
+        "scales": [
+          0.025,
+          0.03535533905932738,
+          0.05,
+          0.07071067811865477,
+          0.1,
+          0.14142135623730953
+        ],
+        "thresholds": [
+          35,
+          45,
+          55,
+          65,
+          75
+        ],
+        "occupancy": 1.0,
+        "confidence": 0.9971546144802623,
+        "source_pixels_preserved": true,
+        "channel": "shared_background",
+        "background_lab": [
+          226.21336364746094,
+          126.29579162597656,
+          140.78515625
+        ],
+        "background_noise_lab": [
+          3.617276191711426,
+          1.0,
+          1.0
+        ],
+        "columns": 4,
+        "rows": 4,
+        "accepted": false,
+        "existing_geometry_agrees": false
+      }
+    ],
+    "candidates_before_cleanup": 16,
+    "candidates_after_cleanup": 16,
+    "compositions_needing_extent_review": 0
+  }
+}

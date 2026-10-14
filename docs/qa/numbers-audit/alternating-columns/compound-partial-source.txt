@@ -1,0 +1,6 @@
+test_partial_source_groups_stay_excluded_after_resizing_cuts (tests.test_compound_grid.CompoundGridTests.test_partial_source_groups_stay_excluded_after_resizing_cuts) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.870s
+
+OK

@@ -1,0 +1,16 @@
+customer_20261012/numbers_compact_5x4.png 20 20 equal False
+customer_20261012/numbers_objects_5x4.png 20 20 equal True
+customer_20261012/alphabet_detached_6x4.png 24 24 equal True
+generated/customer_20261012/alphabet_6x4.png 24 24 equal True
+customer_20261012/cocktails_groups.png 18 18 equal True
+customer_20261012/quotes_groups.png 16 16 equal True
+customer_20261012/animals_accessories_4x3.png 12 12 equal True
+customer_20261012/animals_accessories_columns_4x3.png 12 12 equal True
+acceptance/animal_accessories_4x3.png 12 12 equal True
+floral_patchwork_recovered.png 24 24 equal True
+generated/folk_floral_6x4.png 24 24 equal True
+transport_camera.png 19 19 equal True
+transport_irregular_shadows.png 24 24 equal True
+transport_dashed_shared.png 24 24 equal True
+vehicles_panels.png 24 24 equal True
+acceptance/mixed_icons_6x4.png 24 24 equal True

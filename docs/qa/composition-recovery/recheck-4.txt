@@ -1,0 +1,10 @@
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... [ERROR:0@0.573] global ocl.cpp:1006 cv::ocl::OpenCLExecutionContext::Impl::getInitializedExecutionContext OpenCL: Can't create default OpenCL queue
+ok
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... ok
+test_photographic_variants_keep_all_letters_with_their_illustrations (tests.test_alphabet_compositions.AlphabetCompositionTests.test_photographic_variants_keep_all_letters_with_their_illustrations) ... ok
+test_shared_background_recheck_respects_requested_cells (tests.test_alphabet_compositions.AlphabetCompositionTests.test_shared_background_recheck_respects_requested_cells) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 50.742s
+
+OK

@@ -1,0 +1,47 @@
+test_dark_original_and_resizing_keep_unique_whole_leaf_owners (tests.test_shared_background.SharedBackgroundTests.test_dark_original_and_resizing_keep_unique_whole_leaf_owners) ... ok
+test_large_low_contrast_shapes_on_light_and_dark_shared_fabric (tests.test_shared_background.SharedBackgroundTests.test_large_low_contrast_shapes_on_light_and_dark_shared_fabric) ... ok
+test_uniform_noise_and_stripes_do_not_become_compositions (tests.test_shared_background.SharedBackgroundTests.test_uniform_noise_and_stripes_do_not_become_compositions) ... ok
+test_aligned_centres_are_insufficient_if_accessories_are_discarded (tests.test_accessory_ownership.AccessoryOwnershipTests.test_aligned_centres_are_insufficient_if_accessories_are_discarded) ... ok
+test_source_groups_keep_their_two_detached_accessories_at_three_sizes (tests.test_accessory_ownership.AccessoryOwnershipTests.test_source_groups_keep_their_two_detached_accessories_at_three_sizes) ... 
+  test_source_groups_keep_their_two_detached_accessories_at_three_sizes (tests.test_accessory_ownership.AccessoryOwnershipTests.test_source_groups_keep_their_two_detached_accessories_at_three_sizes) (scale=1.5) ... FAIL
+test_two_distinct_figures_per_cell_do_not_trigger_accessory_merging (tests.test_accessory_ownership.AccessoryOwnershipTests.test_two_distinct_figures_per_cell_do_not_trigger_accessory_merging) ... ok
+test_extension_requires_distinct_cells_and_stricter_image_evidence (tests.test_grid_guidance.GridGuidanceTests.test_extension_requires_distinct_cells_and_stricter_image_evidence) ... ok
+test_extension_respects_fabric_bounds_and_manual_guides (tests.test_grid_guidance.GridGuidanceTests.test_extension_respects_fabric_bounds_and_manual_guides) ... ok
+test_generated_panels_recover_each_occupied_cell (tests.test_grid_guidance.GridGuidanceTests.test_generated_panels_recover_each_occupied_cell) ... ok
+test_generated_spanning_artwork_is_whole_and_does_not_occupy_twice (tests.test_grid_guidance.GridGuidanceTests.test_generated_spanning_artwork_is_whole_and_does_not_occupy_twice) ... ok
+test_neighbours_are_not_joined_without_an_unmerged_spanning_region (tests.test_grid_guidance.GridGuidanceTests.test_neighbours_are_not_joined_without_an_unmerged_spanning_region) ... ok
+test_wide_background_cluster_cannot_merge_four_cells (tests.test_grid_guidance.GridGuidanceTests.test_wide_background_cluster_cannot_merge_four_cells) ... ok
+test_generated_giraffe_stays_one_cut_after_confirmation_and_guided_redetection (tests.test_grid_guidance.GuidedCutsUITests.test_generated_giraffe_stays_one_cut_after_confirmation_and_guided_redetection) ... [ERROR:0@64.871] global ocl.cpp:1006 cv::ocl::OpenCLExecutionContext::Impl::getInitializedExecutionContext OpenCL: Can't create default OpenCL queue
+ok
+test_stale_automatic_cut_removed_but_explicit_manual_choice_preserved (tests.test_grid_guidance.GuidedCutsUITests.test_stale_automatic_cut_removed_but_explicit_manual_choice_preserved) ... ok
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... FAIL
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... FAIL
+
+======================================================================
+FAIL: test_source_groups_keep_their_two_detached_accessories_at_three_sizes (tests.test_accessory_ownership.AccessoryOwnershipTests.test_source_groups_keep_their_two_detached_accessories_at_three_sizes) (scale=1.5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_accessory_ownership.py", line 44, in test_source_groups_keep_their_two_detached_accessories_at_three_sizes
+    self.assertEqual(len(result.candidates),12)
+AssertionError: 14 != 12
+
+======================================================================
+FAIL: test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 58, in test_demo_detect_verify_and_manual_editing
+    self.assertLessEqual(len(window.detections), 12)
+AssertionError: 14 not less than or equal to 12
+
+======================================================================
+FAIL: test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 1005, in test_reliable_grid_is_used_in_first_detection_without_manual_step
+    self.assertTrue(all(d.grid_positioned for d in window.detections))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 16 tests in 89.580s
+
+FAILED (failures=3)

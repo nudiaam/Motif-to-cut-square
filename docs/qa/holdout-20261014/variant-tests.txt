@@ -1,0 +1,199 @@
+test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) ... 
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='letters_compact', variant='diagonal_shadow') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='resize_0.5') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='dim') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='diagonal_shadow') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='warm') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='resize_0.5') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='dim') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='diagonal_shadow') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='warm') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='dim') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='diagonal_shadow') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='animals_panels', variant='diagonal_shadow') ... FAIL
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='letters_compact', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (11, [4]) != (12, [])
+
+First differing element 0:
+11
+12
+
+- (11, [4])
+?   ^   -
+
++ (12, [])
+?   ^
+
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='resize_0.5')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (18, [13, 17]) != (20, [])
+
+First differing element 0:
+18
+20
+
+- (18, [13, 17])
++ (20, [])
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='dim')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (18, [13, 17]) != (20, [])
+
+First differing element 0:
+18
+20
+
+- (18, [13, 17])
++ (20, [])
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 40, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(len(r.candidates),len(points))
+AssertionError: 31 != 20
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_flat', variant='warm')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (18, [13, 17]) != (20, [])
+
+First differing element 0:
+18
+20
+
+- (18, [13, 17])
++ (20, [])
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='resize_0.5')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (15, [2]) != (16, [])
+
+First differing element 0:
+15
+16
+
+- (15, [2])
+?   ^   -
+
++ (16, [])
+?   ^
+
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='dim')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (15, [2]) != (16, [])
+
+First differing element 0:
+15
+16
+
+- (15, [2])
+?   ^   -
+
++ (16, [])
+?   ^
+
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (15, [2]) != (16, [])
+
+First differing element 0:
+15
+16
+
+- (15, [2])
+?   ^   -
+
++ (16, [])
+?   ^
+
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='quotes', variant='warm')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (15, [2]) != (16, [])
+
+First differing element 0:
+15
+16
+
+- (15, [2])
+?   ^   -
+
++ (16, [])
+?   ^
+
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='dim')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (20, [9]) != (20, [])
+
+First differing element 1:
+[9]
+[]
+
+- (20, [9])
+?       -
+
++ (20, [])
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 40, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(len(r.candidates),len(points))
+AssertionError: 12 != 20
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='animals_panels', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 40, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(len(r.candidates),len(points))
+AssertionError: 40 != 12
+
+----------------------------------------------------------------------
+Ran 1 test in 139.418s
+
+FAILED (failures=12)

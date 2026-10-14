@@ -71,6 +71,21 @@ class LogicalLayout:
         return tuple(self.origin_px[i] + column * self.column_vector_px[i]
                      + row * self.row_vector_px[i] for i in (0, 1))
 
+    def coordinates(self, x: float, y: float) -> tuple[float, float]:
+        """Inverse of position, shared by scoring, ownership and boundary checks."""
+        if self.projection is not None:
+            c, r, z = np.linalg.solve(np.asarray(self.projection), (x, y, 1.))
+            return float(c/z), float(r/z)
+        basis = np.column_stack([self.column_vector_px, self.row_vector_px])
+        c, r = np.linalg.solve(basis, np.asarray((x,y))-self.origin_px)
+        return float(c), float(r)
+
+    def cell_inside_image(self, column, row, width, height, tolerance=2.) -> bool:
+        corners = [self.position(column+dc, row+dr)
+                   for dc, dr in ((-.5,-.5),(.5,-.5),(.5,.5),(-.5,.5))]
+        return all(-tolerance <= x <= width+tolerance and -tolerance <= y <= height+tolerance
+                   for x, y in corners)
+
 
 def layout_from_panel_grid(observations: list[LayoutObservation], grid: PanelGrid) -> LogicalLayout:
     """Assign artwork to an independently established grid, never refit to artwork.

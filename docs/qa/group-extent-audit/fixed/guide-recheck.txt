@@ -1,0 +1,18 @@
+test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo) ... FAIL
+test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid) ... ok
+
+======================================================================
+FAIL: test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 259, in test_camera_grid_controls_cuts_through_review_resize_and_undo
+    self.assertEqual(window.logical_layout.source, "visual")
+AssertionError: 'local_contrast' != 'visual'
+- local_contrast
++ visual
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 9.114s
+
+FAILED (failures=1)

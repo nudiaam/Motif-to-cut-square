@@ -30,6 +30,7 @@ class Detection:
     artwork_clipped: bool = False
     layout_observation_px: tuple[float, float] | None = None
     review_reasons: tuple[str, ...] = ()
+    source_incomplete: bool = False
 
     @classmethod
     def from_pixel_center(
@@ -45,6 +46,7 @@ class Detection:
         cut_height_inches: float = 5.0,
         layout_observation_px: tuple[float, float] | None = None,
         review_reasons: tuple[str, ...] = (),
+        source_incomplete: bool = False,
     ) -> "Detection":
         center_inches = mapper.pixel_to_inches(*center_px)
         square = CutSquare.centered_at(
@@ -68,6 +70,7 @@ class Detection:
                 if layout_observation_px is not None else None
             ),
             review_reasons=review_reasons,
+            source_incomplete=source_incomplete,
         )
         detection._update_validity(mapper)
         return detection
@@ -207,7 +210,19 @@ class Detection:
         self.artwork_clipped = not self.contains_artwork(mapper)
         self.valid_cut = self.square_inches.is_valid(
             mapper.bed_width_in, mapper.bed_height_in
-        ) and (self.preserves_layout_position or not self.artwork_clipped)
+        ) and (self.preserves_layout_position or not self.artwork_clipped) and not self.cut_block_reason(mapper)
+
+    def cut_block_reason(self, mapper: CoordinateMapper) -> str | None:
+        """Hard limits, checked from current geometry even when state is stale."""
+        if self.source_incomplete:
+            return "Incomplete source image — load a photo showing the whole composition"
+        if not self.square_inches.is_valid(mapper.bed_width_in, mapper.bed_height_in):
+            return "Cut extends outside the bed"
+        if self.bounding_box_px is not None:
+            x, y, w, h = mapper.pixel_rect_to_inches(self.bounding_box_px)
+            if x < -1e-9 or y < -1e-9 or x+w > mapper.bed_width_in+1e-9 or y+h > mapper.bed_height_in+1e-9:
+                return "Artwork extends outside the bed"
+        return None
 
 
 def recalculate_cut_overlaps(

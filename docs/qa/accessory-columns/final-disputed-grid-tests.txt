@@ -1,0 +1,7 @@
+test_local_probe_cannot_justify_grouping_many_distinct_figures (tests.test_disputed_grid.DisputedGridTests.test_local_probe_cannot_justify_grouping_many_distinct_figures) ... ok
+test_varied_background_original_preserves_24_distinct_motifs (tests.test_disputed_grid.DisputedGridTests.test_varied_background_original_preserves_24_distinct_motifs) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 6.215s
+
+OK

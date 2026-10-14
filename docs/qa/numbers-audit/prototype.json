@@ -1,0 +1,584 @@
+{
+  "grid": {
+    "x_lines_px": [
+      42.740966925606756,
+      330.80981004607133,
+      618.878653166536,
+      906.9474962870006,
+      1195.016339407465,
+      1483.0851825279296
+    ],
+    "y_lines_px": [
+      60.92945298434896,
+      278.11493293362906,
+      495.30041288290914,
+      712.4858928321893,
+      929.6713727814694
+    ],
+    "confidence": 0.8963622320679796,
+    "source": "local_contrast",
+    "lattice": [
+      [
+        181.88268886119405,
+        169.8499275451673
+      ],
+      [
+        288.0688431204646,
+        -0.16386729308914935
+      ],
+      [
+        3.261799749763329,
+        217.18547994928008
+      ]
+    ],
+    "projection": null,
+    "review_reasons": []
+  },
+  "candidates": [
+    {
+      "center_px": [
+        204.0,
+        199.0
+      ],
+      "bounding_box_px": [
+        120,
+        137,
+        168,
+        124
+      ],
+      "score": 0.8,
+      "area_px": 7334,
+      "layout_center_px": [
+        181.88268886119405,
+        169.8499275451673
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        476.0,
+        190.5
+      ],
+      "bounding_box_px": [
+        371,
+        136,
+        210,
+        109
+      ],
+      "score": 0.8,
+      "area_px": 10736,
+      "layout_center_px": [
+        469.9515319816586,
+        169.68606025207816
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        749.0,
+        189.5
+      ],
+      "bounding_box_px": [
+        643,
+        132,
+        212,
+        115
+      ],
+      "score": 0.8,
+      "area_px": 10206,
+      "layout_center_px": [
+        758.0203751021232,
+        169.522192958989
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1016.5,
+        191.5
+      ],
+      "bounding_box_px": [
+        908,
+        136,
+        217,
+        111
+      ],
+      "score": 0.8,
+      "area_px": 13158,
+      "layout_center_px": [
+        1046.0892182225878,
+        169.35832566589986
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1298.0,
+        193.0
+      ],
+      "bounding_box_px": [
+        1184,
+        123,
+        228,
+        140
+      ],
+      "score": 0.8,
+      "area_px": 13752,
+      "layout_center_px": [
+        1334.1580613430524,
+        169.19445837281071
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        211.0,
+        384.0
+      ],
+      "bounding_box_px": [
+        97,
+        312,
+        228,
+        144
+      ],
+      "score": 0.8,
+      "area_px": 14871,
+      "layout_center_px": [
+        185.14448861095738,
+        387.0354074944474
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        480.5,
+        385.0
+      ],
+      "bounding_box_px": [
+        372,
+        310,
+        217,
+        150
+      ],
+      "score": 0.8,
+      "area_px": 13242,
+      "layout_center_px": [
+        473.21333173142193,
+        386.87154020135824
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        743.0,
+        392.5
+      ],
+      "bounding_box_px": [
+        636,
+        313,
+        214,
+        159
+      ],
+      "score": 0.8,
+      "area_px": 17891,
+      "layout_center_px": [
+        761.2821748518866,
+        386.70767290826905
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1015.0,
+        384.5
+      ],
+      "bounding_box_px": [
+        900,
+        308,
+        230,
+        153
+      ],
+      "score": 0.8,
+      "area_px": 14172,
+      "layout_center_px": [
+        1049.3510179723512,
+        386.54380561517996
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1305.0,
+        384.0
+      ],
+      "bounding_box_px": [
+        1166,
+        310,
+        278,
+        148
+      ],
+      "score": 0.8,
+      "area_px": 20641,
+      "layout_center_px": [
+        1337.4198610928158,
+        386.37993832209077
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        196.0,
+        585.5
+      ],
+      "bounding_box_px": [
+        75,
+        510,
+        242,
+        151
+      ],
+      "score": 0.8,
+      "area_px": 14259,
+      "layout_center_px": [
+        188.4062883607207,
+        604.2208874437274
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        478.5,
+        578.5
+      ],
+      "bounding_box_px": [
+        352,
+        505,
+        253,
+        147
+      ],
+      "score": 0.8,
+      "area_px": 18670,
+      "layout_center_px": [
+        476.47513148118526,
+        604.0570201506383
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        751.0,
+        579.5
+      ],
+      "bounding_box_px": [
+        628,
+        499,
+        246,
+        161
+      ],
+      "score": 0.8,
+      "area_px": 18995,
+      "layout_center_px": [
+        764.5439746016499,
+        603.8931528575491
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1031.0,
+        592.0
+      ],
+      "bounding_box_px": [
+        900,
+        499,
+        262,
+        186
+      ],
+      "score": 0.8,
+      "area_px": 18713,
+      "layout_center_px": [
+        1052.6128177221144,
+        603.72928556446
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1321.0,
+        582.0
+      ],
+      "bounding_box_px": [
+        1182,
+        496,
+        278,
+        172
+      ],
+      "score": 0.8,
+      "area_px": 19248,
+      "layout_center_px": [
+        1340.681660842579,
+        603.5654182713708
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        193.0,
+        811.0
+      ],
+      "bounding_box_px": [
+        59,
+        705,
+        268,
+        212
+      ],
+      "score": 0.8,
+      "area_px": 25945,
+      "layout_center_px": [
+        191.66808811048404,
+        821.4063673930075
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        489.0,
+        801.5
+      ],
+      "bounding_box_px": [
+        347,
+        702,
+        284,
+        199
+      ],
+      "score": 0.8,
+      "area_px": 27320,
+      "layout_center_px": [
+        479.7369312309486,
+        821.2425000999184
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        759.5,
+        797.5
+      ],
+      "bounding_box_px": [
+        632,
+        707,
+        255,
+        181
+      ],
+      "score": 0.8,
+      "area_px": 26060,
+      "layout_center_px": [
+        767.8057743514132,
+        821.0786328068292
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1042.0,
+        802.5
+      ],
+      "bounding_box_px": [
+        900,
+        707,
+        284,
+        191
+      ],
+      "score": 0.8,
+      "area_px": 22466,
+      "layout_center_px": [
+        1055.8746174718779,
+        820.9147655137401
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    },
+    {
+      "center_px": [
+        1339.5,
+        802.5
+      ],
+      "bounding_box_px": [
+        1192,
+        704,
+        295,
+        197
+      ],
+      "score": 0.8,
+      "area_px": 29667,
+      "layout_center_px": [
+        1343.9434605923425,
+        820.7508982206509
+      ],
+      "review_reasons": [],
+      "source_incomplete": false
+    }
+  ],
+  "diagnostics": {
+    "agreeing_readings": 5,
+    "thresholds": [
+      35,
+      45,
+      55
+    ],
+    "area_quantiles": [
+      0.87,
+      0.89,
+      0.91
+    ],
+    "columns": 5,
+    "rows": 4,
+    "foreground_parts": 211,
+    "retained_ink_fraction": 1.0,
+    "retained_parts_fraction": 1.0,
+    "spacing_refinement": [
+      1.04,
+      1.08
+    ],
+    "outside_border_parts": 0
+  },
+  "ownership": [
+    {
+      "number": 1,
+      "owners": [
+        0
+      ]
+    },
+    {
+      "number": 2,
+      "owners": [
+        1
+      ]
+    },
+    {
+      "number": 3,
+      "owners": [
+        2
+      ]
+    },
+    {
+      "number": 4,
+      "owners": [
+        3
+      ]
+    },
+    {
+      "number": 5,
+      "owners": [
+        4
+      ]
+    },
+    {
+      "number": 6,
+      "owners": [
+        5
+      ]
+    },
+    {
+      "number": 7,
+      "owners": [
+        6
+      ]
+    },
+    {
+      "number": 8,
+      "owners": [
+        7
+      ]
+    },
+    {
+      "number": 9,
+      "owners": [
+        8
+      ]
+    },
+    {
+      "number": 10,
+      "owners": [
+        9
+      ]
+    },
+    {
+      "number": 11,
+      "owners": [
+        10
+      ]
+    },
+    {
+      "number": 12,
+      "owners": [
+        11
+      ]
+    },
+    {
+      "number": 13,
+      "owners": [
+        12
+      ]
+    },
+    {
+      "number": 14,
+      "owners": [
+        13
+      ]
+    },
+    {
+      "number": 15,
+      "owners": [
+        14
+      ]
+    },
+    {
+      "number": 16,
+      "owners": [
+        15
+      ]
+    },
+    {
+      "number": 17,
+      "owners": [
+        16
+      ]
+    },
+    {
+      "number": 18,
+      "owners": [
+        17
+      ]
+    },
+    {
+      "number": 19,
+      "owners": [
+        18
+      ]
+    },
+    {
+      "number": 20,
+      "owners": [
+        19
+      ]
+    }
+  ]
+}

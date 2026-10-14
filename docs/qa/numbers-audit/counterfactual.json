@@ -1,0 +1,1040 @@
+{
+  "supplied_grid": {
+    "grid": {
+      "x_lines_px": [
+        40.0,
+        325.0,
+        610.0,
+        895.0,
+        1180.0,
+        1465.0
+      ],
+      "y_lines_px": [
+        80.0,
+        290.0,
+        500.0,
+        710.0,
+        920.0
+      ],
+      "confidence": 1,
+      "source": "manual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "candidates": [
+      {
+        "center_px": [
+          748.5,
+          189.5
+        ],
+        "bounding_box_px": [
+          642,
+          132,
+          213,
+          115
+        ],
+        "score": 0.949999988079071,
+        "area_px": 10204,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          476.5,
+          191.0
+        ],
+        "bounding_box_px": [
+          371,
+          136,
+          211,
+          110
+        ],
+        "score": 0.949999988079071,
+        "area_px": 10606,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1016.5,
+          192.0
+        ],
+        "bounding_box_px": [
+          908,
+          136,
+          217,
+          112
+        ],
+        "score": 0.949999988079071,
+        "area_px": 13104,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1297.0,
+          192.5
+        ],
+        "bounding_box_px": [
+          1183,
+          122,
+          228,
+          141
+        ],
+        "score": 0.949999988079071,
+        "area_px": 13749,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          204.0,
+          200.5
+        ],
+        "bounding_box_px": [
+          120,
+          137,
+          168,
+          127
+        ],
+        "score": 0.949999988079071,
+        "area_px": 7370,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1305.5,
+          384.0
+        ],
+        "bounding_box_px": [
+          1169,
+          310,
+          273,
+          148
+        ],
+        "score": 0.949999988079071,
+        "area_px": 20627,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1016.0,
+          384.5
+        ],
+        "bounding_box_px": [
+          901,
+          309,
+          230,
+          151
+        ],
+        "score": 0.949999988079071,
+        "area_px": 14464,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          481.0,
+          385.5
+        ],
+        "bounding_box_px": [
+          373,
+          311,
+          216,
+          149
+        ],
+        "score": 0.949999988079071,
+        "area_px": 13250,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          210.5,
+          386.5
+        ],
+        "bounding_box_px": [
+          96,
+          312,
+          229,
+          149
+        ],
+        "score": 0.949999988079071,
+        "area_px": 15130,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          743.0,
+          393.0
+        ],
+        "bounding_box_px": [
+          636,
+          314,
+          214,
+          158
+        ],
+        "score": 0.949999988079071,
+        "area_px": 17777,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          479.0,
+          579.0
+        ],
+        "bounding_box_px": [
+          351,
+          505,
+          256,
+          148
+        ],
+        "score": 0.949999988079071,
+        "area_px": 18730,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          751.5,
+          580.0
+        ],
+        "bounding_box_px": [
+          628,
+          500,
+          247,
+          160
+        ],
+        "score": 0.949999988079071,
+        "area_px": 19504,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1321.5,
+          582.5
+        ],
+        "bounding_box_px": [
+          1183,
+          498,
+          277,
+          169
+        ],
+        "score": 0.949999988079071,
+        "area_px": 19205,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          196.0,
+          586.0
+        ],
+        "bounding_box_px": [
+          74,
+          510,
+          244,
+          152
+        ],
+        "score": 0.949999988079071,
+        "area_px": 14450,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1031.0,
+          594.5
+        ],
+        "bounding_box_px": [
+          899,
+          500,
+          264,
+          189
+        ],
+        "score": 0.949999988079071,
+        "area_px": 19175,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          758.5,
+          800.0
+        ],
+        "bounding_box_px": [
+          631,
+          710,
+          255,
+          180
+        ],
+        "score": 0.949999988079071,
+        "area_px": 26786,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          481.5,
+          802.0
+        ],
+        "bounding_box_px": [
+          348,
+          703,
+          267,
+          198
+        ],
+        "score": 0.949999988079071,
+        "area_px": 27895,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1041.5,
+          805.0
+        ],
+        "bounding_box_px": [
+          900,
+          708,
+          283,
+          194
+        ],
+        "score": 0.949999988079071,
+        "area_px": 23097,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1338.0,
+          806.5
+        ],
+        "bounding_box_px": [
+          1191,
+          706,
+          294,
+          201
+        ],
+        "score": 0.949999988079071,
+        "area_px": 29262,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          191.5,
+          813.0
+        ],
+        "bounding_box_px": [
+          57,
+          706,
+          269,
+          214
+        ],
+        "score": 0.949999988079071,
+        "area_px": 26292,
+        "layout_center_px": null,
+        "review_reasons": [],
+        "source_incomplete": false
+      }
+    ],
+    "ownership": [
+      {
+        "number": 1,
+        "owners": [
+          4
+        ]
+      },
+      {
+        "number": 2,
+        "owners": [
+          1
+        ]
+      },
+      {
+        "number": 3,
+        "owners": [
+          0
+        ]
+      },
+      {
+        "number": 4,
+        "owners": [
+          2
+        ]
+      },
+      {
+        "number": 5,
+        "owners": [
+          3
+        ]
+      },
+      {
+        "number": 6,
+        "owners": [
+          8
+        ]
+      },
+      {
+        "number": 7,
+        "owners": [
+          7
+        ]
+      },
+      {
+        "number": 8,
+        "owners": [
+          9
+        ]
+      },
+      {
+        "number": 9,
+        "owners": [
+          6
+        ]
+      },
+      {
+        "number": 10,
+        "owners": [
+          5
+        ]
+      },
+      {
+        "number": 11,
+        "owners": [
+          13
+        ]
+      },
+      {
+        "number": 12,
+        "owners": [
+          10
+        ]
+      },
+      {
+        "number": 13,
+        "owners": [
+          11
+        ]
+      },
+      {
+        "number": 14,
+        "owners": [
+          14
+        ]
+      },
+      {
+        "number": 15,
+        "owners": [
+          12
+        ]
+      },
+      {
+        "number": 16,
+        "owners": [
+          19
+        ]
+      },
+      {
+        "number": 17,
+        "owners": [
+          16
+        ]
+      },
+      {
+        "number": 18,
+        "owners": [
+          15
+        ]
+      },
+      {
+        "number": 19,
+        "owners": [
+          17
+        ]
+      },
+      {
+        "number": 20,
+        "owners": [
+          18
+        ]
+      }
+    ],
+    "used_global": false
+  },
+  "supplied_grid_and_border_mask": {
+    "grid": {
+      "x_lines_px": [
+        40.0,
+        325.0,
+        610.0,
+        895.0,
+        1180.0,
+        1465.0
+      ],
+      "y_lines_px": [
+        80.0,
+        290.0,
+        500.0,
+        710.0,
+        920.0
+      ],
+      "confidence": 1,
+      "source": "manual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "candidates": [
+      {
+        "center_px": [
+          204.5,
+          200.0
+        ],
+        "bounding_box_px": [
+          121,
+          137,
+          167,
+          126
+        ],
+        "score": 0.8,
+        "area_px": 7213,
+        "layout_center_px": [
+          182.49999999999952,
+          185.00000000000006
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          476.0,
+          191.0
+        ],
+        "bounding_box_px": [
+          372,
+          137,
+          208,
+          108
+        ],
+        "score": 0.8,
+        "area_px": 10364,
+        "layout_center_px": [
+          467.49999999999966,
+          185.00000000000006
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          748.5,
+          189.5
+        ],
+        "bounding_box_px": [
+          643,
+          133,
+          211,
+          113
+        ],
+        "score": 0.8,
+        "area_px": 9945,
+        "layout_center_px": [
+          752.4999999999998,
+          185.00000000000006
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1016.5,
+          191.5
+        ],
+        "bounding_box_px": [
+          909,
+          136,
+          215,
+          111
+        ],
+        "score": 0.8,
+        "area_px": 12819,
+        "layout_center_px": [
+          1037.4999999999998,
+          185.00000000000006
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1297.0,
+          192.5
+        ],
+        "bounding_box_px": [
+          1184,
+          123,
+          226,
+          139
+        ],
+        "score": 0.8,
+        "area_px": 13366,
+        "layout_center_px": [
+          1322.5,
+          185.00000000000006
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          211.0,
+          386.0
+        ],
+        "bounding_box_px": [
+          97,
+          312,
+          228,
+          148
+        ],
+        "score": 0.8,
+        "area_px": 14804,
+        "layout_center_px": [
+          182.49999999999952,
+          395.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          481.0,
+          385.5
+        ],
+        "bounding_box_px": [
+          374,
+          311,
+          214,
+          149
+        ],
+        "score": 0.8,
+        "area_px": 12801,
+        "layout_center_px": [
+          467.49999999999966,
+          395.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          743.5,
+          393.0
+        ],
+        "bounding_box_px": [
+          637,
+          315,
+          213,
+          156
+        ],
+        "score": 0.8,
+        "area_px": 17328,
+        "layout_center_px": [
+          752.4999999999998,
+          395.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1016.0,
+          385.0
+        ],
+        "bounding_box_px": [
+          902,
+          310,
+          228,
+          150
+        ],
+        "score": 0.8,
+        "area_px": 13714,
+        "layout_center_px": [
+          1037.4999999999998,
+          395.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1304.5,
+          383.5
+        ],
+        "bounding_box_px": [
+          1167,
+          310,
+          275,
+          147
+        ],
+        "score": 0.8,
+        "area_px": 20083,
+        "layout_center_px": [
+          1322.5,
+          395.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          195.5,
+          586.0
+        ],
+        "bounding_box_px": [
+          74,
+          511,
+          243,
+          150
+        ],
+        "score": 0.8,
+        "area_px": 13886,
+        "layout_center_px": [
+          182.49999999999952,
+          605.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          479.5,
+          579.5
+        ],
+        "bounding_box_px": [
+          352,
+          506,
+          255,
+          147
+        ],
+        "score": 0.8,
+        "area_px": 18071,
+        "layout_center_px": [
+          467.49999999999966,
+          605.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          752.0,
+          579.0
+        ],
+        "bounding_box_px": [
+          629,
+          499,
+          246,
+          160
+        ],
+        "score": 0.8,
+        "area_px": 18923,
+        "layout_center_px": [
+          752.4999999999998,
+          605.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1031.5,
+          594.0
+        ],
+        "bounding_box_px": [
+          900,
+          499,
+          263,
+          190
+        ],
+        "score": 0.8,
+        "area_px": 18601,
+        "layout_center_px": [
+          1037.4999999999998,
+          605.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1321.0,
+          581.5
+        ],
+        "bounding_box_px": [
+          1183,
+          497,
+          276,
+          169
+        ],
+        "score": 0.8,
+        "area_px": 18507,
+        "layout_center_px": [
+          1322.5,
+          605.0000000000001
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          191.5,
+          812.5
+        ],
+        "bounding_box_px": [
+          57,
+          704,
+          269,
+          217
+        ],
+        "score": 0.8,
+        "area_px": 25422,
+        "layout_center_px": [
+          182.49999999999952,
+          815.0000000000002
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          489.5,
+          802.5
+        ],
+        "bounding_box_px": [
+          348,
+          702,
+          283,
+          201
+        ],
+        "score": 0.8,
+        "area_px": 27192,
+        "layout_center_px": [
+          467.49999999999966,
+          815.0000000000002
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          758.0,
+          798.5
+        ],
+        "bounding_box_px": [
+          630,
+          708,
+          256,
+          181
+        ],
+        "score": 0.8,
+        "area_px": 25998,
+        "layout_center_px": [
+          752.4999999999998,
+          815.0000000000002
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1042.5,
+          804.5
+        ],
+        "bounding_box_px": [
+          901,
+          707,
+          283,
+          195
+        ],
+        "score": 0.8,
+        "area_px": 22362,
+        "layout_center_px": [
+          1037.4999999999998,
+          815.0000000000002
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1339.5,
+          804.0
+        ],
+        "bounding_box_px": [
+          1192,
+          701,
+          295,
+          206
+        ],
+        "score": 0.8,
+        "area_px": 29016,
+        "layout_center_px": [
+          1322.5,
+          815.0000000000002
+        ],
+        "review_reasons": [],
+        "source_incomplete": false
+      }
+    ],
+    "ownership": [
+      {
+        "number": 1,
+        "owners": [
+          0
+        ]
+      },
+      {
+        "number": 2,
+        "owners": [
+          1
+        ]
+      },
+      {
+        "number": 3,
+        "owners": [
+          2
+        ]
+      },
+      {
+        "number": 4,
+        "owners": [
+          3
+        ]
+      },
+      {
+        "number": 5,
+        "owners": [
+          4
+        ]
+      },
+      {
+        "number": 6,
+        "owners": [
+          5
+        ]
+      },
+      {
+        "number": 7,
+        "owners": [
+          6
+        ]
+      },
+      {
+        "number": 8,
+        "owners": [
+          7
+        ]
+      },
+      {
+        "number": 9,
+        "owners": [
+          8
+        ]
+      },
+      {
+        "number": 10,
+        "owners": [
+          9
+        ]
+      },
+      {
+        "number": 11,
+        "owners": [
+          10
+        ]
+      },
+      {
+        "number": 12,
+        "owners": [
+          11
+        ]
+      },
+      {
+        "number": 13,
+        "owners": [
+          12
+        ]
+      },
+      {
+        "number": 14,
+        "owners": [
+          13
+        ]
+      },
+      {
+        "number": 15,
+        "owners": [
+          14
+        ]
+      },
+      {
+        "number": 16,
+        "owners": [
+          15
+        ]
+      },
+      {
+        "number": 17,
+        "owners": [
+          16
+        ]
+      },
+      {
+        "number": 18,
+        "owners": [
+          17
+        ]
+      },
+      {
+        "number": 19,
+        "owners": [
+          18
+        ]
+      },
+      {
+        "number": 20,
+        "owners": [
+          19
+        ]
+      }
+    ],
+    "used_global": true
+  }
+}

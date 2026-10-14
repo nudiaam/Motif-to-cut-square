@@ -35,6 +35,9 @@ class DemoFlowTests(unittest.TestCase):
         ]
         self.assertTrue(any(item.valid_cut for item in detections))
         self.assertTrue(any(not item.valid_cut for item in detections))
+        for item in detections:
+            if item.cut_block_reason(mapper):
+                item.enabled = False
 
         verification = verify_export_geometry(mapper, detections)
         self.assertLess(verification.maximum_error_x_px, 1e-9)

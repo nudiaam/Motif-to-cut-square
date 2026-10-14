@@ -1,0 +1,35 @@
+test_aligned_centres_are_insufficient_if_accessories_are_discarded (tests.test_accessory_ownership.AccessoryOwnershipTests.test_aligned_centres_are_insufficient_if_accessories_are_discarded) ... ok
+test_source_groups_keep_their_two_detached_accessories_at_three_sizes (tests.test_accessory_ownership.AccessoryOwnershipTests.test_source_groups_keep_their_two_detached_accessories_at_three_sizes) ... ok
+test_two_distinct_figures_per_cell_do_not_trigger_accessory_merging (tests.test_accessory_ownership.AccessoryOwnershipTests.test_two_distinct_figures_per_cell_do_not_trigger_accessory_merging) ... ok
+test_photographic_variants_keep_all_letters_with_their_illustrations (tests.test_alphabet_compositions.AlphabetCompositionTests.test_photographic_variants_keep_all_letters_with_their_illustrations) ... ok
+test_shared_background_recheck_respects_requested_cells (tests.test_alphabet_compositions.AlphabetCompositionTests.test_shared_background_recheck_respects_requested_cells) ... ok
+test_animals_keep_all_twelve_animals_with_their_accessories (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_animals_keep_all_twelve_animals_with_their_accessories) ... ok
+test_customer_birds_keep_eighteen_complete_and_exclude_six_partial (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_customer_birds_keep_eighteen_complete_and_exclude_six_partial) ... ok
+test_missing_partial_grid_cells_cannot_become_enabled_inferred_cuts (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_missing_partial_grid_cells_cannot_become_enabled_inferred_cuts) ... ok
+test_outside_cut_is_excluded_and_can_be_enabled_only_after_moving_inside (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_outside_cut_is_excluded_and_can_be_enabled_only_after_moving_inside) ... ok
+test_partial_cells_are_blocked_on_every_image_edge (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_partial_cells_are_blocked_on_every_image_edge) ... ok
+test_partial_row_stays_excluded_even_with_a_small_cut_or_manual_move (tests.test_customer_cut_boundaries.CustomerCutBoundaryTests.test_partial_row_stays_excluded_even_with_a_small_cut_or_manual_move) ... ok
+test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing) ... FAIL
+test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step) ... FAIL
+test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid (tests.test_ui_smoke.UISmokeTests.test_single_outer_anchor_keeps_evidence_but_does_not_fill_disputed_grid) ... ok
+
+======================================================================
+FAIL: test_demo_detect_verify_and_manual_editing (tests.test_ui_smoke.UISmokeTests.test_demo_detect_verify_and_manual_editing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 58, in test_demo_detect_verify_and_manual_editing
+    self.assertLessEqual(len(window.detections), 12)
+AssertionError: 14 not less than or equal to 12
+
+======================================================================
+FAIL: test_reliable_grid_is_used_in_first_detection_without_manual_step (tests.test_ui_smoke.UISmokeTests.test_reliable_grid_is_used_in_first_detection_without_manual_step)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_ui_smoke.py", line 1007, in test_reliable_grid_is_used_in_first_detection_without_manual_step
+    self.assertTrue(all(d.grid_positioned for d in window.detections))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 14 tests in 94.503s
+
+FAILED (failures=2)

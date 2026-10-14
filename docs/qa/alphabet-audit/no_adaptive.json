@@ -1,0 +1,1547 @@
+{
+  "name": "no_adaptive",
+  "result": {
+    "candidates": [
+      {
+        "center_px": [
+          1305.2277388549726,
+          125.91453641224872
+        ],
+        "bounding_box_px": [
+          1191,
+          34,
+          232,
+          186
+        ],
+        "score": 1.0,
+        "area_px": 8508,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1125.7403885830536,
+          133.62592848987754
+        ],
+        "bounding_box_px": [
+          1006,
+          42,
+          244,
+          186
+        ],
+        "score": 1.0,
+        "area_px": 15750,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          938.058299202433,
+          141.68939466156002
+        ],
+        "bounding_box_px": [
+          822,
+          50,
+          236,
+          186
+        ],
+        "score": 1.0,
+        "area_px": 12489,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Background is ambiguous; artwork extent needs review",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          751.6474462896618,
+          149.69824415517513
+        ],
+        "bounding_box_px": [
+          639,
+          58,
+          229,
+          185
+        ],
+        "score": 1.0,
+        "area_px": 14708,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          566.4949576445287,
+          157.65303000458613
+        ],
+        "bounding_box_px": [
+          454,
+          67,
+          226,
+          184
+        ],
+        "score": 1.0,
+        "area_px": 12410,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          426.6128403407195,
+          163.6628454570086
+        ],
+        "bounding_box_px": [
+          357,
+          75,
+          138,
+          180
+        ],
+        "score": 0.8974687881469726,
+        "area_px": 9416,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          222.13670050321642,
+          196.00429313741944
+        ],
+        "bounding_box_px": [
+          140,
+          129,
+          163,
+          135
+        ],
+        "score": 1.0,
+        "area_px": 10723,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1331.1366543046797,
+          281.4840241539292
+        ],
+        "bounding_box_px": [
+          1218,
+          178,
+          230,
+          211
+        ],
+        "score": 0.9434869461059571,
+        "area_px": 11294,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1140.8171714494665,
+          289.1228839224679
+        ],
+        "bounding_box_px": [
+          1017,
+          185,
+          253,
+          212
+        ],
+        "score": 1.0,
+        "area_px": 13583,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          947.9559887886867,
+          296.86375998538256
+        ],
+        "bounding_box_px": [
+          828,
+          193,
+          245,
+          211
+        ],
+        "score": 1.0,
+        "area_px": 13752,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          756.4366797755197,
+          304.55077721856816
+        ],
+        "bounding_box_px": [
+          641,
+          201,
+          236,
+          211
+        ],
+        "score": 1.0,
+        "area_px": 8948,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          566.2452883941041,
+          312.18449577512365
+        ],
+        "bounding_box_px": [
+          450,
+          209,
+          233,
+          210
+        ],
+        "score": 1.0,
+        "area_px": 8353,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          377.36805149073285,
+          319.76546806723275
+        ],
+        "bounding_box_px": [
+          259,
+          216,
+          233,
+          210
+        ],
+        "score": 1.0,
+        "area_px": 10952,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          215.5065600426642,
+          326.262108435045
+        ],
+        "bounding_box_px": [
+          131,
+          225,
+          166,
+          206
+        ],
+        "score": 1.0,
+        "area_px": 11011,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1324.492790955734,
+          455.5335544656226
+        ],
+        "bounding_box_px": [
+          1225,
+          347,
+          203,
+          221
+        ],
+        "score": 0.9143360290527344,
+        "area_px": 10539,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1155.557853060074,
+          461.78445030051057
+        ],
+        "bounding_box_px": [
+          1030,
+          352,
+          257,
+          223
+        ],
+        "score": 0.9230538177490234,
+        "area_px": 6429,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          950.3355502562423,
+          466.25354577218314
+        ],
+        "bounding_box_px": [
+          835,
+          360,
+          235,
+          215
+        ],
+        "score": 1.0,
+        "area_px": 9740,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          761.7502222654471,
+          476.3560392787576
+        ],
+        "bounding_box_px": [
+          642,
+          367,
+          244,
+          222
+        ],
+        "score": 0.798589672088623,
+        "area_px": 14406,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          565.9683398762731,
+          483.60032023341057
+        ],
+        "bounding_box_px": [
+          446,
+          375,
+          240,
+          221
+        ],
+        "score": 0.7662489433288574,
+        "area_px": 14062,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          371.57872822316455,
+          490.7930846725723
+        ],
+        "bounding_box_px": [
+          249,
+          382,
+          241,
+          221
+        ],
+        "score": 1.0,
+        "area_px": 11559,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          207.9125080324269,
+          496.84902849831917
+        ],
+        "bounding_box_px": [
+          119,
+          390,
+          175,
+          217
+        ],
+        "score": 1.0,
+        "area_px": 10375,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1358.8576354860193,
+          639.2071009144435
+        ],
+        "bounding_box_px": [
+          1253,
+          524,
+          216,
+          234
+        ],
+        "score": 0.9480742874145508,
+        "area_px": 10770,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Background is ambiguous; artwork extent needs review",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1173.2515295512937,
+          644.9007129207479
+        ],
+        "bounding_box_px": [
+          1043,
+          529,
+          266,
+          236
+        ],
+        "score": 0.644419044494629,
+        "area_px": 18563,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          956.3172936771377,
+          652.2064691999698
+        ],
+        "bounding_box_px": [
+          843,
+          537,
+          231,
+          234
+        ],
+        "score": 1.0,
+        "area_px": 14426,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          767.3856563711954,
+          658.5691739617587
+        ],
+        "bounding_box_px": [
+          644,
+          543,
+          251,
+          235
+        ],
+        "score": 0.9487818756103515,
+        "area_px": 16124,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          565.6746756369877,
+          665.3622523255711
+        ],
+        "bounding_box_px": [
+          442,
+          550,
+          247,
+          234
+        ],
+        "score": 1.0,
+        "area_px": 14392,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          365.441259826811,
+          672.1055703130272
+        ],
+        "bounding_box_px": [
+          239,
+          557,
+          249,
+          234
+        ],
+        "score": 1.0,
+        "area_px": 14910,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          197.38383922904688,
+          677.765288111163
+        ],
+        "bounding_box_px": [
+          105,
+          564,
+          182,
+          231
+        ],
+        "score": 1.0,
+        "area_px": 9987,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1375.3105984642207,
+          806.8813464000646
+        ],
+        "bounding_box_px": [
+          1267,
+          723,
+          220,
+          169
+        ],
+        "score": 1.0,
+        "area_px": 14388,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          1193.267020600531,
+          830.0732927830975
+        ],
+        "bounding_box_px": [
+          1058,
+          717,
+          276,
+          230
+        ],
+        "score": 1.0,
+        "area_px": 16634,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          982.3741963989306,
+          836.4668133000341
+        ],
+        "bounding_box_px": [
+          851,
+          724,
+          268,
+          229
+        ],
+        "score": 1.0,
+        "area_px": 13534,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          773.083856508578,
+          842.8117521909204
+        ],
+        "bounding_box_px": [
+          647,
+          730,
+          258,
+          229
+        ],
+        "score": 1.0,
+        "area_px": 16996,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          565.3778051717088,
+          849.1086610864298
+        ],
+        "bounding_box_px": [
+          439,
+          737,
+          253,
+          228
+        ],
+        "score": 1.0,
+        "area_px": 15272,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          359.2381210687704,
+          855.3580832972445
+        ],
+        "bounding_box_px": [
+          230,
+          744,
+          255,
+          226
+        ],
+        "score": 1.0,
+        "area_px": 11531,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ],
+        "source_incomplete": false
+      },
+      {
+        "center_px": [
+          194.93196931498125,
+          860.3392615629052
+        ],
+        "bounding_box_px": [
+          104,
+          750,
+          179,
+          224
+        ],
+        "score": 0.7343335227966309,
+        "area_px": 9997,
+        "layout_center_px": null,
+        "review_reasons": [
+          "Foreground reaches the analysis boundary",
+          "Printed extent is uncertain; check the outer panel guides"
+        ],
+        "source_incomplete": false
+      }
+    ],
+    "panel_grid": {
+      "x_lines_px": [
+        75.94595689779372,
+        272.7909630999733,
+        469.6359693021529,
+        666.4809755043324,
+        863.325981706512,
+        1060.1709879086916,
+        1257.0159941108711,
+        1453.8610003130507
+      ],
+      "y_lines_px": [
+        42.48264603468626,
+        220.17732561807944,
+        397.8720052014727,
+        575.5666847848657,
+        753.261364368259,
+        930.9560439516523
+      ],
+      "confidence": 0.8826881547185197,
+      "source": "camera",
+      "lattice": [
+        [
+          163.04311278880976,
+          152.95498736771225
+        ],
+        [
+          196.84500620217958,
+          -7.208333847109797
+        ],
+        [
+          5.662673605036871,
+          177.6946795833932
+        ]
+      ],
+      "projection": [
+        [
+          181.13954710585912,
+          -15.850957585813296,
+          200.4354137907098
+        ],
+        [
+          -8.39167751774503,
+          152.51619906597617,
+          165.48280345362588
+        ],
+        [
+          -0.003347964474959323,
+          -0.02753339812309104,
+          1.0
+        ]
+      ],
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides"
+      ]
+    }
+  },
+  "diagnostics": {
+    "identity": {
+      "image": {
+        "pixel_sha256": "b35c6e076458c264010a41c3c2ac9cb043cfb18d8651ee5ab92f4dd023682646",
+        "shape": [
+          1024,
+          1536,
+          3
+        ],
+        "dtype": "|u1"
+      },
+      "reference": null,
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto",
+        "adaptive_planning": false
+      },
+      "route": "automatic",
+      "confirmed_guides": null,
+      "input_sha256": "867b4b3f6b897a1138185d5df32c1d3c7e240f4d779040198355bdbe63c8af23",
+      "runtime": {
+        "python": "3.12.13",
+        "opencv": "4.14.0",
+        "numpy": "2.5.2"
+      }
+    },
+    "result_sha256": "503a6eeead4f71358e87fca4ed4f5b324a3d0acf816e4a17958249a5f91d0202",
+    "timings_seconds": {
+      "reference_and_illumination": 0.006978499994147569,
+      "layout": 2.6620070000062697,
+      "appearance": 5.00003807246685e-07,
+      "final_review": 0.29768519999925047,
+      "total": 2.9666733000194654
+    },
+    "detector_revision": "2026-10-13-sustained-panel-divisions",
+    "image_size_px": [
+      1536,
+      1024
+    ],
+    "settings": {
+      "sensitivity": 65,
+      "minimum_area_px": 500,
+      "morphological_cleanup": 0.25,
+      "merge_distance_px_x": 14.0,
+      "merge_distance_px_y": 14.0,
+      "layout_mode": "auto",
+      "adaptive_planning": false
+    },
+    "reference_status": "No empty-bed reference",
+    "reference_applied": false,
+    "fabric_status": "Visible fabric boundary applied (without bed matching)",
+    "analysis_bounds_px": [
+      16,
+      9,
+      1536,
+      1004
+    ],
+    "grid": {
+      "x_lines_px": [
+        75.94595689779372,
+        272.7909630999733,
+        469.6359693021529,
+        666.4809755043324,
+        863.325981706512,
+        1060.1709879086916,
+        1257.0159941108711,
+        1453.8610003130507
+      ],
+      "y_lines_px": [
+        42.48264603468626,
+        220.17732561807944,
+        397.8720052014727,
+        575.5666847848657,
+        753.261364368259,
+        930.9560439516523
+      ],
+      "confidence": 0.8826881547185197,
+      "source": "camera",
+      "lattice": [
+        [
+          163.04311278880976,
+          152.95498736771225
+        ],
+        [
+          196.84500620217958,
+          -7.208333847109797
+        ],
+        [
+          5.662673605036871,
+          177.6946795833932
+        ]
+      ],
+      "projection": [
+        [
+          181.13954710585912,
+          -15.850957585813296,
+          200.4354137907098
+        ],
+        [
+          -8.39167751774503,
+          152.51619906597617,
+          165.48280345362588
+        ],
+        [
+          -0.003347964474959323,
+          -0.02753339812309104,
+          1.0
+        ]
+      ],
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides"
+      ]
+    },
+    "grid_notes": [],
+    "scene_profile": null,
+    "illumination": null,
+    "analysis_policy": null,
+    "detection_plans": [],
+    "candidates_before_cleanup": 35,
+    "candidates_after_cleanup": 35,
+    "compositions_needing_extent_review": 35
+  },
+  "trace": [
+    {
+      "stage": "raw",
+      "shape": [
+        995,
+        1520,
+        3
+      ],
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.0,
+        "merge_distance_px_y": 14.0,
+        "layout_mode": "auto",
+        "adaptive_planning": false
+      },
+      "candidates": [
+        {
+          "center_px": [
+            27.0,
+            15.5
+          ],
+          "bounding_box_px": [
+            0,
+            0,
+            51,
+            41
+          ],
+          "score": 0.1364146676635742,
+          "area_px": 1133,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1274.5,
+            156.0
+          ],
+          "bounding_box_px": [
+            1181,
+            83,
+            164,
+            155
+          ],
+          "score": 0.49055618984269556,
+          "area_px": 8983,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1074.0,
+            173.0
+          ],
+          "bounding_box_px": [
+            959,
+            94,
+            192,
+            148
+          ],
+          "score": 0.4928022979186596,
+          "area_px": 15405,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            857.0,
+            186.5
+          ],
+          "bounding_box_px": [
+            753,
+            103,
+            176,
+            147
+          ],
+          "score": 0.5678922978801294,
+          "area_px": 12187,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            635.5,
+            188.5
+          ],
+          "bounding_box_px": [
+            541,
+            112,
+            192,
+            132
+          ],
+          "score": 0.5307361332813645,
+          "area_px": 7835,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            428.0,
+            191.5
+          ],
+          "bounding_box_px": [
+            344,
+            119,
+            164,
+            140
+          ],
+          "score": 0.5929380936020319,
+          "area_px": 7339,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            222.25,
+            203.0
+          ],
+          "bounding_box_px": [
+            131,
+            125,
+            152,
+            140
+          ],
+          "score": 0.5772097611323195,
+          "area_px": 10076,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            557.0,
+            316.5
+          ],
+          "bounding_box_px": [
+            547,
+            294,
+            21,
+            46
+          ],
+          "score": 0.5316028332519531,
+          "area_px": 589,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1058.0,
+            344.5
+          ],
+          "bounding_box_px": [
+            969,
+            276,
+            188,
+            188
+          ],
+          "score": 0.5688192736052875,
+          "area_px": 7732,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1305.1000000000004,
+            358.5
+          ],
+          "bounding_box_px": [
+            1200,
+            273,
+            188,
+            159
+          ],
+          "score": 0.4836174261409929,
+          "area_px": 12692,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            421.0,
+            376.5
+          ],
+          "bounding_box_px": [
+            332,
+            299,
+            165,
+            169
+          ],
+          "score": 0.47286748825720404,
+          "area_px": 11459,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            707.0,
+            384.5
+          ],
+          "bounding_box_px": [
+            678,
+            333,
+            51,
+            94
+          ],
+          "score": 0.132031321012428,
+          "area_px": 664,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            860.0,
+            384.5
+          ],
+          "bounding_box_px": [
+            764,
+            288,
+            176,
+            187
+          ],
+          "score": 0.4289564928667783,
+          "area_px": 9923,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            190.5,
+            388.0
+          ],
+          "bounding_box_px": [
+            121,
+            296,
+            140,
+            189
+          ],
+          "score": 0.4879183070468725,
+          "area_px": 9666,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            609.5,
+            417.0
+          ],
+          "bounding_box_px": [
+            577,
+            375,
+            84,
+            67
+          ],
+          "score": 0.39583903751344607,
+          "area_px": 1596,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            133.5,
+            538.5
+          ],
+          "bounding_box_px": [
+            105,
+            513,
+            57,
+            52
+          ],
+          "score": 0.49213440399169917,
+          "area_px": 1815,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1232.0,
+            565.0
+          ],
+          "bounding_box_px": [
+            982,
+            479,
+            468,
+            192
+          ],
+          "score": 0.4796975772110798,
+          "area_px": 23071,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            642.0,
+            580.0
+          ],
+          "bounding_box_px": [
+            545,
+            495,
+            174,
+            171
+          ],
+          "score": 0.5417770122796955,
+          "area_px": 9463,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            870.0,
+            595.5
+          ],
+          "bounding_box_px": [
+            769,
+            491,
+            186,
+            172
+          ],
+          "score": 0.5069345614148548,
+          "area_px": 16877,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            425.5,
+            604.0
+          ],
+          "bounding_box_px": [
+            328,
+            502,
+            196,
+            174
+          ],
+          "score": 0.5105080436244329,
+          "area_px": 16044,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            218.30000000000018,
+            613.5
+          ],
+          "bounding_box_px": [
+            171,
+            527,
+            98,
+            162
+          ],
+          "score": 0.4977885629063311,
+          "area_px": 5997,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            120.5,
+            756.0
+          ],
+          "bounding_box_px": [
+            101,
+            728,
+            39,
+            56
+          ],
+          "score": 0.5265165167236328,
+          "area_px": 1222,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1352.5,
+            781.5
+          ],
+          "bounding_box_px": [
+            1239,
+            694,
+            223,
+            187
+          ],
+          "score": 0.5025082817612107,
+          "area_px": 18343,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            430.5,
+            787.5
+          ],
+          "bounding_box_px": [
+            314,
+            706,
+            210,
+            197
+          ],
+          "score": 0.45385460479860384,
+          "area_px": 19926,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            869.0,
+            798.0
+          ],
+          "bounding_box_px": [
+            775,
+            698,
+            175,
+            193
+          ],
+          "score": 0.54140645817126,
+          "area_px": 11786,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            1103.0,
+            799.0
+          ],
+          "bounding_box_px": [
+            992,
+            700,
+            210,
+            172
+          ],
+          "score": 0.533101141746497,
+          "area_px": 17154,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            662.0,
+            812.0
+          ],
+          "bounding_box_px": [
+            550,
+            710,
+            200,
+            176
+          ],
+          "score": 0.46757325182278137,
+          "area_px": 13685,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        },
+        {
+          "center_px": [
+            208.5,
+            825.0
+          ],
+          "bounding_box_px": [
+            158,
+            752,
+            89,
+            149
+          ],
+          "score": 0.3523959639718192,
+          "area_px": 2625,
+          "layout_center_px": null,
+          "review_reasons": [],
+          "source_incomplete": false
+        }
+      ]
+    }
+  ],
+  "ownership": [
+    {
+      "letter": "A",
+      "owners": [
+        7
+      ]
+    },
+    {
+      "letter": "B",
+      "owners": [
+        6
+      ]
+    },
+    {
+      "letter": "C",
+      "owners": [
+        5
+      ]
+    },
+    {
+      "letter": "D",
+      "owners": []
+    },
+    {
+      "letter": "E",
+      "owners": []
+    },
+    {
+      "letter": "F",
+      "owners": [
+        1
+      ]
+    },
+    {
+      "letter": "G",
+      "owners": [
+        14
+      ]
+    },
+    {
+      "letter": "H",
+      "owners": [
+        13
+      ]
+    },
+    {
+      "letter": "I",
+      "owners": [
+        12
+      ]
+    },
+    {
+      "letter": "J",
+      "owners": []
+    },
+    {
+      "letter": "K",
+      "owners": []
+    },
+    {
+      "letter": "L",
+      "owners": [
+        8
+      ]
+    },
+    {
+      "letter": "M",
+      "owners": []
+    },
+    {
+      "letter": "N",
+      "owners": []
+    },
+    {
+      "letter": "O",
+      "owners": [
+        19
+      ]
+    },
+    {
+      "letter": "P",
+      "owners": []
+    },
+    {
+      "letter": "Q",
+      "owners": []
+    },
+    {
+      "letter": "R",
+      "owners": []
+    },
+    {
+      "letter": "S",
+      "owners": [
+        35
+      ]
+    },
+    {
+      "letter": "T",
+      "owners": [
+        34
+      ]
+    },
+    {
+      "letter": "U",
+      "owners": [
+        33
+      ]
+    },
+    {
+      "letter": "V",
+      "owners": [
+        32
+      ]
+    },
+    {
+      "letter": "W",
+      "owners": []
+    },
+    {
+      "letter": "X",
+      "owners": [
+        29
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5212 @@
+{
+  "detections": [
+    {
+      "id": 1,
+      "center_px": [
+        1124.9648612756475,
+        125.62739616206186
+      ],
+      "preferred_center_px": [
+        1121.929023660663,
+        94.31677038065281
+      ],
+      "center_inches": [
+        26.36636393614799,
+        2.9443920975483246
+      ],
+      "bounding_box_px": [
+        997,
+        42,
+        253,
+        106
+      ],
+      "score": 0.833479106426239,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1121.929023660663,
+        94.31677038065281
+      ],
+      "layout_anchor_px": [
+        1124.9648612756475,
+        125.62739616206186
+      ],
+      "layout_cell": [
+        5,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 2,
+      "center_px": [
+        1313.6612434776284,
+        117.49291089762455
+      ],
+      "preferred_center_px": [
+        1299.8334939378583,
+        120.99078441642764
+      ],
+      "center_inches": [
+        30.788935394006916,
+        2.7537400991630756
+      ],
+      "bounding_box_px": [
+        1182,
+        34,
+        240,
+        176
+      ],
+      "score": 0.8152836561203003,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1299.8334939378583,
+        120.99078441642764
+      ],
+      "layout_anchor_px": [
+        1313.6612434776284,
+        117.49291089762455
+      ],
+      "layout_cell": [
+        6,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 3,
+      "center_px": [
+        566.5078040076377,
+        149.7018413112278
+      ],
+      "preferred_center_px": [
+        575.7228180675835,
+        139.25776859765028
+      ],
+      "center_inches": [
+        13.277526656429007,
+        3.508636905731902
+      ],
+      "bounding_box_px": [
+        472,
+        67,
+        208,
+        146
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        575.7228180675835,
+        139.25776859765028
+      ],
+      "layout_anchor_px": [
+        566.5078040076377,
+        149.7018413112278
+      ],
+      "layout_cell": [
+        2,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 4,
+      "center_px": [
+        751.4010471451548,
+        141.73130502301078
+      ],
+      "preferred_center_px": [
+        751.332407713874,
+        139.51195409070564
+      ],
+      "center_inches": [
+        17.610962042464568,
+        3.321827461476815
+      ],
+      "bounding_box_px": [
+        630,
+        58,
+        247,
+        165
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        751.332407713874,
+        139.51195409070564
+      ],
+      "layout_anchor_px": [
+        751.4010471451548,
+        141.73130502301078
+      ],
+      "layout_cell": [
+        3,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 5,
+      "center_px": [
+        937.5491268956494,
+        133.70667416330053
+      ],
+      "preferred_center_px": [
+        938.3252980613646,
+        145.8753592865237
+      ],
+      "center_inches": [
+        21.97380766161678,
+        3.1337501757023563
+      ],
+      "bounding_box_px": [
+        813,
+        50,
+        256,
+        195
+      ],
+      "score": 0.7154543995857239,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        938.3252980613646,
+        145.8753592865237
+      ],
+      "layout_anchor_px": [
+        937.5491268956494,
+        133.70667416330053
+      ],
+      "layout_cell": [
+        4,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Background is ambiguous; artwork extent needs review",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 6,
+      "center_px": [
+        382.8567517002597,
+        157.6188281731894
+      ],
+      "preferred_center_px": [
+        431.0973499697744,
+        167.6289312680954
+      ],
+      "center_inches": [
+        8.973205117974835,
+        3.6941912853091265
+      ],
+      "bounding_box_px": [
+        356,
+        74,
+        148,
+        190
+      ],
+      "score": 0.7652103304862976,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        431.0973499697744,
+        167.6289312680954
+      ],
+      "layout_anchor_px": [
+        382.8567517002597,
+        157.6188281731894
+      ],
+      "layout_cell": [
+        1,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 7,
+      "center_px": [
+        200.4354137907098,
+        165.48280345362588
+      ],
+      "preferred_center_px": [
+        219.65661380445772,
+        184.53856707833518
+      ],
+      "center_inches": [
+        4.69770501071976,
+        3.8785032059443565
+      ],
+      "bounding_box_px": [
+        142,
+        129,
+        154,
+        111
+      ],
+      "score": 0.39990222454071045,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        219.65661380445772,
+        184.53856707833518
+      ],
+      "layout_anchor_px": [
+        200.4354137907098,
+        165.48280345362588
+      ],
+      "layout_cell": [
+        0,
+        0
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 8,
+      "center_px": [
+        1140.7885758963212,
+        288.82795883848814
+      ],
+      "preferred_center_px": [
+        1152.7725834775215,
+        292.1001545475244
+      ],
+      "center_inches": [
+        26.737232247570027,
+        6.769405285277066
+      ],
+      "bounding_box_px": [
+        1044,
+        183,
+        222,
+        222
+      ],
+      "score": 0.8644905090332031,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1152.7725834775215,
+        292.1001545475244
+      ],
+      "layout_anchor_px": [
+        1140.7885758963212,
+        288.82795883848814
+      ],
+      "layout_cell": [
+        5,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 9,
+      "center_px": [
+        1334.9958218083652,
+        281.03201498187565
+      ],
+      "preferred_center_px": [
+        1343.6117436422444,
+        294.3863808074447
+      ],
+      "center_inches": [
+        31.28896457363356,
+        6.586687851137711
+      ],
+      "bounding_box_px": [
+        1241,
+        195,
+        209,
+        202
+      ],
+      "score": 0.7922475934028625,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1343.6117436422444,
+        294.3863808074447
+      ],
+      "layout_anchor_px": [
+        1334.9958218083652,
+        281.03201498187565
+      ],
+      "layout_cell": [
+        6,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 10,
+      "center_px": [
+        756.427597903836,
+        304.25712880086496
+      ],
+      "preferred_center_px": [
+        796.2549454641669,
+        320.6602715793657
+      ],
+      "center_inches": [
+        17.728771825871156,
+        7.1310264562702725
+      ],
+      "bounding_box_px": [
+        780,
+        297,
+        33,
+        47
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        796.2549454641669,
+        320.6602715793657
+      ],
+      "layout_anchor_px": [
+        756.427597903836,
+        304.25712880086496
+      ],
+      "layout_cell": [
+        3,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 11,
+      "center_px": [
+        947.9372179673076,
+        296.5694741049523
+      ],
+      "preferred_center_px": [
+        949.35976237285,
+        326.46211378625645
+      ],
+      "center_inches": [
+        22.217278546108773,
+        6.950847049334819
+      ],
+      "bounding_box_px": [
+        868,
+        290,
+        164,
+        73
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        949.35976237285,
+        326.46211378625645
+      ],
+      "layout_anchor_px": [
+        947.9372179673076,
+        296.5694741049523
+      ],
+      "layout_cell": [
+        4,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 12,
+      "center_px": [
+        377.37794857727897,
+        319.4730893132591
+      ],
+      "preferred_center_px": [
+        369.89978163662937,
+        331.76690824712665
+      ],
+      "center_inches": [
+        8.844795669779977,
+        7.48765053077951
+      ],
+      "bounding_box_px": [
+        347,
+        308,
+        45,
+        47
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        369.89978163662937,
+        331.76690824712665
+      ],
+      "layout_anchor_px": [
+        377.37794857727897,
+        319.4730893132591
+      ],
+      "layout_cell": [
+        1,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 13,
+      "center_px": [
+        566.2457618010069,
+        311.89148306937983
+      ],
+      "preferred_center_px": [
+        524.8240106661748,
+        340.31711735455923
+      ],
+      "center_inches": [
+        13.271385042211099,
+        7.30995663443859
+      ],
+      "bounding_box_px": [
+        466,
+        304,
+        117,
+        73
+      ],
+      "score": 0.9467431902885437,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        524.8240106661748,
+        340.31711735455923
+      ],
+      "layout_anchor_px": [
+        566.2457618010069,
+        311.89148306937983
+      ],
+      "layout_cell": [
+        2,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 14,
+      "center_px": [
+        189.81058665525305,
+        327.0024923281151
+      ],
+      "preferred_center_px": [
+        208.02441888131602,
+        371.5414189071659
+      ],
+      "center_inches": [
+        4.4486856247324935,
+        7.664120913940199
+      ],
+      "bounding_box_px": [
+        131,
+        304,
+        153,
+        136
+      ],
+      "score": 0.6452955007553101,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        208.02441888131602,
+        371.5414189071659
+      ],
+      "layout_anchor_px": [
+        189.81058665525305,
+        327.0024923281151
+      ],
+      "layout_cell": [
+        0,
+        1
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 15,
+      "center_px": [
+        1357.6006955381642,
+        454.30850258805305
+      ],
+      "preferred_center_px": [
+        1319.2753934074885,
+        389.83292468121454
+      ],
+      "center_inches": [
+        31.818766301675723,
+        10.647855529407494
+      ],
+      "bounding_box_px": [
+        1258,
+        339,
+        124,
+        102
+      ],
+      "score": 0.8746427297592163,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1319.2753934074885,
+        389.83292468121454
+      ],
+      "layout_anchor_px": [
+        1357.6006955381642,
+        454.30850258805305
+      ],
+      "layout_cell": [
+        6,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 16,
+      "center_px": [
+        1157.5510617756088,
+        461.7106980014705
+      ],
+      "preferred_center_px": [
+        1164.9490993290972,
+        450.472708692271
+      ],
+      "center_inches": [
+        27.13010301036583,
+        10.821344484409465
+      ],
+      "bounding_box_px": [
+        1051,
+        359,
+        232,
+        185
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1164.9490993290972,
+        450.472708692271
+      ],
+      "layout_anchor_px": [
+        1157.5510617756088,
+        461.7106980014705
+      ],
+      "layout_cell": [
+        5,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 17,
+      "center_px": [
+        958.9393868756347,
+        469.05968635673406
+      ],
+      "preferred_center_px": [
+        945.1051964781699,
+        461.7671054728251
+      ],
+      "center_inches": [
+        22.475141879897688,
+        10.993586398985954
+      ],
+      "bounding_box_px": [
+        825,
+        351,
+        245,
+        225
+      ],
+      "score": 0.22119173407554626,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        945.1051964781699,
+        461.7671054728251
+      ],
+      "layout_anchor_px": [
+        958.9393868756347,
+        469.05968635673406
+      ],
+      "layout_cell": [
+        4,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 18,
+      "center_px": [
+        178.56658856814084,
+        497.93488017610275
+      ],
+      "preferred_center_px": [
+        187.13892471082377,
+        476.62602238847495
+      ],
+      "center_inches": [
+        4.1851544195658015,
+        11.670348754127408
+      ],
+      "bounding_box_px": [
+        122,
+        383,
+        129,
+        190
+      ],
+      "score": 0.890400230884552,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        187.13892471082377,
+        476.62602238847495
+      ],
+      "layout_anchor_px": [
+        178.56658856814084,
+        497.93488017610275
+      ],
+      "layout_cell": [
+        0,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 19,
+      "center_px": [
+        761.7502222654471,
+        476.3560392787576
+      ],
+      "preferred_center_px": [
+        804.9016036628907,
+        524.0034191618944
+      ],
+      "center_inches": [
+        17.853520834346416,
+        11.16459467059588
+      ],
+      "bounding_box_px": [
+        786,
+        500,
+        38,
+        48
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        804.9016036628907,
+        524.0034191618944
+      ],
+      "layout_anchor_px": [
+        761.7502222654471,
+        476.3560392787576
+      ],
+      "layout_cell": [
+        3,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 20,
+      "center_px": [
+        565.9683398762729,
+        483.6003202334106
+      ],
+      "preferred_center_px": [
+        582.6076904815927,
+        528.8749704988594
+      ],
+      "center_inches": [
+        13.264882965850147,
+        11.334382505470561
+      ],
+      "bounding_box_px": [
+        561,
+        504,
+        43,
+        50
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        582.6076904815927,
+        528.8749704988594
+      ],
+      "layout_anchor_px": [
+        565.9683398762729,
+        483.6003202334106
+      ],
+      "layout_cell": [
+        2,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 21,
+      "center_px": [
+        371.57872822316455,
+        490.7930846725724
+      ],
+      "preferred_center_px": [
+        367.5899986981419,
+        536.6505798076386
+      ],
+      "center_inches": [
+        8.70887644273042,
+        11.502962922013415
+      ],
+      "bounding_box_px": [
+        344,
+        511,
+        47,
+        51
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        367.5899986981419,
+        536.6505798076386
+      ],
+      "layout_anchor_px": [
+        371.57872822316455,
+        490.7930846725724
+      ],
+      "layout_cell": [
+        1,
+        2
+      ],
+      "inferred": false,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 22,
+      "center_px": [
+        1381.592799071862,
+        638.2187283338649
+      ],
+      "preferred_center_px": [
+        1372.59175564648,
+        588.9854846890986
+      ],
+      "center_inches": [
+        32.381081228246764,
+        14.958251445324958
+      ],
+      "bounding_box_px": [
+        1279,
+        524,
+        189,
+        131
+      ],
+      "score": 0.5062114000320435,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1372.59175564648,
+        588.9854846890986
+      ],
+      "layout_anchor_px": [
+        1381.592799071862,
+        638.2187283338649
+      ],
+      "layout_cell": [
+        6,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Background is ambiguous; artwork extent needs review"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 23,
+      "center_px": [
+        1175.33841432118,
+        645.163573230179
+      ],
+      "preferred_center_px": [
+        1132.6079797258724,
+        605.4831944746514
+      ],
+      "center_inches": [
+        27.546994085652656,
+        15.121021247582322
+      ],
+      "bounding_box_px": [
+        1033,
+        529,
+        202,
+        155
+      ],
+      "score": 0.2589039206504822,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1132.6079797258724,
+        605.4831944746514
+      ],
+      "layout_anchor_px": [
+        1175.33841432118,
+        645.163573230179
+      ],
+      "layout_cell": [
+        5,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 24,
+      "center_px": [
+        365.4301354688775,
+        672.4342049972043
+      ],
+      "preferred_center_px": [
+        374.0280431849336,
+        668.5351891419944
+      ],
+      "center_inches": [
+        8.564768800051816,
+        15.760176679621978
+      ],
+      "bounding_box_px": [
+        247,
+        556,
+        250,
+        229
+      ],
+      "score": 0.38598495721817017,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        374.0280431849336,
+        668.5351891419944
+      ],
+      "layout_anchor_px": [
+        365.4301354688775,
+        672.4342049972043
+      ],
+      "layout_cell": [
+        1,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 25,
+      "center_px": [
+        166.6476710534735,
+        679.1274609255127
+      ],
+      "preferred_center_px": [
+        202.51241718070744,
+        691.2586818784436
+      ],
+      "center_inches": [
+        3.9058047903157846,
+        15.917049865441703
+      ],
+      "bounding_box_px": [
+        117,
+        592,
+        168,
+        202
+      ],
+      "score": 0.8125240206718445,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        202.51241718070744,
+        691.2586818784436
+      ],
+      "layout_anchor_px": [
+        166.6476710534735,
+        679.1274609255127
+      ],
+      "layout_cell": [
+        0,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 26,
+      "center_px": [
+        767.3958729800834,
+        658.8995123698335
+      ],
+      "preferred_center_px": [
+        760.2578548938868,
+        708.8007579537399
+      ],
+      "center_inches": [
+        17.985840772970704,
+        15.442957321167972
+      ],
+      "bounding_box_px": [
+        685,
+        650,
+        152,
+        119
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        760.2578548938868,
+        708.8007579537399
+      ],
+      "layout_anchor_px": [
+        767.3958729800834,
+        658.8995123698335
+      ],
+      "layout_cell": [
+        3,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 27,
+      "center_px": [
+        970.6117425838253,
+        652.0569781052961
+      ],
+      "preferred_center_px": [
+        1040.7521926290963,
+        735.265919534623
+      ],
+      "center_inches": [
+        22.748712716808406,
+        15.282585424342878
+      ],
+      "bounding_box_px": [
+        1008,
+        709,
+        66,
+        53
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1040.7521926290963,
+        735.265919534623
+      ],
+      "layout_anchor_px": [
+        970.6117425838253,
+        652.0569781052961
+      ],
+      "layout_cell": [
+        4,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 28,
+      "center_px": [
+        565.6741433039344,
+        665.691737061253
+      ],
+      "preferred_center_px": [
+        588.458019606481,
+        745.8443918353216
+      ],
+      "center_inches": [
+        13.257987733685964,
+        15.602150087373117
+      ],
+      "bounding_box_px": [
+        566,
+        719,
+        45,
+        54
+      ],
+      "score": 0.5547377467155457,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        588.458019606481,
+        745.8443918353216
+      ],
+      "layout_anchor_px": [
+        565.6741433039344,
+        665.691737061253
+      ],
+      "layout_cell": [
+        2,
+        3
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Small foreground on a textured panel; check for missing faint or detached details"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 29,
+      "center_px": [
+        1407.1038733475718,
+        833.7725455501977
+      ],
+      "preferred_center_px": [
+        1371.5918297644698,
+        806.9952708556833
+      ],
+      "center_inches": [
+        32.97899703158372,
+        19.54154403633276
+      ],
+      "bounding_box_px": [
+        1260,
+        723,
+        227,
+        169
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1371.5918297644698,
+        806.9952708556833
+      ],
+      "layout_anchor_px": [
+        1407.1038733475718,
+        833.7725455501977
+      ],
+      "layout_cell": [
+        6,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 30,
+      "center_px": [
+        983.0174444385567,
+        846.5515513012547
+      ],
+      "preferred_center_px": [
+        982.3368607452596,
+        835.8814710025341
+      ],
+      "center_inches": [
+        23.039471354028674,
+        19.841051983623156
+      ],
+      "bounding_box_px": [
+        841,
+        722,
+        288,
+        231
+      ],
+      "score": 0.949999988079071,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        982.3368607452596,
+        835.8814710025341
+      ],
+      "layout_anchor_px": [
+        983.0174444385567,
+        846.5515513012547
+      ],
+      "layout_cell": [
+        4,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 31,
+      "center_px": [
+        1194.2475887595488,
+        840.1865486860598
+      ],
+      "preferred_center_px": [
+        1194.6932919965966,
+        844.783384562879
+      ],
+      "center_inches": [
+        27.990177861551924,
+        19.69187223482953
+      ],
+      "bounding_box_px": [
+        1049,
+        745,
+        296,
+        202
+      ],
+      "score": 0.20348525047302246,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        1194.6932919965966,
+        844.783384562879
+      ],
+      "layout_anchor_px": [
+        1194.2475887595488,
+        840.1865486860598
+      ],
+      "layout_cell": [
+        5,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 32,
+      "center_px": [
+        358.8996179987968,
+        865.3581075825499
+      ],
+      "preferred_center_px": [
+        359.4148238488638,
+        850.137947207037
+      ],
+      "center_inches": [
+        8.4117097968468,
+        20.281830646466013
+      ],
+      "bounding_box_px": [
+        220,
+        733,
+        275,
+        238
+      ],
+      "score": 0.4602988362312317,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        359.4148238488638,
+        850.137947207037
+      ],
+      "layout_anchor_px": [
+        358.8996179987968,
+        865.3581075825499
+      ],
+      "layout_cell": [
+        1,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 33,
+      "center_px": [
+        153.9911859705534,
+        871.5326179012727
+      ],
+      "preferred_center_px": [
+        222.2468251329738,
+        864.1420261168829
+      ],
+      "center_inches": [
+        3.609168421184845,
+        20.42654573206108
+      ],
+      "bounding_box_px": [
+        150,
+        759,
+        142,
+        214
+      ],
+      "score": 0.6097834706306458,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        222.2468251329738,
+        864.1420261168829
+      ],
+      "layout_anchor_px": [
+        153.9911859705534,
+        871.5326179012727
+      ],
+      "layout_cell": [
+        0,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 34,
+      "center_px": [
+        565.3616032032527,
+        859.1367840115746
+      ],
+      "preferred_center_px": [
+        565.3523490816408,
+        864.8645737760961
+      ],
+      "center_inches": [
+        13.250662575076236,
+        20.13601837527128
+      ],
+      "bounding_box_px": [
+        428,
+        767,
+        275,
+        198
+      ],
+      "score": 0.857776939868927,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": [
+        565.3523490816408,
+        864.8645737760961
+      ],
+      "layout_anchor_px": [
+        565.3616032032527,
+        859.1367840115746
+      ],
+      "layout_cell": [
+        2,
+        4
+      ],
+      "inferred": false,
+      "artwork_clipped": true,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "Foreground reaches the analysis boundary",
+        "Artwork or background continues into a neighbouring cell; check ownership",
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position",
+        "Image evidence continues beyond the detected artwork; check its full extent"
+      ],
+      "source_incomplete": false
+    },
+    {
+      "id": 35,
+      "center_px": [
+        773.3948766637601,
+        852.8681127767935
+      ],
+      "preferred_center_px": [
+        773.3948766637601,
+        852.8681127767935
+      ],
+      "center_inches": [
+        18.126442421806875,
+        19.989096393206097
+      ],
+      "bounding_box_px": null,
+      "score": 0.0,
+      "enabled": true,
+      "valid_cut": true,
+      "overlaps_cut": true,
+      "manual": false,
+      "cut_width_inches": 5.0,
+      "cut_height_inches": 5.0,
+      "original_center_px": null,
+      "layout_anchor_px": [
+        773.3948766637601,
+        852.8681127767935
+      ],
+      "layout_cell": [
+        3,
+        4
+      ],
+      "inferred": true,
+      "artwork_clipped": false,
+      "layout_observation_px": null,
+      "review_reasons": [
+        "No artwork detected here; verify this proposed position"
+      ],
+      "source_incomplete": false
+    }
+  ],
+  "layout": {
+    "columns": 7,
+    "rows": 5,
+    "origin_px": [
+      163.04311278880976,
+      152.95498736771225
+    ],
+    "column_vector_px": [
+      196.84500620217958,
+      -7.208333847109797
+    ],
+    "row_vector_px": [
+      5.662673605036871,
+      177.6946795833932
+    ],
+    "confidence": 0.8826881547185197,
+    "mean_residual_px": 34.97083616988904,
+    "occupancy": 0.9714285714285714,
+    "matches": [
+      {
+        "detection_id": 1,
+        "observed_px": [
+          1123.5,
+          95.0
+        ],
+        "proposed_px": [
+          1124.9648612756475,
+          125.62739616206186
+        ],
+        "column": 5,
+        "row": 0,
+        "residual_px": 30.66240718248933,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 2,
+        "observed_px": [
+          1302.0,
+          122.0
+        ],
+        "proposed_px": [
+          1313.6612434776284,
+          117.49291089762455
+        ],
+        "column": 6,
+        "row": 0,
+        "residual_px": 12.501937914630801,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 3,
+        "observed_px": [
+          576.0,
+          140.0
+        ],
+        "proposed_px": [
+          566.5078040076377,
+          149.7018413112278
+        ],
+        "column": 2,
+        "row": 0,
+        "residual_px": 13.573043490155992,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 4,
+        "observed_px": [
+          753.5,
+          140.5
+        ],
+        "proposed_px": [
+          751.4010471451548,
+          141.73130502301078
+        ],
+        "column": 3,
+        "row": 0,
+        "residual_px": 2.433457447039948,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 5,
+        "observed_px": [
+          941.0,
+          147.5
+        ],
+        "proposed_px": [
+          937.5491268956494,
+          133.70667416330053
+        ],
+        "column": 4,
+        "row": 0,
+        "residual_px": 14.218451491624949,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 6,
+        "observed_px": [
+          430.0,
+          169.0
+        ],
+        "proposed_px": [
+          382.8567517002597,
+          157.6188281731894
+        ],
+        "column": 1,
+        "row": 0,
+        "residual_px": 48.49759718174042,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 7,
+        "observed_px": [
+          219.0,
+          184.5
+        ],
+        "proposed_px": [
+          200.4354137907098,
+          165.48280345362588
+        ],
+        "column": 0,
+        "row": 0,
+        "residual_px": 26.576260564751998,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 8,
+        "observed_px": [
+          1155.0,
+          294.0
+        ],
+        "proposed_px": [
+          1140.7885758963212,
+          288.82795883848814
+        ],
+        "column": 5,
+        "row": 1,
+        "residual_px": 15.123312627562678,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 9,
+        "observed_px": [
+          1345.5,
+          296.0
+        ],
+        "proposed_px": [
+          1334.9958218083652,
+          281.03201498187565
+        ],
+        "column": 6,
+        "row": 1,
+        "residual_px": 18.28601473761876,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 10,
+        "observed_px": [
+          796.5,
+          320.5
+        ],
+        "proposed_px": [
+          756.427597903836,
+          304.25712880086496
+        ],
+        "column": 3,
+        "row": 1,
+        "residual_px": 43.23919835691147,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 11,
+        "observed_px": [
+          950.0,
+          326.5
+        ],
+        "proposed_px": [
+          947.9372179673076,
+          296.5694741049523
+        ],
+        "column": 4,
+        "row": 1,
+        "residual_px": 30.001524129092513,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 12,
+        "observed_px": [
+          369.5,
+          331.5
+        ],
+        "proposed_px": [
+          377.37794857727897,
+          319.4730893132591
+        ],
+        "column": 1,
+        "row": 1,
+        "residual_px": 14.37736604712749,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 13,
+        "observed_px": [
+          524.5,
+          340.5
+        ],
+        "proposed_px": [
+          566.2457618010069,
+          311.89148306937983
+        ],
+        "column": 2,
+        "row": 1,
+        "residual_px": 50.60786371025739,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 14,
+        "observed_px": [
+          207.5,
+          372.0
+        ],
+        "proposed_px": [
+          189.81058665525305,
+          327.0024923281151
+        ],
+        "column": 0,
+        "row": 1,
+        "residual_px": 48.34967467483778,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 15,
+        "observed_px": [
+          1320.0,
+          390.0
+        ],
+        "proposed_px": [
+          1357.6006955381642,
+          454.30850258805305
+        ],
+        "column": 6,
+        "row": 2,
+        "residual_px": 74.49426696109809,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 16,
+        "observed_px": [
+          1167.0,
+          451.5
+        ],
+        "proposed_px": [
+          1157.5510617756088,
+          461.7106980014705
+        ],
+        "column": 5,
+        "row": 2,
+        "residual_px": 13.911893733262751,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 17,
+        "observed_px": [
+          947.5,
+          463.5
+        ],
+        "proposed_px": [
+          958.9393868756347,
+          469.05968635673406
+        ],
+        "column": 4,
+        "row": 2,
+        "residual_px": 12.718871195027406,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 18,
+        "observed_px": [
+          186.5,
+          478.0
+        ],
+        "proposed_px": [
+          178.56658856814084,
+          497.93488017610275
+        ],
+        "column": 0,
+        "row": 2,
+        "residual_px": 21.45549963488914,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 19,
+        "observed_px": [
+          805.0,
+          524.0
+        ],
+        "proposed_px": [
+          761.7502222654471,
+          476.3560392787576
+        ],
+        "column": 3,
+        "row": 2,
+        "residual_px": 64.34664146088373,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 20,
+        "observed_px": [
+          582.5,
+          529.0
+        ],
+        "proposed_px": [
+          565.9683398762729,
+          483.6003202334106
+        ],
+        "column": 2,
+        "row": 2,
+        "residual_px": 48.315905345499765,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 21,
+        "observed_px": [
+          367.5,
+          536.5
+        ],
+        "proposed_px": [
+          371.57872822316455,
+          490.7930846725724
+        ],
+        "column": 1,
+        "row": 2,
+        "residual_px": 45.88854031963838,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 22,
+        "observed_px": [
+          1373.5,
+          589.5
+        ],
+        "proposed_px": [
+          1381.592799071862,
+          638.2187283338649
+        ],
+        "column": 6,
+        "row": 3,
+        "residual_px": 49.38631275248697,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 23,
+        "observed_px": [
+          1134.0,
+          606.5
+        ],
+        "proposed_px": [
+          1175.33841432118,
+          645.163573230179
+        ],
+        "column": 5,
+        "row": 3,
+        "residual_px": 56.60155822514917,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 24,
+        "observed_px": [
+          372.0,
+          670.5
+        ],
+        "proposed_px": [
+          365.4301354688775,
+          672.4342049972043
+        ],
+        "column": 1,
+        "row": 3,
+        "residual_px": 6.848669135570194,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 25,
+        "observed_px": [
+          201.0,
+          693.0
+        ],
+        "proposed_px": [
+          166.6476710534735,
+          679.1274609255127
+        ],
+        "column": 0,
+        "row": 3,
+        "residual_px": 37.04766989195868,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 26,
+        "observed_px": [
+          761.0,
+          709.5
+        ],
+        "proposed_px": [
+          767.3958729800834,
+          658.8995123698335
+        ],
+        "column": 3,
+        "row": 3,
+        "residual_px": 51.00310323488166,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 27,
+        "observed_px": [
+          1041.0,
+          735.5
+        ],
+        "proposed_px": [
+          970.6117425838253,
+          652.0569781052961
+        ],
+        "column": 4,
+        "row": 3,
+        "residual_px": 109.16613341602653,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 28,
+        "observed_px": [
+          588.5,
+          746.0
+        ],
+        "proposed_px": [
+          565.6741433039344,
+          665.691737061253
+        ],
+        "column": 2,
+        "row": 3,
+        "residual_px": 83.48914198953209,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 29,
+        "observed_px": [
+          1373.5,
+          807.5
+        ],
+        "proposed_px": [
+          1407.1038733475718,
+          833.7725455501977
+        ],
+        "column": 6,
+        "row": 4,
+        "residual_px": 42.655210158277995,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 30,
+        "observed_px": [
+          985.0,
+          837.5
+        ],
+        "proposed_px": [
+          983.0174444385567,
+          846.5515513012547
+        ],
+        "column": 4,
+        "row": 4,
+        "residual_px": 9.266126888482315,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 31,
+        "observed_px": [
+          1197.0,
+          846.0
+        ],
+        "proposed_px": [
+          1194.2475887595488,
+          840.1865486860598
+        ],
+        "column": 5,
+        "row": 4,
+        "residual_px": 6.432105706229876,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 32,
+        "observed_px": [
+          357.5,
+          852.0
+        ],
+        "proposed_px": [
+          358.8996179987968,
+          865.3581075825499
+        ],
+        "column": 1,
+        "row": 4,
+        "residual_px": 13.431231095083328,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 33,
+        "observed_px": [
+          221.0,
+          866.0
+        ],
+        "proposed_px": [
+          153.9911859705534,
+          871.5326179012727
+        ],
+        "column": 0,
+        "row": 4,
+        "residual_px": 67.23682784363375,
+        "status": "matched",
+        "review_reason": ""
+      },
+      {
+        "detection_id": 34,
+        "observed_px": [
+          565.5,
+          866.0
+        ],
+        "proposed_px": [
+          565.3616032032527,
+          859.1367840115746
+        ],
+        "column": 2,
+        "row": 4,
+        "residual_px": 6.864611232774067,
+        "status": "matched",
+        "review_reason": ""
+      }
+    ],
+    "missing": [
+      {
+        "column": 3,
+        "row": 4,
+        "center_px": [
+          773.3948766637601,
+          852.8681127767935
+        ],
+        "source": "inferred",
+        "review_state": "proposed",
+        "reason": "",
+        "covered_by_artwork": false
+      }
+    ],
+    "reason": "Cut centres follow the panel grid; artwork is assigned to its cells.",
+    "source": "camera",
+    "projection": [
+      [
+        181.13954710585912,
+        -15.850957585813296,
+        200.4354137907098
+      ],
+      [
+        -8.39167751774503,
+        152.51619906597617,
+        165.48280345362588
+      ],
+      [
+        -0.003347964474959323,
+        -0.02753339812309104,
+        1.0
+      ]
+    ]
+  },
+  "diagnostics": {
+    "identity": {
+      "image": {
+        "pixel_sha256": "b35c6e076458c264010a41c3c2ac9cb043cfb18d8651ee5ab92f4dd023682646",
+        "shape": [
+          1024,
+          1536,
+          3
+        ],
+        "dtype": "|u1"
+      },
+      "reference": {
+        "pixel_sha256": "bee571f9615d001b69ae3c170a5c4d26a456326869e7dae9562cf126ebcb4d06",
+        "shape": [
+          481,
+          719,
+          3
+        ],
+        "dtype": "|u1"
+      },
+      "settings": {
+        "sensitivity": 65,
+        "minimum_area_px": 500,
+        "morphological_cleanup": 0.25,
+        "merge_distance_px_x": 14.933333333333332,
+        "merge_distance_px_y": 14.933333333333332,
+        "layout_mode": "auto",
+        "adaptive_planning": true
+      },
+      "route": "automatic",
+      "confirmed_guides": null,
+      "input_sha256": "2974aef9aefb6a876a57015c0ee878fe7cdcc70d804de43789967d706f8275aa",
+      "runtime": {
+        "python": "3.12.13",
+        "opencv": "4.14.0",
+        "numpy": "2.5.2"
+      }
+    },
+    "result_sha256": "f0466c621a81a85edd3bf44e972154e91259c0ce0d3d02ed8672c782c1a88138",
+    "timings_seconds": {
+      "reference_and_illumination": 0.639109899988398,
+      "layout": 3.580653799988795,
+      "appearance": 2.910516900010407,
+      "final_review": 0.25460250000469387,
+      "total": 7.384885999956168
+    },
+    "detector_revision": "2026-10-13-sustained-panel-divisions",
+    "image_size_px": [
+      1536,
+      1024
+    ],
+    "settings": {
+      "sensitivity": 65,
+      "minimum_area_px": 500,
+      "morphological_cleanup": 0.25,
+      "merge_distance_px_x": 14.933333333333332,
+      "merge_distance_px_y": 14.933333333333332,
+      "layout_mode": "auto",
+      "adaptive_planning": true
+    },
+    "reference_status": "Reference could not be matched to the visible bed",
+    "reference_applied": false,
+    "fabric_status": "Visible fabric boundary applied (without bed matching)",
+    "analysis_bounds_px": [
+      16,
+      9,
+      1536,
+      1004
+    ],
+    "grid": {
+      "x_lines_px": [
+        75.94595689779372,
+        272.7909630999733,
+        469.6359693021529,
+        666.4809755043324,
+        863.325981706512,
+        1060.1709879086916,
+        1257.0159941108711,
+        1453.8610003130507
+      ],
+      "y_lines_px": [
+        42.48264603468626,
+        220.17732561807944,
+        397.8720052014727,
+        575.5666847848657,
+        753.261364368259,
+        930.9560439516523
+      ],
+      "confidence": 0.8826881547185197,
+      "source": "camera",
+      "lattice": [
+        [
+          163.04311278880976,
+          152.95498736771225
+        ],
+        [
+          196.84500620217958,
+          -7.208333847109797
+        ],
+        [
+          5.662673605036871,
+          177.6946795833932
+        ]
+      ],
+      "projection": [
+        [
+          181.13954710585912,
+          -15.850957585813296,
+          200.4354137907098
+        ],
+        [
+          -8.39167751774503,
+          152.51619906597617,
+          165.48280345362588
+        ],
+        [
+          -0.003347964474959323,
+          -0.02753339812309104,
+          1.0
+        ]
+      ],
+      "review_reasons": [
+        "Printed extent is uncertain; check the outer panel guides",
+        "Competing panel layouts have similar support; verify grid position"
+      ]
+    },
+    "grid_notes": [],
+    "scene_profile": {
+      "analysis_size_px": [
+        960,
+        640
+      ],
+      "source_scale": 0.625,
+      "luminance_percentiles": [
+        47.0,
+        215.0,
+        225.0
+      ],
+      "fine_detail_fraction": 0.35287923177083336,
+      "original_preserved": true
+    },
+    "illumination": null,
+    "analysis_policy": {
+      "max_scene_side": 960,
+      "context_fraction": 0.15,
+      "sample_inset": 0.035,
+      "sample_band": 0.06,
+      "palette_radius": 16.0,
+      "max_background_colours": 4,
+      "max_region_side": 320,
+      "max_shadow_gain": 1.6
+    },
+    "detection_plans": [
+      {
+        "stage": "grid",
+        "selected_route": "camera",
+        "hypotheses": [
+          {
+            "route": "camera",
+            "columns": 7,
+            "rows": 5,
+            "eligible": true,
+            "evidence_count": 27,
+            "evidence_source": "primary",
+            "seam_support": 0.22518709485549185,
+            "occupied_fraction": 0.7428571428571429,
+            "aligned_fraction": 0.07407407407407407,
+            "outside_fraction": 0.0,
+            "score": 0.3685933564607152,
+            "unique_assignment_fraction": 0.9629629629629629,
+            "competing_routes": [],
+            "selection_margin": 0.0
+          }
+        ]
+      },
+      {
+        "stage": "zones",
+        "image_size_px": [
+          1400,
+          854
+        ],
+        "zones": [
+          {
+            "column": 0,
+            "row": 0,
+            "bounds": [
+              0,
+              0,
+              200,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  118.0,
+                  182.0,
+                  162.0
+                ],
+                [
+                  98.0,
+                  178.0,
+                  159.0
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9142201834862386,
+              "background_noise": 2.4494898319244385,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 20.593687057495117,
+              "fine_detail_fraction": 0.12766081871345028,
+              "background_luminance": 215.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 1,
+            "row": 0,
+            "bounds": [
+              200,
+              0,
+              400,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  203.0,
+                  127.0,
+                  127.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8149847094801224,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 55.4797248840332,
+              "fine_detail_fraction": 0.14403508771929824,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 2,
+            "row": 0,
+            "bounds": [
+              400,
+              0,
+              600,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  195.0,
+                  134.0,
+                  184.0
+                ],
+                [
+                  209.0,
+                  129.0,
+                  136.0
+                ],
+                [
+                  225.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8169724770642202,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 51.352699279785156,
+              "fine_detail_fraction": 0.18119883040935672,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 3,
+            "row": 0,
+            "bounds": [
+              600,
+              0,
+              800,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  206.0,
+                  131.0,
+                  139.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7373088685015291,
+              "background_noise": 3.605551242828369,
+              "foreground_threshold": 11.037185668945312,
+              "contrast_p90": 104.39348602294922,
+              "fine_detail_fraction": 0.20801169590643276,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 4,
+            "row": 0,
+            "bounds": [
+              800,
+              0,
+              1000,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  225.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  169.0,
+                  143.0,
+                  189.0
+                ],
+                [
+                  216.0,
+                  129.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8093272171253822,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 73.97431945800781,
+              "fine_detail_fraction": 0.21298245614035088,
+              "background_luminance": 224.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 5,
+            "row": 0,
+            "bounds": [
+              1000,
+              0,
+              1200,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  172.0,
+                  112.0,
+                  162.0
+                ],
+                [
+                  118.0,
+                  126.0,
+                  94.0
+                ],
+                [
+                  150.5,
+                  107.0,
+                  161.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8085626911314985,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.649110794067383,
+              "contrast_p90": 26.55371856689453,
+              "fine_detail_fraction": 0.20482456140350877,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 6,
+            "row": 0,
+            "bounds": [
+              1200,
+              0,
+              1400,
+              171
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  131.0,
+                  107.0,
+                  158.0
+                ],
+                [
+                  217.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8989296636085627,
+              "background_noise": 2.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 63.537391662597656,
+              "fine_detail_fraction": 0.18169590643274855,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 0,
+            "row": 1,
+            "bounds": [
+              0,
+              171,
+              200,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  104.0,
+                  181.0,
+                  159.0
+                ],
+                [
+                  93.0,
+                  175.0,
+                  155.0
+                ],
+                [
+                  215.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8484709480122324,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 45.80392837524414,
+              "fine_detail_fraction": 0.16649122807017544,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 1,
+            "row": 1,
+            "bounds": [
+              200,
+              171,
+              400,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  139.0,
+                  147.0,
+                  164.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7758409785932722,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 32.668025970458984,
+              "fine_detail_fraction": 0.1414327485380117,
+              "background_luminance": 219.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 2,
+            "row": 1,
+            "bounds": [
+              400,
+              171,
+              600,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  179.0,
+                  141.0,
+                  164.0
+                ],
+                [
+                  161.0,
+                  144.0,
+                  168.0
+                ],
+                [
+                  195.5,
+                  127.0,
+                  130.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8613149847094801,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.263901233673096,
+              "contrast_p90": 13.0,
+              "fine_detail_fraction": 0.16508771929824562,
+              "background_luminance": 220.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 3,
+            "row": 1,
+            "bounds": [
+              600,
+              171,
+              800,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  201.0,
+                  126.0,
+                  127.0
+                ],
+                [
+                  148.0,
+                  146.0,
+                  169.0
+                ],
+                [
+                  187.5,
+                  125.0,
+                  124.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7996941896024465,
+              "background_noise": 4.0,
+              "foreground_threshold": 13.0,
+              "contrast_p90": 21.54646110534668,
+              "fine_detail_fraction": 0.16991228070175438,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 4,
+            "row": 1,
+            "bounds": [
+              800,
+              171,
+              1000,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  226.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  178.0,
+                  141.0,
+                  118.0
+                ],
+                [
+                  164.5,
+                  143.0,
+                  115.0
+                ],
+                [
+                  187.0,
+                  139.0,
+                  120.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7432721712538226,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 65.46182250976562,
+              "fine_detail_fraction": 0.1765204678362573,
+              "background_luminance": 224.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 5,
+            "row": 1,
+            "bounds": [
+              1000,
+              171,
+              1200,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  226.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  110.0,
+                  128.0,
+                  93.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7197247706422019,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 70.22820281982422,
+              "fine_detail_fraction": 0.15461988304093569,
+              "background_luminance": 224.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 6,
+            "row": 1,
+            "bounds": [
+              1200,
+              171,
+              1400,
+              342
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  225.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  122.0,
+                  106.0,
+                  156.0
+                ],
+                [
+                  222.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  228.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7584097859327217,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 47.099891662597656,
+              "fine_detail_fraction": 0.1496783625730994,
+              "background_luminance": 223.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 0,
+            "row": 2,
+            "bounds": [
+              0,
+              342,
+              200,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  153.0,
+                  120.0,
+                  105.0
+                ],
+                [
+                  209.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7915644171779141,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 69.23944091796875,
+              "fine_detail_fraction": 0.23305882352941176,
+              "background_luminance": 217.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 1,
+            "row": 2,
+            "bounds": [
+              200,
+              342,
+              400,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  114.0,
+                  145.0,
+                  159.0
+                ],
+                [
+                  133.0,
+                  146.0,
+                  162.0
+                ],
+                [
+                  213.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8288343558282208,
+              "background_noise": 2.4494898319244385,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 24.04370880126953,
+              "fine_detail_fraction": 0.15685294117647058,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 2,
+            "row": 2,
+            "bounds": [
+              400,
+              342,
+              600,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  171.0,
+                  142.0,
+                  165.0
+                ],
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  205.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7909509202453988,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 39.673667907714844,
+              "fine_detail_fraction": 0.18441176470588236,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 3,
+            "row": 2,
+            "bounds": [
+              600,
+              342,
+              800,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  200.0,
+                  126.0,
+                  125.5
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  190.0,
+                  125.0,
+                  122.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8291411042944785,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.649110794067383,
+              "contrast_p90": 43.32551193237305,
+              "fine_detail_fraction": 0.19738235294117648,
+              "background_luminance": 220.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 4,
+            "row": 2,
+            "bounds": [
+              800,
+              342,
+              1000,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  150.0,
+                  146.0,
+                  112.0
+                ],
+                [
+                  165.5,
+                  145.0,
+                  114.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8239263803680982,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.69693899154663,
+              "contrast_p90": 27.658634185791016,
+              "fine_detail_fraction": 0.24176470588235294,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 5,
+            "row": 2,
+            "bounds": [
+              1000,
+              342,
+              1200,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  209.5,
+                  129.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7650306748466258,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 12.780839920043945,
+              "fine_detail_fraction": 0.13405882352941176,
+              "background_luminance": 223.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 6,
+            "row": 2,
+            "bounds": [
+              1200,
+              342,
+              1400,
+              512
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": false,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  222.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  226.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7039877300613497,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 74.39086151123047,
+              "fine_detail_fraction": 0.08429411764705882,
+              "background_luminance": 223.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 0,
+            "row": 3,
+            "bounds": [
+              0,
+              512,
+              200,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  190.0,
+                  127.0,
+                  128.0
+                ],
+                [
+                  184.5,
+                  127.0,
+                  127.0
+                ],
+                [
+                  209.5,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8923547400611621,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 45.74330520629883,
+              "fine_detail_fraction": 0.14850877192982456,
+              "background_luminance": 216.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 1,
+            "row": 3,
+            "bounds": [
+              200,
+              512,
+              400,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  137.0
+                ],
+                [
+                  188.0,
+                  127.0,
+                  129.0
+                ],
+                [
+                  65.0,
+                  137.0,
+                  145.0
+                ],
+                [
+                  141.0,
+                  112.0,
+                  169.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7380733944954129,
+              "background_noise": 4.4721360206604,
+              "foreground_threshold": 14.888544082641602,
+              "contrast_p90": 32.69556427001953,
+              "fine_detail_fraction": 0.288187134502924,
+              "background_luminance": 203.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 2,
+            "row": 3,
+            "bounds": [
+              400,
+              512,
+              600,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  78.0,
+                  139.0,
+                  150.0
+                ],
+                [
+                  99.0,
+                  140.0,
+                  154.0
+                ],
+                [
+                  125.0,
+                  108.0,
+                  162.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.6983180428134557,
+              "background_noise": 5.099019527435303,
+              "foreground_threshold": 17.39607810974121,
+              "contrast_p90": 30.38091468811035,
+              "fine_detail_fraction": 0.26248538011695904,
+              "background_luminance": 210.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 3,
+            "row": 3,
+            "bounds": [
+              600,
+              512,
+              800,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  194.0,
+                  135.0,
+                  153.0
+                ],
+                [
+                  160.0,
+                  159.0,
+                  183.0
+                ],
+                [
+                  181.0,
+                  136.0,
+                  156.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7602446483180428,
+              "background_noise": 3.605551242828369,
+              "foreground_threshold": 10.230658292770386,
+              "contrast_p90": 26.851442337036133,
+              "fine_detail_fraction": 0.17634502923976608,
+              "background_luminance": 217.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 4,
+            "row": 3,
+            "bounds": [
+              800,
+              512,
+              1000,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  221.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  151.5,
+                  162.0,
+                  183.0
+                ],
+                [
+                  142.0,
+                  164.0,
+                  180.0
+                ],
+                [
+                  165.0,
+                  156.0,
+                  182.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.704434250764526,
+              "background_noise": 4.123105525970459,
+              "foreground_threshold": 12.249781131744385,
+              "contrast_p90": 40.31128692626953,
+              "fine_detail_fraction": 0.23260233918128656,
+              "background_luminance": 215.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 5,
+            "row": 3,
+            "bounds": [
+              1000,
+              512,
+              1200,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  205.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  182.0,
+                  122.0,
+                  130.0
+                ],
+                [
+                  196.0,
+                  142.0,
+                  142.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8012232415902141,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.649110794067383,
+              "contrast_p90": 37.429935455322266,
+              "fine_detail_fraction": 0.3044152046783626,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 6,
+            "row": 3,
+            "bounds": [
+              1200,
+              512,
+              1400,
+              683
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  128.0,
+                  177.0,
+                  157.0
+                ],
+                [
+                  215.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8113149847094802,
+              "background_noise": 2.8284270763397217,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 59.78293991088867,
+              "fine_detail_fraction": 0.15947368421052632,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 0,
+            "row": 4,
+            "bounds": [
+              0,
+              683,
+              200,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  214.0,
+                  128.0,
+                  137.0
+                ],
+                [
+                  210.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  187.0,
+                  129.0,
+                  134.0
+                ],
+                [
+                  174.5,
+                  129.0,
+                  133.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8521406727828746,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 10.099504470825195,
+              "fine_detail_fraction": 0.16576023391812866,
+              "background_luminance": 212.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 1,
+            "row": 4,
+            "bounds": [
+              200,
+              683,
+              400,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  216.0,
+                  128.0,
+                  137.0
+                ],
+                [
+                  138.0,
+                  109.0,
+                  169.0
+                ],
+                [
+                  210.0,
+                  128.0,
+                  137.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7600917431192661,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 47.89780807495117,
+              "fine_detail_fraction": 0.18146198830409357,
+              "background_luminance": 215.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 2,
+            "row": 4,
+            "bounds": [
+              400,
+              683,
+              600,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  140.5,
+                  124.0,
+                  104.0
+                ],
+                [
+                  98.0,
+                  107.0,
+                  152.0
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7441896024464831,
+              "background_noise": 3.0,
+              "foreground_threshold": 9.0,
+              "contrast_p90": 31.212175369262695,
+              "fine_detail_fraction": 0.2116081871345029,
+              "background_luminance": 214.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 3,
+            "row": 4,
+            "bounds": [
+              600,
+              683,
+              800,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  125.0,
+                  125.0,
+                  99.0
+                ],
+                [
+                  107.0,
+                  126.0,
+                  100.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7162079510703364,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.649110794067383,
+              "contrast_p90": 61.33677291870117,
+              "fine_detail_fraction": 0.24605263157894736,
+              "background_luminance": 213.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 4,
+            "row": 4,
+            "bounds": [
+              800,
+              683,
+              1000,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.6759938837920489,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 9.649110794067383,
+              "contrast_p90": 111.05989074707031,
+              "fine_detail_fraction": 0.22997076023391813,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 5,
+            "row": 4,
+            "bounds": [
+              1000,
+              683,
+              1200,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  133.0,
+                  176.0,
+                  156.0
+                ],
+                [
+                  213.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  207.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8249235474006116,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 45.97825622558594,
+              "fine_detail_fraction": 0.2189766081871345,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          },
+          {
+            "column": 6,
+            "row": 4,
+            "bounds": [
+              1200,
+              683,
+              1400,
+              854
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.7532110091743119,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 109.45957946777344,
+              "fine_detail_fraction": 0.2781578947368421,
+              "background_luminance": 217.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 35
+            }
+          }
+        ]
+      },
+      {
+        "stage": "zones",
+        "image_size_px": [
+          1536,
+          1024
+        ],
+        "zones": [
+          {
+            "column": 0,
+            "row": 0,
+            "bounds": [
+              112,
+              80,
+              332,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9374444444444444,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 121.14041137695312,
+              "fine_detail_fraction": 0.1826086956521739,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 1,
+            "row": 0,
+            "bounds": [
+              332,
+              80,
+              552,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  210.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9861111111111112,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 59.338016510009766,
+              "fine_detail_fraction": 0.17391304347826086,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 2,
+            "row": 0,
+            "bounds": [
+              552,
+              80,
+              772,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  225.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  229.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9371111111111111,
+              "background_noise": 1.7320507764816284,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 97.19156646728516,
+              "fine_detail_fraction": 0.2466622749231445,
+              "background_luminance": 224.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 3,
+            "row": 0,
+            "bounds": [
+              772,
+              80,
+              992,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  226.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  229.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9141111111111111,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 130.61891174316406,
+              "fine_detail_fraction": 0.23126921387790952,
+              "background_luminance": 226.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 4,
+            "row": 0,
+            "bounds": [
+              992,
+              80,
+              1212,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  226.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  230.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9315555555555556,
+              "background_noise": 2.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 124.2509536743164,
+              "fine_detail_fraction": 0.23596837944664031,
+              "background_luminance": 225.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 5,
+            "row": 0,
+            "bounds": [
+              1212,
+              80,
+              1432,
+              287
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  39.0,
+                  127.0,
+                  126.0
+                ],
+                [
+                  227.0,
+                  128.0,
+                  134.0
+                ],
+                [
+                  221.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.871,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 82.32374572753906,
+              "fine_detail_fraction": 0.225713658322354,
+              "background_luminance": 223.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 0,
+            "row": 1,
+            "bounds": [
+              112,
+              287,
+              332,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9181111111111111,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 77.8087387084961,
+              "fine_detail_fraction": 0.22430830039525693,
+              "background_luminance": 219.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 1,
+            "row": 1,
+            "bounds": [
+              332,
+              287,
+              552,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  221.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9713333333333334,
+              "background_noise": 1.7320507764816284,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 90.69729614257812,
+              "fine_detail_fraction": 0.21466842336407554,
+              "background_luminance": 221.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 2,
+            "row": 1,
+            "bounds": [
+              552,
+              287,
+              772,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  227.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9361111111111111,
+              "background_noise": 1.7320507764816284,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 40.62019348144531,
+              "fine_detail_fraction": 0.21805006587615283,
+              "background_luminance": 223.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 3,
+            "row": 1,
+            "bounds": [
+              772,
+              287,
+              992,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  225.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  223.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9348888888888889,
+              "background_noise": 1.7320507764816284,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 81.93289947509766,
+              "fine_detail_fraction": 0.27393500219587175,
+              "background_luminance": 225.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 4,
+            "row": 1,
+            "bounds": [
+              992,
+              287,
+              1212,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  225.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  228.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8745555555555555,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 77.59123992919922,
+              "fine_detail_fraction": 0.17094861660079053,
+              "background_luminance": 225.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 5,
+            "row": 1,
+            "bounds": [
+              1212,
+              287,
+              1432,
+              494
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  224.0,
+                  128.0,
+                  134.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9288888888888889,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 77.3757095336914,
+              "fine_detail_fraction": 0.15994729907773386,
+              "background_luminance": 224.0,
+              "background_chroma": [
+                128.0,
+                134.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 0,
+            "row": 2,
+            "bounds": [
+              112,
+              494,
+              332,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  222.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.854,
+              "background_noise": 1.4142135381698608,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 85.18215942382812,
+              "fine_detail_fraction": 0.22378129117259551,
+              "background_luminance": 216.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 1,
+            "row": 2,
+            "bounds": [
+              332,
+              494,
+              552,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  214.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9615555555555556,
+              "background_noise": 2.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 142.70948791503906,
+              "fine_detail_fraction": 0.36965305226174794,
+              "background_luminance": 219.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 2,
+            "row": 2,
+            "bounds": [
+              552,
+              494,
+              772,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  214.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.933,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 107.1307601928711,
+              "fine_detail_fraction": 0.26262626262626265,
+              "background_luminance": 220.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 3,
+            "row": 2,
+            "bounds": [
+              772,
+              494,
+              992,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  222.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.9347777777777778,
+              "background_noise": 2.4494898319244385,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 107.00466918945312,
+              "fine_detail_fraction": 0.22395696091348266,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 4,
+            "row": 2,
+            "bounds": [
+              992,
+              494,
+              1212,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  199.0,
+                  129.0,
+                  136.0
+                ],
+                [
+                  227.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8164444444444444,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 56.286766052246094,
+              "fine_detail_fraction": 0.3859903381642512,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 5,
+            "row": 2,
+            "bounds": [
+              1212,
+              494,
+              1432,
+              701
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  223.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  228.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8362222222222222,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 101.1039047241211,
+              "fine_detail_fraction": 0.20935441370223978,
+              "background_luminance": 222.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 0,
+            "row": 3,
+            "bounds": [
+              112,
+              701,
+              332,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  216.0,
+                  128.0,
+                  137.0
+                ],
+                [
+                  210.0,
+                  128.0,
+                  137.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8831111111111111,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 40.50801086425781,
+              "fine_detail_fraction": 0.19894598155467721,
+              "background_luminance": 216.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 1,
+            "row": 3,
+            "bounds": [
+              332,
+              701,
+              552,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  217.0,
+                  128.0,
+                  137.0
+                ],
+                [
+                  210.0,
+                  128.0,
+                  137.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8764444444444445,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 126.43575286865234,
+              "fine_detail_fraction": 0.3154589371980676,
+              "background_luminance": 216.0,
+              "background_chroma": [
+                128.0,
+                137.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 2,
+            "row": 3,
+            "bounds": [
+              552,
+              701,
+              772,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  218.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8913333333333333,
+              "background_noise": 2.2360680103302,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 113.22102355957031,
+              "fine_detail_fraction": 0.2482213438735178,
+              "background_luminance": 218.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 3,
+            "row": 3,
+            "bounds": [
+              772,
+              701,
+              992,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  219.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  209.5,
+                  128.5,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8964444444444445,
+              "background_noise": 2.5495097637176514,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 120.5674057006836,
+              "fine_detail_fraction": 0.26205533596837943,
+              "background_luminance": 219.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 4,
+            "row": 3,
+            "bounds": [
+              992,
+              701,
+              1212,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  221.0,
+                  128.0,
+                  136.0
+                ],
+                [
+                  211.0,
+                  128.0,
+                  136.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.845,
+              "background_noise": 3.0,
+              "foreground_threshold": 8.0,
+              "contrast_p90": 113.75104522705078,
+              "fine_detail_fraction": 0.25527009222661395,
+              "background_luminance": 220.0,
+              "background_chroma": [
+                128.0,
+                136.0
+              ],
+              "similar_background_cells": 24
+            }
+          },
+          {
+            "column": 5,
+            "row": 3,
+            "bounds": [
+              1212,
+              701,
+              1432,
+              908
+            ],
+            "strategy": "local_palette",
+            "preserve_detail": true,
+            "shadow_gain": 1.0,
+            "measurements": {
+              "background_colours": [
+                [
+                  220.0,
+                  128.0,
+                  135.0
+                ],
+                [
+                  212.0,
+                  128.0,
+                  135.0
+                ]
+              ],
+              "background_reliable": true,
+              "background_coverage": 0.8163333333333334,
+              "background_noise": 3.1622776985168457,
+              "foreground_threshold": 8.4064701795578,
+              "contrast_p90": 112.455322265625,
+              "fine_detail_fraction": 0.2808959156785244,
+              "background_luminance": 219.0,
+              "background_chroma": [
+                128.0,
+                135.0
+              ],
+              "similar_background_cells": 24
+            }
+          }
+        ]
+      },
+      {
+        "stage": "appearance_ownership_recheck",
+        "route": "shared_background",
+        "initial_evidence_count": 30,
+        "retained_regions_fraction": 0.5333333333333333,
+        "corroborated": false,
+        "seam_support": 0.0,
+        "occupied_fraction": 1.0,
+        "aligned_fraction": 1.0,
+        "outside_fraction": 0.0,
+        "score": 0.6,
+        "unique_assignment_fraction": 1.0
+      },
+      {
+        "stage": "joint_appearance",
+        "selected_route": "current",
+        "hypotheses": [
+          {
+            "route": "current",
+            "columns": 7,
+            "rows": 5,
+            "eligible": true,
+            "evidence_count": 35,
+            "evidence_source": "current",
+            "seam_support": 0.2090184386308087,
+            "occupied_fraction": 0.9428571428571428,
+            "aligned_fraction": 0.7058823529411765,
+            "outside_fraction": 0.02857142857142857,
+            "score": 0.581506535116189,
+            "unique_assignment_fraction": 0.9705882352941176,
+            "competing_routes": [
+              "shared_background"
+            ],
+            "selection_margin": 0.03150653511618895
+          },
+          {
+            "route": "shared_background",
+            "columns": 6,
+            "rows": 4,
+            "eligible": true,
+            "evidence_count": 30,
+            "evidence_source": "shared_background",
+            "seam_support": 0.0,
+            "occupied_fraction": 1.0,
+            "aligned_fraction": 0.8,
+            "outside_fraction": 0.0,
+            "score": 0.55,
+            "unique_assignment_fraction": 0.8
+          }
+        ],
+        "scene_resolved_before_refinement": true
+      },
+      {
+        "stage": "contrast_geometry",
+        "analysis_size_px": [
+          960,
+          640
+        ],
+        "agreeing_passes": 24,
+        "scales": [
+          0.025,
+          0.03535533905932738,
+          0.05,
+          0.07071067811865477,
+          0.1,
+          0.14142135623730953
+        ],
+        "thresholds": [
+          35,
+          45,
+          55,
+          65,
+          75
+        ],
+        "occupancy": 1.0,
+        "confidence": 0.8967355255050213,
+        "source_pixels_preserved": true,
+        "channel": "shared_background",
+        "background_lab": [
+          220.09390258789062,
+          128.03829956054688,
+          135.817138671875
+        ],
+        "background_noise_lab": [
+          4.512930393218994,
+          1.0,
+          1.0
+        ],
+        "columns": 6,
+        "rows": 4,
+        "accepted": false,
+        "existing_geometry_agrees": false
+      }
+    ],
+    "candidates_before_cleanup": 35,
+    "candidates_after_cleanup": 34,
+    "compositions_needing_extent_review": 34
+  },
+  "mapper": {
+    "image_width_px": 1536,
+    "image_height_px": 1024,
+    "bed_width_in": 36.0,
+    "bed_height_in": 24.0,
+    "image_x_in": 0.0,
+    "image_y_in": 0.0,
+    "image_width_in": 36.0,
+    "image_height_in": 24.0
+  }
+}

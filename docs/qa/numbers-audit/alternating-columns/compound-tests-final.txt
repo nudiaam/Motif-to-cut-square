@@ -1,0 +1,10 @@
+test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) ... ok
+test_confirmed_guides_and_incomplete_ink_are_protected (tests.test_compound_grid.CompoundGridTests.test_confirmed_guides_and_incomplete_ink_are_protected) ... ok
+test_equal_spacing_does_not_join_independent_large_figures_and_clusters (tests.test_compound_grid.CompoundGridTests.test_equal_spacing_does_not_join_independent_large_figures_and_clusters) ... ok
+test_large_and_one_small_figure_are_not_a_compound_pattern (tests.test_compound_grid.CompoundGridTests.test_large_and_one_small_figure_are_not_a_compound_pattern) ... ok
+test_ui_keeps_twenty_groups_and_reports_small_cut_size (tests.test_compound_grid.CompoundGridTests.test_ui_keeps_twenty_groups_and_reports_small_cut_size) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 44.750s
+
+OK

@@ -1,0 +1,651 @@
+[
+  {
+    "image": "alphabet_6x4",
+    "variant": "half",
+    "count": 23,
+    "grid": {
+      "x_lines_px": [
+        54.471515423302364,
+        164.173317213871,
+        273.87511900443957,
+        383.5769207950082,
+        493.2787225855768,
+        602.9805243761455,
+        712.6823261667141
+      ],
+      "y_lines_px": [
+        44.01572594394819,
+        148.40791505442286,
+        252.8001041648975,
+        357.19229327537215,
+        461.5844823858468
+      ],
+      "confidence": 0.9282630820001252,
+      "source": "local_contrast",
+      "lattice": [
+        [
+          107.64880909451847,
+          97.34643975896147
+        ],
+        [
+          109.70180179056862,
+          -0.4538477039103822
+        ],
+        [
+          1.1157381493788034,
+          104.39218911047465
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": [
+      {
+        "box": [
+          619,
+          264,
+          86,
+          65
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      }
+    ]
+  },
+  {
+    "image": "alphabet_6x4",
+    "variant": "surround",
+    "count": 24,
+    "grid": {
+      "x_lines_px": [
+        158.8278181818185,
+        378.6885454545457,
+        598.549272727273,
+        818.4100000000002,
+        1038.2707272727275,
+        1258.1314545454545,
+        1477.9921818181817
+      ],
+      "y_lines_px": [
+        120.31354545454529,
+        329.6797272727272,
+        539.0459090909092,
+        748.412090909091,
+        957.7782727272729
+      ],
+      "confidence": 0.9492894094931086,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": []
+  },
+  {
+    "image": "alphabet_6x4",
+    "variant": "bottom_partial",
+    "count": 24,
+    "grid": {
+      "x_lines_px": [
+        108.43515772778268,
+        327.9707764694294,
+        547.5063952110761,
+        767.0420139527228,
+        986.5776326943695,
+        1206.1132514360163,
+        1425.6488701776632
+      ],
+      "y_lines_px": [
+        93.76167718139787,
+        296.8612939842638,
+        499.96091078712965,
+        703.0605275899957,
+        906.1601443928615
+      ],
+      "confidence": 0.9389618201959227,
+      "source": "local_contrast",
+      "lattice": [
+        [
+          214.21475688529964,
+          197.36017198515947
+        ],
+        [
+          219.53561874164672,
+          -0.8194745609314562
+        ],
+        [
+          2.6588068088709376,
+          203.0996168028659
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": [
+      {
+        "box": [
+          795,
+          726,
+          152,
+          134
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          140,
+          733,
+          120,
+          127
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          355,
+          735,
+          169,
+          125
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          576,
+          736,
+          172,
+          124
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          1009,
+          739,
+          181,
+          121
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          1239,
+          740,
+          180,
+          120
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      }
+    ]
+  },
+  {
+    "image": "christmas_6x4",
+    "variant": "half",
+    "count": 24,
+    "grid": {
+      "x_lines_px": [
+        59.32142857142877,
+        167.9642857142859,
+        276.607142857143,
+        385.2500000000001,
+        493.8928571428572,
+        602.5357142857143,
+        711.1785714285714
+      ],
+      "y_lines_px": [
+        42.449999999999974,
+        146.85000000000002,
+        251.25000000000006,
+        355.6500000000001,
+        460.05000000000007
+      ],
+      "confidence": 0.956820358741973,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": [
+      {
+        "box": [
+          407,
+          72,
+          76,
+          64
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          88,
+          180,
+          59,
+          58
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          191,
+          173,
+          89,
+          94
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          311,
+          247,
+          39,
+          99
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          172,
+          267,
+          99,
+          80
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          71,
+          370,
+          69,
+          66
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          176,
+          372,
+          84,
+          74
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          398,
+          362,
+          85,
+          94
+        ],
+        "reasons": [
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          622,
+          372,
+          75,
+          75
+        ],
+        "reasons": [
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          293,
+          380,
+          76,
+          77
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          512,
+          391,
+          78,
+          55
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      }
+    ]
+  },
+  {
+    "image": "christmas_6x4",
+    "variant": "surround",
+    "count": 24,
+    "grid": {
+      "x_lines_px": [
+        167.85800000000012,
+        385.46109090909096,
+        603.0641818181817,
+        820.6672727272726,
+        1038.2703636363635,
+        1255.8734545454543,
+        1473.476545454545
+      ],
+      "y_lines_px": [
+        120.26497727272718,
+        328.5976590909091,
+        536.9303409090909,
+        745.2630227272728,
+        953.5957045454546
+      ],
+      "confidence": 0.951915576388714,
+      "source": "visual",
+      "lattice": null,
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": [
+      {
+        "box": [
+          1091,
+          152,
+          120,
+          160
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          482,
+          396,
+          57,
+          54
+        ],
+        "reasons": [
+          "Small foreground on a textured panel; check for missing faint or detached details",
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          227,
+          383,
+          117,
+          127
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          165,
+          774,
+          164,
+          136
+        ],
+        "reasons": [
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          401,
+          778,
+          169,
+          150
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          1055,
+          748,
+          194,
+          210
+        ],
+        "reasons": [
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          845,
+          759,
+          171,
+          189
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          1294,
+          778,
+          150,
+          151
+        ],
+        "reasons": [
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      },
+      {
+        "box": [
+          637,
+          795,
+          151,
+          153
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Illumination compensation used; check artwork in the shadowed band"
+        ]
+      }
+    ]
+  },
+  {
+    "image": "christmas_6x4",
+    "variant": "bottom_partial",
+    "count": 24,
+    "grid": {
+      "x_lines_px": [
+        122.20717009500927,
+        338.8729841813395,
+        555.5387982676698,
+        772.204612354,
+        988.8704264403302,
+        1205.5362405266605,
+        1422.2020546129907
+      ],
+      "y_lines_px": [
+        98.08013393236313,
+        297.4596335136566,
+        496.8391330949501,
+        696.2186326762437,
+        895.5981322575371
+      ],
+      "confidence": 0.9832446340274913,
+      "source": "local_contrast",
+      "lattice": [
+        [
+          233.1505225424346,
+          199.35191617812035
+        ],
+        [
+          216.66581408633024,
+          -0.6328129820441879
+        ],
+        [
+          -1.7402969361734677,
+          199.37949958129352
+        ]
+      ],
+      "projection": null,
+      "review_reasons": []
+    },
+    "reviews": [
+      {
+        "box": [
+          1041,
+          117,
+          120,
+          160
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          994,
+          344,
+          201,
+          121
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          177,
+          348,
+          117,
+          127
+        ],
+        "reasons": [
+          "Image evidence continues beyond the detected artwork; check its full extent"
+        ]
+      },
+      {
+        "box": [
+          1005,
+          713,
+          194,
+          147
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          799,
+          724,
+          165,
+          136
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          141,
+          739,
+          138,
+          121
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          354,
+          743,
+          166,
+          117
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          1244,
+          743,
+          154,
+          117
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Artwork reaches the source-image boundary"
+        ]
+      },
+      {
+        "box": [
+          588,
+          760,
+          150,
+          100
+        ],
+        "reasons": [
+          "Foreground reaches the analysis boundary",
+          "Panel is only partly inside the source image; verify the complete composition",
+          "Image evidence continues beyond the detected artwork; check its full extent",
+          "Artwork reaches the source-image boundary"
+        ]
+      }
+    ]
+  }
+]

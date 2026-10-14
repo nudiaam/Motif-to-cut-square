@@ -1,0 +1,458 @@
+{
+  "full": {
+    "model": [
+      [
+        221.49208068847656,
+        128.7332305908203,
+        134.63697814941406
+      ],
+      [
+        4.944480895996094,
+        1.0,
+        1.0
+      ]
+    ],
+    "global_return": {
+      "line": 54,
+      "selected_count": 190,
+      "pitch": 213.75,
+      "unexplained": [
+        [
+          [
+            1532,
+            873,
+            4,
+            33
+          ],
+          79
+        ]
+      ],
+      "result_count": null
+    }
+  },
+  "cloth": {
+    "model": [
+      [
+        221.47390747070312,
+        128.73477172851562,
+        134.62864685058594
+      ],
+      [
+        4.9839348793029785,
+        1.0,
+        1.0
+      ]
+    ],
+    "global_return": {
+      "line": 54,
+      "selected_count": 190,
+      "pitch": 213.75,
+      "unexplained": [
+        [
+          [
+            1532,
+            873,
+            4,
+            33
+          ],
+          79
+        ]
+      ],
+      "result_count": null
+    }
+  },
+  "pass_layouts": [
+    {
+      "components": 43,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8542522974720687,
+      "occupancy": 1.0
+    },
+    {
+      "components": 52,
+      "columns": 9,
+      "rows": 4,
+      "confidence": 0.3992247781300642,
+      "occupancy": 0.4722222222222222
+    },
+    {
+      "components": 56,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.6990767574097524,
+      "occupancy": 0.825
+    },
+    {
+      "components": 60,
+      "columns": 8,
+      "rows": 4,
+      "confidence": 0.6443342669808202,
+      "occupancy": 0.8125
+    },
+    {
+      "components": 66,
+      "columns": 19,
+      "rows": 7,
+      "confidence": 0.2326894639641837,
+      "occupancy": 0.22556390977443608
+    },
+    {
+      "components": 43,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8542522974720687,
+      "occupancy": 1.0
+    },
+    {
+      "components": 52,
+      "columns": 9,
+      "rows": 4,
+      "confidence": 0.3992247781300642,
+      "occupancy": 0.4722222222222222
+    },
+    {
+      "components": 56,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.6990767574097524,
+      "occupancy": 0.825
+    },
+    {
+      "components": 60,
+      "columns": 8,
+      "rows": 4,
+      "confidence": 0.6443342669808202,
+      "occupancy": 0.8125
+    },
+    {
+      "components": 66,
+      "columns": 19,
+      "rows": 7,
+      "confidence": 0.2326894639641837,
+      "occupancy": 0.22556390977443608
+    },
+    {
+      "components": 43,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8542522974720687,
+      "occupancy": 1.0
+    },
+    {
+      "components": 52,
+      "columns": 9,
+      "rows": 4,
+      "confidence": 0.3992247781300642,
+      "occupancy": 0.4722222222222222
+    },
+    {
+      "components": 56,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.6990767574097524,
+      "occupancy": 0.825
+    },
+    {
+      "components": 60,
+      "columns": 8,
+      "rows": 4,
+      "confidence": 0.6443342669808202,
+      "occupancy": 0.8125
+    },
+    {
+      "components": 66,
+      "columns": 19,
+      "rows": 7,
+      "confidence": 0.2326894639641837,
+      "occupancy": 0.22556390977443608
+    },
+    {
+      "components": 43,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8542522974720687,
+      "occupancy": 1.0
+    },
+    {
+      "components": 52,
+      "columns": 9,
+      "rows": 4,
+      "confidence": 0.3903942459952337,
+      "occupancy": 0.4444444444444444
+    },
+    {
+      "components": 56,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.6991867058891494,
+      "occupancy": 0.825
+    },
+    {
+      "components": 60,
+      "columns": 8,
+      "rows": 4,
+      "confidence": 0.6437654586844691,
+      "occupancy": 0.8125
+    },
+    {
+      "components": 65,
+      "columns": 20,
+      "rows": 7,
+      "confidence": 0.23354254920465772,
+      "occupancy": 0.2357142857142857
+    },
+    {
+      "components": 37,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8938577880532064,
+      "occupancy": 1.0
+    },
+    {
+      "components": 45,
+      "columns": 10,
+      "rows": 3,
+      "confidence": 0.8406300320308978,
+      "occupancy": 1.0
+    },
+    {
+      "components": 53,
+      "columns": 9,
+      "rows": 4,
+      "confidence": 0.4064303646756867,
+      "occupancy": 0.4722222222222222
+    },
+    {
+      "components": 58,
+      "columns": 8,
+      "rows": 4,
+      "confidence": 0.5818957034715698,
+      "occupancy": 0.71875
+    },
+    {
+      "components": 62,
+      "columns": 8,
+      "rows": 7,
+      "confidence": 0.3680813064606041,
+      "occupancy": 0.4107142857142857
+    },
+    {
+      "components": 32,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.7220235736275658,
+      "occupancy": 0.725
+    },
+    {
+      "components": 35,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.7198510814554743,
+      "occupancy": 0.75
+    },
+    {
+      "components": 50,
+      "columns": 10,
+      "rows": 4,
+      "confidence": 0.6963658937129866,
+      "occupancy": 0.8
+    },
+    {
+      "components": 55,
+      "columns": 15,
+      "rows": 4,
+      "confidence": 0.3217505443783871,
+      "occupancy": 0.3333333333333333
+    },
+    {
+      "components": 61,
+      "columns": 11,
+      "rows": 4,
+      "confidence": 0.5398534797516202,
+      "occupancy": 0.7045454545454546
+    }
+  ],
+  "region_counts": [
+    43,
+    52,
+    56,
+    60,
+    66,
+    43,
+    52,
+    56,
+    60,
+    66,
+    43,
+    52,
+    56,
+    60,
+    66,
+    43,
+    52,
+    56,
+    60,
+    65,
+    37,
+    45,
+    53,
+    58,
+    62,
+    32,
+    35,
+    50,
+    55,
+    61
+  ],
+  "chosen_region_centers": [
+    [
+      1336.8,
+      125.6
+    ],
+    [
+      788.0,
+      124.8
+    ],
+    [
+      950.4,
+      122.4
+    ],
+    [
+      148.8,
+      129.6
+    ],
+    [
+      254.4,
+      107.2
+    ],
+    [
+      408.8,
+      125.6
+    ],
+    [
+      677.6,
+      124.0
+    ],
+    [
+      1216.0,
+      122.4
+    ],
+    [
+      1066.4,
+      124.8
+    ],
+    [
+      522.4,
+      136.0
+    ],
+    [
+      257.6,
+      304.8
+    ],
+    [
+      521.6,
+      316.64000000000016
+    ],
+    [
+      1006.4,
+      320.8
+    ],
+    [
+      1081.6,
+      320.0
+    ],
+    [
+      1355.2,
+      289.6
+    ],
+    [
+      782.4,
+      326.4
+    ],
+    [
+      132.8,
+      320.0
+    ],
+    [
+      407.2,
+      302.4
+    ],
+    [
+      672.0,
+      312.8
+    ],
+    [
+      935.2,
+      306.4
+    ],
+    [
+      1216.8,
+      312.8
+    ],
+    [
+      1360.8,
+      368.0
+    ],
+    [
+      1368.8,
+      447.2
+    ],
+    [
+      802.4,
+      516.8
+    ],
+    [
+      1084.8,
+      518.4
+    ],
+    [
+      536.8,
+      510.4
+    ],
+    [
+      244.8,
+      516.0
+    ],
+    [
+      1234.4,
+      513.6
+    ],
+    [
+      676.0,
+      514.4
+    ],
+    [
+      949.6,
+      515.2
+    ],
+    [
+      401.6,
+      518.4
+    ],
+    [
+      118.4,
+      522.4
+    ],
+    [
+      1376.0,
+      534.4
+    ],
+    [
+      641.6,
+      732.8
+    ],
+    [
+      202.4,
+      740.8
+    ],
+    [
+      1351.2,
+      732.0
+    ],
+    [
+      1039.2,
+      733.6
+    ]
+  ]
+}

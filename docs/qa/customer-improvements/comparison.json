@@ -1,0 +1,274 @@
+[
+  {
+    "file": "generated\\customer_20261012\\alphabet_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 4.070326000044588,
+    "after_seconds": 3.9929250000277534
+  },
+  {
+    "file": "generated\\customer_20261012\\christmas_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 3,
+      "Illumination compensation used; check artwork in the shadowed band": 6
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 3,
+      "Small foreground on a textured panel; check for missing faint or detached details": 1,
+      "Illumination compensation used; check artwork in the shadowed band": 6
+    },
+    "before_seconds": 4.400660899991635,
+    "after_seconds": 4.334707100002561
+  },
+  {
+    "file": "floral_patchwork_recovered.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 4.115457899984904,
+    "after_seconds": 4.038355699973181
+  },
+  {
+    "file": "pastel_panels_camera.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 2
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 2
+    },
+    "before_seconds": 3.558413099963218,
+    "after_seconds": 3.342645699973218
+  },
+  {
+    "file": "patchwork_camera.png",
+    "before_count": 22,
+    "after_count": 22,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Foreground reaches the analysis boundary": 4,
+      "Image evidence continues beyond the detected artwork; check its full extent": 6
+    },
+    "after_reviews": {
+      "Foreground reaches the analysis boundary": 4,
+      "Small foreground on a textured panel; check for missing faint or detached details": 1,
+      "Image evidence continues beyond the detected artwork; check its full extent": 6
+    },
+    "before_seconds": 3.3162672000471503,
+    "after_seconds": 3.3209542999975383
+  },
+  {
+    "file": "transport_camera.png",
+    "before_count": 19,
+    "after_count": 19,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 2
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 2
+    },
+    "before_seconds": 1.4625821000081487,
+    "after_seconds": 1.4039715999970213
+  },
+  {
+    "file": "transport_dashed_shared.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "before_seconds": 2.2832131000468507,
+    "after_seconds": 2.145487100002356
+  },
+  {
+    "file": "transport_irregular_shadows.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 8
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 8
+    },
+    "before_seconds": 3.4966058999998495,
+    "after_seconds": 3.470728499989491
+  },
+  {
+    "file": "vehicles_panels.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "before_seconds": 6.2727598999626935,
+    "after_seconds": 6.209841900039464
+  },
+  {
+    "file": "acceptance\\animal_accessories_4x3.png",
+    "before_count": 12,
+    "after_count": 12,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 7.777325899980497,
+    "after_seconds": 7.65553240000736
+  },
+  {
+    "file": "acceptance\\dark_leaves_5x3.png",
+    "before_count": 15,
+    "after_count": 15,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 3.8596791000454687,
+    "after_seconds": 3.832742300000973
+  },
+  {
+    "file": "acceptance\\groups_4x3.png",
+    "before_count": 12,
+    "after_count": 12,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 3.6225262999651022,
+    "after_seconds": 3.589475799992215
+  },
+  {
+    "file": "acceptance\\mixed_icons_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Background is ambiguous; artwork extent needs review": 1,
+      "Image evidence continues beyond the detected artwork; check its full extent": 5,
+      "Illumination compensation used; check artwork in the shadowed band": 6
+    },
+    "after_reviews": {
+      "Background is ambiguous; artwork extent needs review": 1,
+      "Image evidence continues beyond the detected artwork; check its full extent": 5,
+      "Illumination compensation used; check artwork in the shadowed band": 6
+    },
+    "before_seconds": 3.8999565999838524,
+    "after_seconds": 3.9023636000347324
+  },
+  {
+    "file": "acceptance\\pastel_4x4.png",
+    "before_count": 16,
+    "after_count": 16,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "before_seconds": 1.4215811000321992,
+    "after_seconds": 1.2950384000432678
+  },
+  {
+    "file": "acceptance\\patchwork_animals_5x4.png",
+    "before_count": 20,
+    "after_count": 20,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 6
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 6
+    },
+    "before_seconds": 2.858270100026857,
+    "after_seconds": 2.8843813000130467
+  },
+  {
+    "file": "acceptance\\space_dark_3x5.png",
+    "before_count": 15,
+    "after_count": 15,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 2.5389832999790087,
+    "after_seconds": 2.5536034000106156
+  },
+  {
+    "file": "acceptance\\spanning_5x4.png",
+    "before_count": 19,
+    "after_count": 19,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "before_seconds": 1.808582599973306,
+    "after_seconds": 1.6218402999802493
+  },
+  {
+    "file": "acceptance\\thin_7x3.png",
+    "before_count": 21,
+    "after_count": 21,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 1
+    },
+    "before_seconds": 1.6423009000136517,
+    "after_seconds": 1.521424200036563
+  },
+  {
+    "file": "generated\\straight\\dogs_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 4
+    },
+    "after_reviews": {
+      "Image evidence continues beyond the detected artwork; check its full extent": 4
+    },
+    "before_seconds": 4.410198799974751,
+    "after_seconds": 4.337887599947862
+  },
+  {
+    "file": "generated\\straight\\hearts_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 4.3933710000128485,
+    "after_seconds": 4.383508400002029
+  },
+  {
+    "file": "generated\\straight\\pastel_6x4.png",
+    "before_count": 24,
+    "after_count": 24,
+    "same_candidate_geometry": true,
+    "before_reviews": {},
+    "after_reviews": {},
+    "before_seconds": 1.8921720999642275,
+    "after_seconds": 1.787780400016345
+  }
+]

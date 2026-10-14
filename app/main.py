@@ -317,6 +317,18 @@ QLabel#verificationLabel {
     color: #d9c2e5;
 }
 QStatusBar { background: #191d22; color: #aeb8c2; }
+QStatusBar::item { border: none; }
+QWidget#analysisStatus { background: transparent; }
+QProgressBar#analysisProgress {
+    border: none; border-radius: 2px; background: #353d47;
+}
+QProgressBar#analysisProgress::chunk { background: #39b99a; border-radius: 2px; }
+QPushButton#analysisCancel {
+    background: transparent; border: 1px solid #46515e;
+    padding: 2px 8px; color: #aeb8c2;
+}
+QPushButton#analysisCancel:hover { background: #353d47; color: #f1f4f7; }
+QPushButton#analysisCancel:disabled { color: #697581; border-color: #353d47; }
 QMessageBox { background: #252b32; }
 QToolTip {
     background: #101419;

@@ -1,0 +1,50 @@
+test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) ... 
+  test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) (variant='diagonal_shadow') ... FAIL
+  test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) (variant='perspective') ... FAIL
+test_confirmed_guides_and_incomplete_ink_are_protected (tests.test_compound_grid.CompoundGridTests.test_confirmed_guides_and_incomplete_ink_are_protected) ... ok
+test_equal_spacing_does_not_join_independent_large_figures_and_clusters (tests.test_compound_grid.CompoundGridTests.test_equal_spacing_does_not_join_independent_large_figures_and_clusters) ... ok
+test_large_and_one_small_figure_are_not_a_compound_pattern (tests.test_compound_grid.CompoundGridTests.test_large_and_one_small_figure_are_not_a_compound_pattern) ... ok
+test_ui_keeps_twenty_groups_and_reports_small_cut_size (tests.test_compound_grid.CompoundGridTests.test_ui_keeps_twenty_groups_and_reports_small_cut_size) ... ok
+
+======================================================================
+FAIL: test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) (variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_compound_grid.py", line 36, in test_compact_number_groups_across_photographic_variations
+    self.assertEqual((r.panel_grid.columns,r.panel_grid.rows),(5,4))
+AssertionError: Tuples differ: (10, 4) != (5, 4)
+
+First differing element 0:
+10
+5
+
+- (10, 4)
+?  ^^
+
++ (5, 4)
+?  ^
+
+
+======================================================================
+FAIL: test_compact_number_groups_across_photographic_variations (tests.test_compound_grid.CompoundGridTests.test_compact_number_groups_across_photographic_variations) (variant='perspective')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_compound_grid.py", line 36, in test_compact_number_groups_across_photographic_variations
+    self.assertEqual((r.panel_grid.columns,r.panel_grid.rows),(5,4))
+AssertionError: Tuples differ: (10, 4) != (5, 4)
+
+First differing element 0:
+10
+5
+
+- (10, 4)
+?  ^^
+
++ (5, 4)
+?  ^
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 45.468s
+
+FAILED (failures=2)

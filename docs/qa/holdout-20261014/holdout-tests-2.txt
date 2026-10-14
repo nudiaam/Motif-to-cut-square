@@ -1,0 +1,43 @@
+test_native_originals_keep_each_complete_group_exactly_once (tests.test_holdout_groups.HoldoutGroupTests.test_native_originals_keep_each_complete_group_exactly_once) ... ok
+test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) ... 
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='dim') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='diagonal_shadow') ... FAIL
+  test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='animals_panels', variant='diagonal_shadow') ... FAIL
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='dim')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 42, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(assess(r,transform,points),(len(points),[]))
+AssertionError: Tuples differ: (20, [9]) != (20, [])
+
+First differing element 1:
+[9]
+[]
+
+- (20, [9])
+?       -
+
++ (20, [])
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='numbers_felt', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 40, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(len(r.candidates),len(points))
+AssertionError: 12 != 20
+
+======================================================================
+FAIL: test_source_groups_under_scale_and_illumination_changes (tests.test_holdout_groups.HoldoutGroupTests.test_source_groups_under_scale_and_illumination_changes) (source='animals_panels', variant='diagonal_shadow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\00_Nuria\00-Work\2025-Individual\12-SquareDetect-Epilog\tests\test_holdout_groups.py", line 40, in test_source_groups_under_scale_and_illumination_changes
+    self.assertEqual(len(r.candidates),len(points))
+AssertionError: 40 != 12
+
+----------------------------------------------------------------------
+Ran 2 tests in 168.025s
+
+FAILED (failures=3)

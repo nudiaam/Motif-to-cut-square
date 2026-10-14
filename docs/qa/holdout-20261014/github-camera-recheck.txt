@@ -1,0 +1,6 @@
+test_camera_grid_controls_cuts_through_review_resize_and_undo (tests.test_ui_smoke.UISmokeTests.test_camera_grid_controls_cuts_through_review_resize_and_undo) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 5.587s
+
+OK
