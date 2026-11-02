@@ -7,6 +7,8 @@ from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
 
+from app import __version__
+
 import cv2
 import numpy as np
 from PySide6.QtCore import Qt, Slot, QTimer
@@ -127,7 +129,7 @@ class _HistorySnapshot:
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Lalikul Cut Prep — Laser Bed Prototype")
+        self.setWindowTitle(f"Lalikul Cut Prep  v{__version__} — Laser Bed Prototype")
         self.resize(1420, 880)
         self.setMinimumSize(1080, 700)
 
