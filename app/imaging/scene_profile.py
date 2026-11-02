@@ -7,6 +7,10 @@ import numpy as np
 
 @dataclass(frozen=True)
 class AnalysisPolicy:
+    max_detection_side: int = 1536
+    max_native_detection_side: int = 2048
+    max_extent_side: int = 512
+    boundary_uncertainty_px: float = 1.5
     max_scene_side: int = 960
     context_fraction: float = .15
     sample_inset: float = .035

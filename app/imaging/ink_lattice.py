@@ -49,7 +49,7 @@ def _infer_ink_lattice(image):
     model=_shared_background(lab[fy:fy+fh,fx:fx+fw])
     if model is None:return None
     colour,noise=model;signal=10*np.linalg.norm((lab-colour)/noise,axis=2)
-    readings=[];masks={};base_parts={}
+    readings=[];masks={};base_parts={};layouts={}
     for threshold in (35,45,55):
         mask=((signal>threshold)&(cloth>0)).astype(np.uint8)
         count,labels,stats,_=cv2.connectedComponentsWithStats(mask);keep=np.zeros(count,bool)
@@ -69,7 +69,11 @@ def _infer_ink_lattice(image):
                     if len(xs)<max(25,mask.size*.0003):continue
                     boxes.append((x+int(xs.min()),y+int(ys.min()),int(xs.max()-xs.min()+1),int(ys.max()-ys.min()+1)))
                 if not 6<=len(boxes)<=100:continue
-                layout=fit_logical_layout([LayoutObservation(i,(x+w/2,y+h/2),(x,y,w,h)) for i,(x,y,w,h) in enumerate(boxes)])
+                key=tuple(boxes)
+                if key not in layouts:
+                    layouts[key]=fit_logical_layout([LayoutObservation(i,(x+w/2,y+h/2),(x,y,w,h))
+                        for i,(x,y,w,h) in enumerate(boxes)])
+                layout=layouts[key]
                 matched=sum(m.status=='matched' for m in layout.matches)/len(boxes)
                 if (layout.confidence<.88 or layout.occupancy<.90 or matched<.80
                         or len(boxes)<layout.columns*layout.rows or min(layout.columns,layout.rows)<2):continue

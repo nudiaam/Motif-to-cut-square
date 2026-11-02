@@ -29,7 +29,10 @@ class SVGExporter:
         detections: list[Detection],
         unit: LengthUnit = LengthUnit.INCHES,
     ) -> ET.ElementTree:
-        blocked = [(d.id, d.cut_block_reason(mapper)) for d in detections if d.enabled]
+        # A cut that only crosses its panel on real fabric is a red warning the
+        # user may still export. But an impossible cut (off the bed, no fabric,
+        # incomplete source) is never exported — a last-resort hard block.
+        blocked = [(d.id, d.cut_hard_block_reason(mapper)) for d in detections if d.enabled]
         blocked = [(identifier, reason) for identifier, reason in blocked if reason]
         if blocked:
             raise ValueError("Cannot export blocked cuts: " + "; ".join(

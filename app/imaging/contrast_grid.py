@@ -59,6 +59,7 @@ def infer_contrast_geometry(image, *, channel='dark'):
     if channel == 'light': luminance = 255-luminance
     luminance = cv2.GaussianBlur(luminance, (0, 0), 1.)
     proposals = []
+    layouts = {}
     for fraction in (.025 * 2**(i/2) for i in range(6)):
         size = max(3, round(min(small.shape[:2])*fraction) | 1)
         field = cv2.morphologyEx(luminance, cv2.MORPH_CLOSE, np.ones((size,size), np.uint8))
@@ -89,10 +90,13 @@ def infer_contrast_geometry(image, *, channel='dark'):
             regions = _regions(signal, threshold, max(25, signal.size*.0003), exclude_frame=True)
             if not 6 <= len(regions) <= 150:
                 continue
-            layout = fit_logical_layout([
-                LayoutObservation(i, (x+rw/2,y+rh/2), region.bounding_box_px, region.center_px)
-                for i,region in enumerate(regions)
-                for x,y,rw,rh in [region.bounding_box_px]])
+            key = tuple((r.bounding_box_px,r.center_px) for r in regions)
+            if key not in layouts:
+                layouts[key] = fit_logical_layout([
+                    LayoutObservation(i, (x+rw/2,y+rh/2), region.bounding_box_px, region.center_px)
+                    for i,region in enumerate(regions)
+                    for x,y,rw,rh in [region.bounding_box_px]])
+            layout = layouts[key]
             support = sum(m.status == 'matched' for m in layout.matches)/len(regions)
             if layout.confidence < .70 or layout.occupancy < .75 or support < .60:
                 continue

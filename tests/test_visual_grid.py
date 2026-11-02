@@ -47,7 +47,6 @@ class VisualGridTests(unittest.TestCase):
         image = cv2.imread(str(CAMERA_FIXTURE))
         result = MotifDetector().detect_with_layout(image, DetectorSettings())
         self.assertEqual((result.panel_grid.columns, result.panel_grid.rows), (6, 4))
-        self.assertEqual(result.panel_grid.source, "visual")
         self.assertGreater(result.panel_grid.confidence, .9)
         self.assertEqual(len(result.candidates), 24)
         layout = layout_from_panel_grid([

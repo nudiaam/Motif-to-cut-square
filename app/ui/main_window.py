@@ -38,6 +38,7 @@ from app.config.machines import (
 )
 from app.demo.demo_image import create_demo_image
 from app.config.bed_references import BedReferences
+from app.diagnostics_log import get_logger
 from app.export.debug_exporter import export_debug_json, export_detection_bundle
 from app.export.svg_exporter import SVGExporter
 from app.export.verifier import verify_export_geometry
@@ -616,7 +617,9 @@ class MainWindow(QMainWindow):
             lambda: self._push_history("Edit panel grid")
         )
         self.canvas.grid_edit_finished.connect(self.finish_grid_edit)
-        self.panel.grid_confirmation_requested.connect(self.confirm_grid)
+        self.panel.grid_confirmation_requested.connect(
+            lambda: self.confirm_grid(background=True)
+        )
         self.panel.detection_confirmation_requested.connect(
             self.confirm_detection
         )
@@ -855,6 +858,7 @@ class MainWindow(QMainWindow):
                 self.image_bgr, settings
             )
         except Exception as exc:  # present processing failures as UI errors
+            get_logger().exception('Detection failed: %s', exc)
             QMessageBox.critical(self, "Detection failed", str(exc))
             return
         finally:
@@ -862,6 +866,7 @@ class MainWindow(QMainWindow):
         self._apply_detection_result(result, self.detector.last_diagnostics)
 
     def _apply_detection_result(self, result, diagnostics):
+        from app.imaging.scene_profile import POLICY
         self._push_history("Detect motifs")
         self.detection_diagnostics = copy.deepcopy(diagnostics)
         candidates = result.candidates
@@ -879,6 +884,8 @@ class MainWindow(QMainWindow):
                 layout_observation_px=candidate.layout_center_px,
                 review_reasons=candidate.review_reasons,
                 source_incomplete=candidate.source_incomplete,
+                cut_region_uncertainty_px=(0. if result.panel_grid and result.panel_grid.source=='manual'
+                    else POLICY.boundary_uncertainty_px*max(1.,max(self.image_bgr.shape[:2])/POLICY.max_scene_side)),
             )
             for index, candidate in enumerate(candidates, start=1)
         ]
@@ -1020,8 +1027,15 @@ class MainWindow(QMainWindow):
         result = self.detector.detect_with_layout(self.image_bgr, settings)
         return result.panel_grid or infer_panel_grid(self.image_bgr, list(result.candidates))
 
-    def confirm_grid(self) -> None:
-        """Apply the chosen layout and re-detect without advancing the workflow."""
+    def confirm_grid(self, *, background: bool = False) -> None:
+        """Apply the chosen layout and re-detect without advancing the workflow.
+
+        The confirm-grid button drives the background worker so the guided
+        re-detection never blocks the interface; calling this synchronously
+        (``background=False``) keeps the deterministic path used by tests.
+        """
+        if self._detection_worker is not None:
+            return
         if self.image_bgr is None:
             self._request_image()
             return
@@ -1036,7 +1050,7 @@ class MainWindow(QMainWindow):
         self._grid_review_complete = self.panel_grid is not None
         self.panel.edit_grid_checkbox.setChecked(False)
         self._set_workflow_phase("detect")
-        self.detect_motifs(replace_confirmed=True)
+        self.detect_motifs(replace_confirmed=True, background=background)
 
     def confirm_detection(self) -> None:
         """Advance only after the user explicitly accepts the detected figures."""
@@ -1285,14 +1299,22 @@ class MainWindow(QMainWindow):
 
     def set_detection_enabled(self, detection_id: int, enabled: bool) -> None:
         detection = self._find_detection(detection_id)
-        if detection is None or detection.enabled == enabled:
+        if detection is None or (detection.enabled == enabled and not (detection.auto_blocked and not enabled)):
             return
-        if enabled and self.mapper is not None and detection.cut_block_reason(self.mapper):
-            self.statusBar().showMessage(detection.cut_block_reason(self.mapper), 7000)
-            self.panel.set_detections(self.detections, self.selected_ids, self.selected_id)
-            return
+        if enabled and self.mapper is not None:
+            hard = detection.cut_hard_block_reason(self.mapper)
+            if hard:
+                # An impossible cut (off the bed, no fabric) cannot be enabled.
+                self.statusBar().showMessage(hard, 7000)
+                self.panel.set_detections(self.detections, self.selected_ids, self.selected_id)
+                return
+            reason = detection.cut_block_reason(self.mapper)
+            if reason:
+                # A panel-boundary crossing on real fabric is a red warning only.
+                self.statusBar().showMessage(reason, 7000)
         self._push_history("Change export inclusion")
         detection.enabled = enabled
+        detection.auto_blocked = False
         self._refresh()
 
     def delete_selected(self) -> None:
@@ -1694,13 +1716,13 @@ class MainWindow(QMainWindow):
         # Inferred cuts cannot contribute evidence to their own grid.
         evidence = [item for item in self.detections
                     if item.bounding_box_px is not None and not item.inferred]
-        signature = (self.detection_panel_grid,self.cut_width_inches,self.cut_height_inches,
+        signature = (self.detection_panel_grid,self.mapper,self.cut_width_inches,self.cut_height_inches,
                      tuple((item.id, item.bounding_box_px, item.layout_observation_px,
-                            item.enabled) for item in evidence))
+                            item.enabled or item.auto_blocked) for item in evidence))
         if signature != self._layout_signature:
             observations = []
             for item in evidence:
-                if item.enabled:
+                if item.enabled or item.auto_blocked:
                     x, y, width, height = item.bounding_box_px
                     observations.append(LayoutObservation(
                         item.id,
@@ -1756,6 +1778,8 @@ class MainWindow(QMainWindow):
             if item.layout_cell in desired:
                 item.source_incomplete = not self.logical_layout.cell_inside_image(
                     *item.layout_cell, self.mapper.image_width_px, self.mapper.image_height_px)
+                item.cut_region_px = self.logical_layout.cell_polygon(*item.layout_cell)
+                item.cut_region_required = True
                 item.place_on_grid(
                     self.logical_layout.position(*item.layout_cell),
                     item.layout_cell,
@@ -1779,6 +1803,9 @@ class MainWindow(QMainWindow):
                 *cell, self.mapper.image_width_px, self.mapper.image_height_px)
             detection.review_reasons = ("No artwork detected here; verify this proposed position",)
             detection.original_center_px = None
+            detection.cut_region_uncertainty_px = max((d.cut_region_uncertainty_px for d in self.detections),default=2.)
+            detection.cut_region_px = self.logical_layout.cell_polygon(*cell)
+            detection.cut_region_required = True
             detection.place_on_grid(position, cell, self.mapper)
             self.detections.append(detection)
             next_id += 1
@@ -1787,12 +1814,14 @@ class MainWindow(QMainWindow):
         self.panel.set_detection_diagnostics(self.detection_diagnostics)
         self._preflight_complete = False
         self._update_logical_layout()
-        # Retain excluded observations for inspection; never offer an unusable
-        # boundary cut or regenerate it as an empty grid cell.
+        # A cut that only crosses its panel on real fabric stays enabled and is
+        # shown in red; the user decides. An impossible cut (off the bed, no
+        # fabric to cut) is auto-excluded — it is not a real cut.
         if self.mapper is not None:
             for detection in self.detections:
-                if detection.cut_block_reason(self.mapper):
+                if detection.enabled and detection.cut_hard_block_reason(self.mapper):
                     detection.enabled = False
+                    detection.auto_blocked = True
         active = [d for d in self.detections if d.enabled]
         if any(d.grid_positioned for d in active) and all(d.preserves_layout_position for d in active):
             self._review_centering_complete = True
@@ -1816,6 +1845,33 @@ class MainWindow(QMainWindow):
         if self._workflow_phase in {"review", "export"}:
             self._update_output_summary()
             self._update_review_controls()
+
+    def _review_guidance_text(self, *, has_image, has_detections, selected_count,
+                              collision_count, invalid_geometry_count) -> str:
+        """The one-line guidance under the review controls.
+
+        Pure: it only reads state and returns the message, so the mutually
+        exclusive cases read as a flat list instead of a long if/elif chain
+        inside the control-refresh method.
+        """
+        if not has_image:
+            return "Load or paste an image to begin."
+        if not has_detections:
+            return "Run Detect figures first. Add a grid only if the result needs it."
+        if not self._detection_review_complete:
+            return "Check the detection · Continue only if every figure is correct."
+        if not self._review_centering_complete:
+            if selected_count:
+                return (f"{selected_count} selected · Shift+click adds more · "
+                        "Delete mistakes, then fix overlaps")
+            if collision_count:
+                return f"{collision_count} overlapping cuts · Fix layout, then center"
+            return "Layout clear · Center cuts on their drawings"
+        if collision_count:
+            return f"Centered · {collision_count} overlapping cuts still need resolution"
+        if invalid_geometry_count:
+            return f"Centered · Review {invalid_geometry_count} clipped or out-of-bed cuts"
+        return "Review the output summary · Export SVG when ready"
 
     def _update_review_controls(self) -> None:
         collision_count = sum(
@@ -1872,42 +1928,10 @@ class MainWindow(QMainWindow):
         self.panel.set_detection_review_state(
             has_detections, self._detection_review_complete, has_image=has_image
         )
-        if not has_image:
-            self.review_guidance.setText("Load or paste an image to begin.")
-        elif not has_detections:
-            self.review_guidance.setText(
-                "Run Detect figures first. Add a grid only if the result needs it."
-            )
-        elif not self._detection_review_complete:
-            self.review_guidance.setText(
-                "Check the detection · Continue only if every figure is correct."
-            )
-        elif not self._review_centering_complete:
-            if selected_count:
-                self.review_guidance.setText(
-                    f"{selected_count} selected · Shift+click adds more · "
-                    "Delete mistakes, then fix overlaps"
-                )
-            elif collision_count:
-                self.review_guidance.setText(
-                    f"{collision_count} overlapping cuts · Fix layout, then center"
-                )
-            else:
-                self.review_guidance.setText(
-                    "Layout clear · Center cuts on their drawings"
-                )
-        elif collision_count:
-            self.review_guidance.setText(
-                f"Centered · {collision_count} overlapping cuts still need resolution"
-            )
-        elif invalid_geometry_count:
-            self.review_guidance.setText(
-                f"Centered · Review {invalid_geometry_count} clipped or out-of-bed cuts"
-            )
-        else:
-            self.review_guidance.setText(
-                "Review the output summary · Export SVG when ready"
-            )
+        self.review_guidance.setText(self._review_guidance_text(
+            has_image=has_image, has_detections=has_detections,
+            selected_count=selected_count, collision_count=collision_count,
+            invalid_geometry_count=invalid_geometry_count))
 
         self._set_workflow_state(
             self.remove_detection_button,

@@ -108,8 +108,8 @@ HELP = {
     "detections_section": "Lists every automatically detected or manually added motif center. A row checkbox controls export inclusion.",
     "total": "The total number of detections currently present.",
     "valid": "Enabled cuts without known geometry or assignment problems. This does not confirm that every intended figure was found: compare the result with the image.",
-    "invalid": "Enabled cuts with overlap, clipped-artwork or assignment warnings. Cuts outside the bed or incomplete in the source image are excluded and cannot be exported.",
-    "disabled": "Cuts excluded manually or because they are outside the bed or incomplete in the photo. Blocked cuts must be corrected before they can be enabled.",
+    "invalid": "Enabled cuts with overlap, clipped-artwork or assignment warnings. Cuts outside their panel or bed, unassigned cuts and incomplete source panels are blocked from export.",
+    "disabled": "Cuts excluded manually or blocked by bed limits, incomplete source or panel boundaries. Blocked cuts must be corrected before they can be enabled.",
     "selected_section": "Shows pixel coordinates, physical coordinates, global cut geometry, boundary status, and export state for the selected detection.",
     "export_units": "SVG units normally follow the working units. Choosing another unit triggers a warning before export because downstream software may interpret unit conversions differently.",
 }
@@ -1115,7 +1115,7 @@ class SidePanel(QWidget):
         warning_ids = set()
         for detection in detections:
             match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
-            blocked = detection.cut_block_reason(self._mapper) if self._mapper else None
+            blocked = detection.cut_hard_block_reason(self._mapper) if self._mapper else None
             if blocked:
                 state = "BLOCKED"
             elif not detection.enabled:
@@ -1157,8 +1157,9 @@ class SidePanel(QWidget):
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             if blocked:
+                # Red warning with the reason, but the cut stays checkable: the
+                # user may still include a cut that does not fit its panel.
                 item.setToolTip(blocked + "\n" + item.toolTip())
-                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(
                 Qt.CheckState.Checked if detection.enabled else Qt.CheckState.Unchecked
             )
@@ -1182,7 +1183,7 @@ class SidePanel(QWidget):
         self.disabled_value_label.setText(str(disabled))
         counts = review_counts(detections, self._mapper, self._logical_layout)
         lines = [f'{LABELS[key]}: {count}' for key,count in counts.items() if count]
-        clipped=sum(d.enabled and d.artwork_clipped for d in detections)
+        clipped=sum((d.enabled or d.auto_blocked) and d.artwork_clipped for d in detections)
         if clipped and detections:
             unit=self._working_unit
             width=from_inches(detections[0].cut_width_inches,unit)
@@ -1190,9 +1191,14 @@ class SidePanel(QWidget):
             lines.insert(0,f'Selected {width:g} × {height:g} {unit.value} cuts do not contain {clipped} artwork groups. Adjust cut size or verify image scale.')
         if detections:
             lines.append('Dashed cyan: detected artwork. Solid outlines: cuts.')
-        blocked_count = sum(bool(d.cut_block_reason(self._mapper)) for d in detections) if self._mapper else 0
+        region_blocked = sum(bool((d.cut_block_reason(self._mapper) or '').startswith(
+            ('Cut crosses its panel','No safe panel region'))) for d in detections) if self._mapper else 0
+        blocked_count = (sum(bool(d.cut_block_reason(self._mapper)) for d in detections)-region_blocked
+                         if self._mapper else 0)
         if blocked_count:
             lines.append(f'Excluded — outside bed / incomplete image: {blocked_count}')
+        if region_blocked:
+            lines.append(f'Blocked — panel boundary / unassigned region: {region_blocked}. Adjust cut size, image scale or panel guides.')
         self.review_breakdown_label.setText('\n'.join(lines) + ('\nA cut can have several warnings.' if lines else ''))
         self.review_breakdown_label.setVisible(bool(lines))
         spacing = physical_spacing(self._mapper, self._logical_layout,

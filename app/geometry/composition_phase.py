@@ -1,6 +1,7 @@
 """Find a shared translation that contains complete artwork at the chosen size."""
 from dataclasses import replace
 import numpy as np
+from .cut_region import rectangle_inside_region
 
 
 def contain_automatic_compositions(layout,detections,mapper,width_inches,height_inches):
@@ -29,10 +30,19 @@ def contain_automatic_compositions(layout,detections,mapper,width_inches,height_
     if np.linalg.norm(delta)<1e-6:return layout
     pitch=min(np.linalg.norm(layout.column_vector_px),np.linalg.norm(layout.row_vector_px))
     if np.linalg.norm(delta)>pitch*.20:return layout
+    regions=tuple(layout.cell_polygon(c,r) for r in range(layout.rows) for c in range(layout.columns))
+    by_id={d.id:d for d in active}
+    for match in layout.matches:
+        polygon=tuple(mapper.pixel_to_inches(*p) for p in regions[match.row*layout.columns+match.column])
+        target=mapper.pixel_to_inches(*(np.asarray(layout.position(match.column,match.row))+delta))
+        if not rectangle_inside_region(target,(width_inches,height_inches),polygon,by_id[match.detection_id].region_clearance_inches(mapper)):
+            return layout
     projection=layout.projection
     if projection is not None:
         matrix=np.array([[1.,0.,delta[0]],[0.,1.,delta[1]],[0.,0.,1.]])@np.asarray(projection)
         projection=tuple(tuple(float(v) for v in line) for line in matrix)
     shifted=tuple(replace(m,proposed_px=tuple(np.asarray(m.proposed_px)+delta)) for m in layout.matches)
     return replace(layout,origin_px=tuple(np.asarray(layout.origin_px)+delta),projection=projection,matches=shifted,
+                   x_boundaries_px=tuple(x+delta[0] for x in layout.x_boundaries_px),
+                   y_boundaries_px=tuple(y+delta[1] for y in layout.y_boundaries_px),cell_regions_px=regions,
                    reason='Common cut phase contains the complete compositions at the selected size.')

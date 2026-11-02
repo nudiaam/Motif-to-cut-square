@@ -64,6 +64,10 @@ def export_debug_json(
                 "artwork_clipped": detection.artwork_clipped,
                 "review_reasons": detection.review_reasons,
                 "source_incomplete": detection.source_incomplete,
+                "cut_region_px": detection.cut_region_px,
+                "cut_region_required": detection.cut_region_required,
+                "auto_blocked": detection.auto_blocked,
+                "cut_region_uncertainty_px": detection.cut_region_uncertainty_px,
                 "cut_block_reason": detection.cut_block_reason(mapper),
                 "manual": detection.manual,
                 "score": detection.score,
@@ -131,7 +135,14 @@ def export_detection_bundle(path, image, reference, mapper, detections, **kwargs
                         raise ValueError('Could not encode the bed reference.')
                     bundle.writestr('reference.png', encoded.tobytes())
                     reference_note = 'reference.png is the exact reference selected for this run (whether matched or rejected).'
+            from app.diagnostics_log import log_file_path
+            log_path = log_file_path()
+            if log_path is not None and Path(log_path).exists():
+                bundle.write(log_path, 'detection.log')
+                log_note = 'detection.log is the rolling application log (text only, no images).'
+            else:
+                log_note = 'No application log was available for this run.'
             bundle.writestr('README.txt', 'Diagnostic package. source.png preserves the original decoded pixels, without overlays.\n'
-                             'report.json contains detection-time settings and the currently reviewed cuts.\n'+reference_note+'\n')
+                             'report.json contains detection-time settings and the currently reviewed cuts.\n'+reference_note+'\n'+log_note+'\n')
         archive.replace(output)
     return output

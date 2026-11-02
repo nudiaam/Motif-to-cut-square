@@ -67,6 +67,9 @@ class NumberCompositionTests(unittest.TestCase):
         window.detect_motifs();application.processEvents()
         self.assertEqual(len(window.detections),20)
         self.assertTrue(all(d.grid_positioned and not d.inferred for d in window.detections))
+        # Grouping is independent of whether a five-inch cut fits its region.
+        self.assertTrue(all(d.enabled or d.cut_block_reason(window.mapper) for d in window.detections))
+        window.change_cut_size(1.,1.)
         self.assertEqual(sum(d.enabled for d in window.detections),20)
         window.confirm_detection()
         self.assertEqual(len(window.detections),20)

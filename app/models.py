@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.cut_square import CutSquare
+from app.geometry.cut_region import CUT_REGION_CLEARANCE_IN, rectangle_inside_region, fit_center_in_region
 from app.imaging.logical_layout import LogicalLayout
 
 
@@ -31,6 +32,10 @@ class Detection:
     layout_observation_px: tuple[float, float] | None = None
     review_reasons: tuple[str, ...] = ()
     source_incomplete: bool = False
+    cut_region_px: tuple[tuple[float, float], ...] | None = None
+    cut_region_required: bool = False
+    auto_blocked: bool = False
+    cut_region_uncertainty_px: float = 0.
 
     @classmethod
     def from_pixel_center(
@@ -47,6 +52,7 @@ class Detection:
         layout_observation_px: tuple[float, float] | None = None,
         review_reasons: tuple[str, ...] = (),
         source_incomplete: bool = False,
+        cut_region_uncertainty_px: float = 0.,
     ) -> "Detection":
         center_inches = mapper.pixel_to_inches(*center_px)
         square = CutSquare.centered_at(
@@ -71,6 +77,7 @@ class Detection:
             ),
             review_reasons=review_reasons,
             source_incomplete=source_incomplete,
+            cut_region_uncertainty_px=cut_region_uncertainty_px,
         )
         detection._update_validity(mapper)
         return detection
@@ -212,17 +219,41 @@ class Detection:
             mapper.bed_width_in, mapper.bed_height_in
         ) and (self.preserves_layout_position or not self.artwork_clipped) and not self.cut_block_reason(mapper)
 
-    def cut_block_reason(self, mapper: CoordinateMapper) -> str | None:
-        """Hard limits, checked from current geometry even when state is stale."""
+    def cut_hard_block_reason(self, mapper: CoordinateMapper) -> str | None:
+        """A cut that is impossible to make: no whole composition, off the bed,
+        or no safe panel to cut in. These are auto-excluded from the result and
+        from export — not worth showing as cuts. A cut that only crosses its
+        panel on real fabric is instead a red warning (see `cut_block_reason`)
+        the user may still export, because it is a cutting decision.
+        Checked from current geometry even when cached state is stale."""
         if self.source_incomplete:
             return "Incomplete source image — load a photo showing the whole composition"
         if not self.square_inches.is_valid(mapper.bed_width_in, mapper.bed_height_in):
             return "Cut extends outside the bed"
+        if self.cut_region_required and self.cut_region_px is None:
+            return "No safe panel region assigned — review the panel guides before exporting"
         if self.bounding_box_px is not None:
             x, y, w, h = mapper.pixel_rect_to_inches(self.bounding_box_px)
             if x < -1e-9 or y < -1e-9 or x+w > mapper.bed_width_in+1e-9 or y+h > mapper.bed_height_in+1e-9:
                 return "Artwork extends outside the bed"
         return None
+
+    def cut_block_reason(self, mapper: CoordinateMapper) -> str | None:
+        """Any reason a cut is flagged red: a hard block that cannot be cut, or a
+        panel-boundary crossing on real fabric (a warning the user may export)."""
+        hard = self.cut_hard_block_reason(mapper)
+        if hard is not None:
+            return hard
+        if self.cut_region_px is not None:
+            polygon = tuple(mapper.pixel_to_inches(*p) for p in self.cut_region_px)
+            if not rectangle_inside_region(self.center_inches,
+                    (self.cut_width_inches,self.cut_height_inches),polygon,self.region_clearance_inches(mapper)):
+                return "Cut crosses its panel boundary or lacks the required clearance — adjust the cut size or panel guides"
+        return None
+
+    def region_clearance_inches(self,mapper):
+        return max(CUT_REGION_CLEARANCE_IN,self.cut_region_uncertainty_px/mapper.px_per_inch_x,
+                   self.cut_region_uncertainty_px/mapper.px_per_inch_y)
 
 
 def recalculate_cut_overlaps(
@@ -484,15 +515,49 @@ def apply_logical_layout(
         return [], []
     matches = {match.detection_id: match for match in layout.matches}
     moved = []
-    active = [item for item in detections if item.enabled]
+    active = [item for item in detections if item.enabled or item.auto_blocked]
     for detection in active:
         match = matches.get(detection.id)
+        detection.cut_region_required = True
+        if match is not None and match.status == "matched" and match.column is not None and match.row is not None:
+            detection.cut_region_px = layout.cell_polygon(match.column,match.row)
+            detection.recalculate_for_mapper(mapper)
+        elif detection.manual:
+            if detection.layout_cell is not None:
+                col,row = detection.layout_cell
+            else:
+                c,r = layout.coordinates(*detection.center_px)
+                col,row = int(c+.5) if c >= -.5 else -1,int(r+.5) if r >= -.5 else -1
+            detection.cut_region_px = (layout.cell_polygon(col,row)
+                if 0 <= col < layout.columns and 0 <= row < layout.rows else None)
+            detection.recalculate_for_mapper(mapper)
+        else:
+            detection.cut_region_px = None
+            detection.recalculate_for_mapper(mapper)
         if detection.manual or match is None or match.status != "matched":
             continue
         if match.column is None or match.row is None:
             continue
         original = detection.center_inches
-        detection.place_on_grid(layout.position(match.column, match.row),
+        position = layout.position(match.column,match.row)
+        polygon = tuple(mapper.pixel_to_inches(*p) for p in detection.cut_region_px)
+        target = mapper.pixel_to_inches(*position)
+        size = (detection.cut_width_inches,detection.cut_height_inches)
+        clearance = detection.region_clearance_inches(mapper)
+        if not rectangle_inside_region(target,size,polygon,clearance):
+            hw,hh = size[0]/2,size[1]/2
+            bounds = (hw,hh,mapper.bed_width_in-hw,mapper.bed_height_in-hh)
+            artwork_bounds = bounds
+            if detection.bounding_box_px is not None:
+                x,y,w,h = mapper.pixel_rect_to_inches(detection.bounding_box_px)
+                artwork_bounds = (max(bounds[0],x+w-hw),max(bounds[1],y+h-hh),
+                                  min(bounds[2],x+hw),min(bounds[3],y+hh))
+            fitted = fit_center_in_region(target,size,polygon,clearance,artwork_bounds)
+            if fitted is None:
+                fitted = fit_center_in_region(target,size,polygon,clearance,bounds)
+            if fitted is not None:
+                position = mapper.inches_to_pixel(*fitted)
+        detection.place_on_grid(position,
                                 (match.column, match.row), mapper)
         if _distance_squared(original, detection.center_inches) > 1e-12:
             moved.append(detection.id)

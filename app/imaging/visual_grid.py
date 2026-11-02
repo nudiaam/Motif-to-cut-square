@@ -9,8 +9,85 @@ from __future__ import annotations
 
 import cv2
 import numpy as np
+from dataclasses import replace
 
 from .panel_grid import PanelGrid
+from .scene_profile import POLICY
+
+
+def refine_printed_boundaries(image_bgr,grid):
+    """Refine sustained touching seams locally, without fitting a mean pitch.
+
+    Gutter pairs and artwork-only edges do not establish a single seam. This
+    refinement never changes dimensions or overrides manual/projective guides.
+    """
+    if grid is None or grid.source not in ('visual','seam_consensus') or grid.lattice is not None:
+        return grid
+    h,w = image_bgr.shape[:2]
+    scale = min(1.,POLICY.max_scene_side/max(h,w))
+    small = cv2.resize(image_bgr,(round(w*scale),round(h*scale)),interpolation=cv2.INTER_AREA)
+    lab = cv2.cvtColor(small,cv2.COLOR_BGR2LAB).astype(np.float32)
+    fx,fy,fw,fh = _fabric_bounds(small)
+    lines = (np.asarray(grid.x_lines_px)*scale,np.asarray(grid.y_lines_px)*scale)
+    refined = []
+    for axis,expected in zip((1,0),lines):
+        perpendicular = lines[1 if axis == 1 else 0]
+        a,b = int(np.ceil(perpendicular[0])),int(np.floor(perpendicular[-1]))
+        crop = lab[max(0,a):min(small.shape[0],b)] if axis == 1 else lab[:,max(0,a):min(small.shape[1],b)]
+        if min(crop.shape[:2]) < 20:
+            return grid
+        readings = []
+        pitch = float(np.median(np.diff(expected)))
+        for gap in (2,4):
+            softened = cv2.GaussianBlur(crop,(0,0),1.)
+            along = np.swapaxes(softened,0,axis)
+            difference = np.linalg.norm(along[gap:]-along[:-gap],axis=2)
+            profile = np.pad(np.percentile(difference,20,axis=1),(gap//2,gap//2))
+            measured = []
+            for boundary_index,position in enumerate(expected):
+                signal = profile
+                left,right = max(1,int(position-pitch*.18)),min(len(profile)-1,int(position+pitch*.18)+1)
+                if right <= left:
+                    measured.append(None);continue
+                peaks = [p for p in range(left,right) if signal[p]>=signal[p-1] and signal[p]>signal[p+1]]
+                if boundary_index in (0,len(expected)-1):
+                    # A bed/cloth transition is often stronger than the print
+                    # edge. It must not expand a printed cell into the border.
+                    cloth_lo,cloth_hi = (fx,fx+fw) if axis == 1 else (fy,fy+fh)
+                    inset = max(3.,pitch*.035)
+                    peaks = [p for p in peaks if cloth_lo+inset < p < cloth_hi-inset]
+                    noise = signal[max(left,int(np.ceil(cloth_lo+inset))):min(right,int(np.floor(cloth_hi-inset))+1)]
+                else:
+                    noise = signal
+                if not len(noise):
+                    measured.append(None);continue
+                # The outer cloth band has a different noise floor from the
+                # illustrated interior; use its local baseline, still requiring
+                # the same seam at two scales.
+                floor = float(np.median(noise))
+                mad = float(np.median(abs(noise-floor)))
+                peaks.sort(key=lambda p:signal[p],reverse=True)
+                if not peaks or signal[peaks[0]] < max(1.5,floor+4*mad):
+                    measured.append(None);continue
+                strongest = peaks[0]
+                if any(abs(p-strongest)>gap*2 and signal[p]>=signal[strongest]*.65 for p in peaks[1:]):
+                    measured.append(None);continue
+                measured.append(float(strongest))
+            readings.append(measured)
+        chosen = expected.copy()
+        accepted = []
+        for i,(a,b) in enumerate(zip(*readings)):
+            if a is not None and b is not None and abs(a-b)<=2.:
+                chosen[i]=(a+b)/2
+                accepted.append(i)
+        # Both axes need repeated independent seam evidence. Avoid turning a
+        # few motif edges into a replacement for a supported global layout.
+        if sum(0<i<len(expected)-1 for i in accepted) < max(1,int(np.ceil((len(expected)-2)*.75))):
+            return grid
+        if np.any(np.diff(chosen)<pitch*.65):
+            return grid
+        refined.append(tuple(float(v/scale) for v in chosen))
+    return replace(grid,x_lines_px=refined[0],y_lines_px=refined[1])
 
 
 def _fabric_bounds(image: np.ndarray) -> tuple[int, int, int, int]:

@@ -1,6 +1,7 @@
 """A job owns its pixels and detector; only the GUI thread applies its result."""
 from threading import Event
 from PySide6.QtCore import QThread, Signal
+from app.diagnostics_log import get_logger
 from app.imaging.detector import MotifDetector
 
 
@@ -43,4 +44,7 @@ class DetectionWorker(QThread):
             pass
         except Exception as exc:
             if not self.cancelled.is_set():
+                # The UI shows a short message; the full traceback goes to the
+                # rotating log so a field failure leaves evidence to attach.
+                get_logger().exception('Detection failed: %s', exc)
                 self.failed.emit(str(exc))

@@ -1,5 +1,52 @@
 # Change log
 
+## 2026-11-02 — Edge false positives, cut blocking by reason, faster analysis
+
+- Drop a regular lattice band extrapolated off the photographed cloth, and
+  off-grid edge slivers that cannot form a square cut, so a side margin of the
+  laser bed is no longer detected as an extra column of panels.
+- Separate impossible cuts from on-fabric warnings. A cut that is off the bed,
+  on no fabric, from an incomplete photo or with no assigned panel is auto-
+  excluded and never exported. A cut that only crosses its panel on real fabric
+  is shown in red and left to the operator, who may still export it.
+- Keep the bounded-resolution analysis that lets large customer photos process
+  much faster without changing the detected geometry.
+- Full regression suite passing (274 tests).
+
+## 2026-10-25 — Guard cut regions and bound expensive image analysis
+
+- Keep exact local panel divisions and refine supported visible seams without
+  replacing individual cell sizes by their mean spacing.
+- Attach convex cut regions to assigned cuts, retain them after manual movement
+  and block boundary crossings in placement, review, verification and SVG export.
+  Preserve requested dimensions and manual exclusions; restore automatic
+  inclusion when a corrected size makes the cut feasible.
+- Retain inputs up to a 2048-pixel maximum side; analyse larger inputs at 1536,
+  preserving original coordinates, physical placement and source images. Bound
+  local extent review, reuse contrast fields and aggregate component statistics.
+- Remove only unsupported outer grid strips; preserve partial source content.
+  Require local evidence for additions to empty printed cells and prevent a
+  replacement partition from erasing a complete detected row under shadow.
+- See the [implementation and validation report](docs/qa/customer-20261025/correccion.md)
+  for tests, measured performance, corrected regressions and remaining limits.
+
+## 2026-10-25 — Cut-boundary and performance diagnosis (documentation only)
+
+- Audit the eight customer screenshots and reproduce cuts crossing their cell
+  boundaries while remaining green and included in SVG output.
+- Document local-boundary regularization, cut orientation, calibration limits,
+  excluded lateral detections and measured processing costs.
+- Record reproducible geometry probes, four clean control runs, profiles,
+  resolution/thread comparisons and 35 passing existing tests.
+- Require performance validation on representative customer hardware; this
+  unusually powerful workstation is not an acceptance benchmark. Customer
+  originals and diagnostic packages remain pending. No application fix is
+  included. See the [diagnosis and evidence](docs/qa/customer-20261025/README.md).
+- Record the proposed bounded-resolution analysis (initial maximum side 1280),
+  local detail checks, shared preprocessing and mandatory region containment.
+  Clarify that the diagnostic script is internal and requires no customer
+  reinstall. This proposal remains unimplemented and unvalidated.
+
 ## 2026-10-14 — Whole-source grouping and sustained fabric recovery
 
 - Infer composition geometry from stable whitespace at several grouping scales

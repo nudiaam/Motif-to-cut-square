@@ -17,6 +17,90 @@ if TYPE_CHECKING:
     from .detector import MotifCandidate
 
 
+def restrict_grid_to_fabric(grid, candidates, mask):
+    """Remove only wholly unsupported peripheral strips, never partial motifs.
+
+    A single cloth-supported observation protects its row/column. Printed or
+    partially visible source content must remain available for review.
+    """
+    if grid is None or mask is None or grid.source == 'manual' or not np.any(mask):
+        return grid
+    from .logical_layout import layout_from_panel_grid
+    layout = layout_from_panel_grid([],grid)
+    height,width = mask.shape
+    supported = np.zeros((grid.rows,grid.columns),bool)
+    for r in range(grid.rows):
+        for c in range(grid.columns):
+            polygon = np.asarray(layout.cell_polygon(c,r))
+            points = []
+            for v in np.linspace(.05,.95,7):
+                for u in np.linspace(.05,.95,7):
+                    points.append((1-v)*((1-u)*polygon[0]+u*polygon[1])+
+                                  v*((1-u)*polygon[3]+u*polygon[2]))
+            pixels = [(int(x),int(y)) for x,y in points if 0 <= x < width and 0 <= y < height]
+            supported[r,c] = sum(bool(mask[y,x]) for x,y in pixels) >= 5
+    for candidate in candidates:
+        x,y = candidate.layout_center_px or candidate.center_px
+        if not (0 <= x < width and 0 <= y < height and mask[int(y),int(x)]):
+            continue
+        c,r = layout.coordinates(x,y)
+        c,r = int(np.floor(c+.5)),int(np.floor(r+.5))
+        if 0 <= c < grid.columns and 0 <= r < grid.rows:
+            supported[r,c] = True
+    return _trim_unsupported_strips(grid,supported)
+
+
+def _trim_unsupported_strips(grid, supported):
+    """Drop only wholly unsupported outer rows/columns, keeping lattice phase.
+
+    `supported` is a rows x columns boolean of cells with independent evidence.
+    Interior lines are never removed and the grid never shrinks below 2x2.
+    """
+    left,top,right,bottom = 0,0,grid.columns,grid.rows
+    while right-left > 2 and not supported[top:bottom,left].any(): left += 1
+    while right-left > 2 and not supported[top:bottom,right-1].any(): right -= 1
+    while bottom-top > 2 and not supported[top,left:right].any(): top += 1
+    while bottom-top > 2 and not supported[bottom-1,left:right].any(): bottom -= 1
+    if (left,top,right,bottom) == (0,0,grid.columns,grid.rows):
+        return grid
+    lattice = grid.lattice
+    if lattice is not None:
+        origin,col,row = lattice
+        lattice = ((origin[0]+left*col[0]+top*row[0],origin[1]+left*col[1]+top*row[1]),col,row)
+    projection = grid.projection
+    if projection is not None:
+        matrix = np.asarray(projection) @ np.array([[1.,0.,left],[0.,1.,top],[0.,0.,1.]])
+        projection = tuple(tuple(float(v) for v in row) for row in matrix)
+    return replace(grid,x_lines_px=grid.x_lines_px[left:right+1],
+                   y_lines_px=grid.y_lines_px[top:bottom+1],lattice=lattice,projection=projection)
+
+
+def clip_lattice_off_image(grid, image_shape):
+    """Remove phantom outer bands of a regular lattice whose cells fall off frame.
+
+    A lattice fitted to motif anchors can extrapolate a row or column past the
+    photographed edge, where no real panel exists (the grey-collection seventh
+    column, centred beyond the right image border). A cut placed there would run
+    off the cloth onto the laser bed. Only peripheral bands whose every cell
+    centre lies outside the image are dropped — a frame-independent test, so an
+    uneven shadow that merely darkens real cells never removes them. Interior
+    geometry is untouched and non-lattice grids keep their own boundary handling.
+    """
+    if grid is None or grid.lattice is None or grid.source == 'manual':
+        return grid
+    from .logical_layout import layout_from_panel_grid
+    layout = layout_from_panel_grid([],grid)
+    height,width = image_shape[:2]
+    supported = np.zeros((grid.rows,grid.columns),bool)
+    for r in range(grid.rows):
+        for c in range(grid.columns):
+            x,y = layout.position(c,r)
+            supported[r,c] = 0 <= x < width and 0 <= y < height
+    if supported.all():
+        return grid
+    return _trim_unsupported_strips(grid,supported)
+
+
 def _intersection(a, b):
     ax, ay, aw, ah = a
     bx, by, bw, bh = b

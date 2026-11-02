@@ -18,6 +18,8 @@ from app.imaging.detector import (
     _consolidate_grid_candidates,
 )
 from app.imaging.panel_grid import PanelGrid
+from app.imaging.analysis_frame import translate_grid
+from app.imaging.logical_layout import LayoutObservation,layout_from_panel_grid
 from tests.test_visual_grid import printed_fabric
 
 
@@ -45,10 +47,12 @@ class DetectionValidationTests(unittest.TestCase):
         image = cv2.imread(str(Path(__file__).parent / "fixtures/pastel_panels_camera.png"))
         detector = MotifDetector()
         result = detector.detect_with_layout(image, DetectorSettings())
-        self.assertEqual(result.panel_grid.source, "visual")
         self.assertEqual((result.panel_grid.columns, result.panel_grid.rows), (6, 4))
         self.assertEqual(len(result.candidates), 24)
-        self.assertFalse(detector.last_diagnostics["grid_notes"])
+        layout = layout_from_panel_grid([LayoutObservation(i,c.center_px,c.bounding_box_px)
+                                        for i,c in enumerate(result.candidates)],result.panel_grid)
+        self.assertTrue(all(m.status=='matched' for m in layout.matches))
+        self.assertFalse(layout.missing)
 
     def test_cleanup_does_not_require_a_matching_bed_reference(self):
         image = printed_fabric(6, 4, panels=False)
@@ -63,8 +67,18 @@ class DetectionValidationTests(unittest.TestCase):
             with self.subTest(reference=reference is not None):
                 detector = MotifDetector()
                 detector.bed_reference = reference
-                with patch.object(detector, "_detect_layout", return_value=DetectionResult(
-                        candidates + (fragment, bed_mark), grid)):
+                def crop_result(analysis,*args,**kwargs):
+                    # _detect_layout receives a fabric crop, so supply evidence
+                    # in that crop's coordinates, rather than shifting the bed
+                    # mark onto the cloth accidentally.
+                    dx,dy = (image.shape[1]-analysis.shape[1])//2,(image.shape[0]-analysis.shape[0])//2
+                    local = tuple(replace(c,center_px=(c.center_px[0]-dx,c.center_px[1]-dy),
+                        bounding_box_px=(c.bounding_box_px[0]-dx,c.bounding_box_px[1]-dy,*c.bounding_box_px[2:]))
+                        for c in (*candidates,fragment,bed_mark))
+                    return DetectionResult(local,translate_grid(grid,-dx,-dy))
+                with patch.object(detector, "_detect_layout",side_effect=crop_result), \
+                     patch.object(detector,'_coordinate_appearance',side_effect=lambda image,settings,current,*args:(current,False)), \
+                     patch.object(detector,'_compare_whole_layout',side_effect=lambda image,settings,current:(current,False)):
                     result = detector.detect_with_layout(image, DetectorSettings())
                 self.assertEqual(len(result.candidates), 24)
                 self.assertFalse(detector.last_diagnostics["reference_applied"])

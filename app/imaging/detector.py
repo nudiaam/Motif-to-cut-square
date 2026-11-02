@@ -26,7 +26,7 @@ from .composition_evidence import shared_compositions
 from .content_preservation import foreground_mask, preservation
 
 
-DETECTOR_REVISION = "2026-10-14-whole-ink-layout-validation"
+DETECTOR_REVISION = "2026-10-25-bounded-analysis-and-cut-regions"
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +55,17 @@ class MotifCandidate:
 class DetectionResult:
     candidates: tuple[MotifCandidate, ...]
     panel_grid: PanelGrid | None = None
+
+
+def _scale_candidate(candidate,sx,sy,width,height):
+    x,y,w,h = candidate.bounding_box_px
+    left,top = max(0,int(np.floor(x*sx))),max(0,int(np.floor(y*sy)))
+    right,bottom = min(width,int(np.ceil((x+w)*sx))),min(height,int(np.ceil((y+h)*sy)))
+    return replace(candidate,center_px=(candidate.center_px[0]*sx,candidate.center_px[1]*sy),
+        bounding_box_px=(left,top,max(1,right-left),max(1,bottom-top)),
+        area_px=max(1,round(candidate.area_px*sx*sy)),
+        layout_center_px=((candidate.layout_center_px[0]*sx,candidate.layout_center_px[1]*sy)
+                          if candidate.layout_center_px is not None else None))
 
 
 def _inside_fabric(candidate: MotifCandidate, mask: np.ndarray | None) -> bool:
@@ -181,9 +192,65 @@ class MotifDetector:
             self.progress_callback(stage)
 
     def detect_with_layout(self, image_bgr, settings):
+        try:
+            return self._detect_bounded_layout(image_bgr,settings)
+        finally:
+            self._contrast_cache = None
+
+    def _detect_bounded_layout(self, image_bgr, settings):
+        """Bound global work; return all public geometry in original pixels."""
+        from .analysis_frame import scale_grid
+        self._validate_image(image_bgr)
+        started = perf_counter()
+        h,w = image_bgr.shape[:2]
+        # Retain medium-resolution originals: resampling them can change faint
+        # components and phase without meaningful memory savings. Larger inputs
+        # use the smaller working tier, so expensive work remains bounded.
+        factor = (1. if max(h,w) <= POLICY.max_native_detection_side
+                  else POLICY.max_detection_side/max(h,w))
+        if factor == 1.:
+            result = self._detect_at_analysis_resolution(image_bgr,settings)
+            self.last_diagnostics['analysis_frame'] = {
+                'source_size_px':[w,h],'working_size_px':[w,h],'scale_xy':[1.,1.],
+                'max_side_px':POLICY.max_native_detection_side,
+                'large_image_working_side_px':POLICY.max_detection_side,'public_geometry':'source_pixels'}
+            return result
+        small = cv2.resize(image_bgr,(max(1,round(w*factor)),max(1,round(h*factor))),
+                           interpolation=cv2.INTER_AREA)
+        sx,sy = small.shape[1]/w,small.shape[0]/h
+        local_settings = replace(settings,minimum_area_px=max(1,round(settings.minimum_area_px*sx*sy)),
+            merge_distance_px_x=settings.merge_distance_px_x*sx,
+            merge_distance_px_y=settings.merge_distance_px_y*sy)
+        result = self._detect_at_analysis_resolution(small,local_settings)
+        grid = scale_grid(result.panel_grid,1/sx,1/sy)
+        candidates = tuple(_scale_candidate(c,1/sx,1/sy,w,h) for c in result.candidates)
+        self._progress('Verifying artwork detail in original-image regions')
+        fine_started = perf_counter()
+        candidates = review_extents(image_bgr,candidates,grid)
+        diagnostics = self.last_diagnostics
+        diagnostics.update(identity=run_identity(image_bgr,self.bed_reference,asdict(settings)),
+            settings=asdict(settings),image_size_px=[w,h],grid=asdict(grid) if grid else None,
+            result_sha256=result_identity(candidates,grid),
+            compositions_needing_extent_review=sum(bool(c.review_reasons) for c in candidates),
+            analysis_frame={'source_size_px':[w,h],'working_size_px':[small.shape[1],small.shape[0]],
+                'scale_xy':[sx,sy],'max_side_px':POLICY.max_native_detection_side,
+                'large_image_working_side_px':POLICY.max_detection_side,
+                'public_geometry':'source_pixels','detection_plans_geometry':'working_pixels'})
+        if diagnostics.get('analysis_bounds_px') is not None:
+            left,top,right,bottom = diagnostics['analysis_bounds_px']
+            diagnostics['analysis_bounds_px'] = [left/sx,top/sy,right/sx,bottom/sy]
+        if diagnostics.get('illumination') is not None:
+            first,last = diagnostics['illumination']['affected_y_px']
+            diagnostics['illumination']['affected_y_px'] = [round(first/sy),round(last/sy)]
+        diagnostics['timings_seconds']['source_detail_review'] = perf_counter()-fine_started
+        diagnostics['timings_seconds']['total'] = perf_counter()-started
+        return DetectionResult(candidates,grid)
+
+    def _detect_at_analysis_resolution(self, image_bgr, settings):
         from .bed_reference import locate_fabric, locate_bright_fabric, extend_to_fabric
         from .logical_layout import LayoutObservation, fit_logical_layout, layout_from_panel_grid
         self._validate_image(image_bgr)
+        self._contrast_cache = {}
         started = perf_counter()
         timings = {}
         self._progress('Analysing image and bed reference')
@@ -210,6 +277,10 @@ class MotifDetector:
                     # A shadow can make the original support incomplete. Keep
                     # either view's evidence, never intersect away dark artwork.
                     mask = cv2.bitwise_or(mask, expanded.mask)
+        # Where there is fabric is independent of the permission to recover
+        # artwork outside a tentative mask. Keep this evidence so peripheral
+        # strip removal still runs after an appearance recovery clears `mask`.
+        fabric_mask = mask
         analysis_bounds = None
         timings['reference_and_illumination'] = perf_counter()-started
         phase = perf_counter()
@@ -285,7 +356,9 @@ class MotifDetector:
                     self._plans.append({'stage':'hierarchical_compositions',**support})
                     self._grid_notes.append('Repeated primary anchors and complete small-part ownership agree')
             if recovered:
-                # Original-pixel local support supersedes a tentative bright mask.
+                # Original-pixel local support supersedes a tentative bright mask
+                # for keeping shadowed artwork; `fabric_mask` still records where
+                # cloth was seen, for peripheral strip removal below.
                 mask = None
                 analysis_bounds = None
         timings['appearance'] = perf_counter()-phase
@@ -315,12 +388,51 @@ class MotifDetector:
                     layout.confidence, "fabric", (origin, col, row), layout.projection,
                 )
         final_grid = extended or grid
+        from .visual_grid import refine_printed_boundaries
+        refined = refine_printed_boundaries(image_bgr,final_grid)
+        if refined != final_grid:
+            self._grid_notes.append('Refined printed boundaries with sustained local seams; retained individual cell sizes')
+            final_grid = refined
+        from .grid_guidance import restrict_grid_to_fabric, clip_lattice_off_image
+        restricted = restrict_grid_to_fabric(final_grid,candidates,fabric_mask)
+        if restricted != final_grid:
+            self._grid_notes.append('Removed peripheral grid strips with no fabric or artwork support')
+            final_grid = restricted
+        # A regular lattice can extrapolate a row or column past the photographed
+        # edge (the grey seventh column, centred off-frame). Drop any band whose
+        # cells all lie outside the image; a cut there would run onto the bed.
+        if final_grid is not None and final_grid.lattice is not None:
+            clipped = clip_lattice_off_image(final_grid,image_bgr.shape)
+            if clipped != final_grid:
+                self._grid_notes.append('Dropped a lattice band extrapolated off the photographed edge')
+                final_grid = clipped
         for ambiguous in self._ambiguous_grids:
             if final_grid is not None and grid_distance(final_grid, ambiguous) < .08:
                 final_grid = replace(final_grid, review_reasons=tuple(dict.fromkeys((
                     *final_grid.review_reasons,
                     'Competing panel layouts have similar support; verify grid position'))))
         candidates = self.finalize_compositions(image_bgr, candidates, final_grid)
+        if final_grid is not None and final_grid.lattice is not None and candidates:
+            # The machine only cuts 5x5 squares. A detection that sits off the
+            # panel grid and whose box is a thin rectangle, not a square, is a
+            # fabric-edge/bed sliver (the grey right margin), never a panel. It
+            # could only ever be an invalid oblong cut, so it is dropped here and
+            # the final result shows squares only. An in-grid motif, even a tall
+            # one assigned to its cell, is always kept.
+            from .logical_layout import layout_from_panel_grid
+            panel_layout = layout_from_panel_grid([], final_grid)
+            def _is_panel(candidate):
+                x, y = candidate.layout_center_px or candidate.center_px
+                col, row = panel_layout.coordinates(x, y)
+                on_grid = (-.5 <= col <= final_grid.columns-.5
+                           and -.5 <= row <= final_grid.rows-.5)
+                bw, bh = candidate.bounding_box_px[2], candidate.bounding_box_px[3]
+                square_like = min(bw, bh) >= .5*max(bw, bh)
+                return on_grid or square_like
+            kept = tuple(c for c in candidates if _is_panel(c))
+            if len(kept) != len(candidates):
+                self._grid_notes.append('Discarded off-grid edge slivers that cannot form a square cut')
+                candidates = kept
         if illumination is not None:
             first,last=illumination['affected_y_px']
             candidates=tuple(replace(c,review_reasons=tuple(dict.fromkeys((*c.review_reasons,
@@ -374,8 +486,27 @@ class MotifDetector:
             improvement=(grid is None or len(current.candidates)!=len(whole)
                 or (reverse is not None and not reverse['approved']))
             accepted=improvement and (before is None or before['approved'])
+            added_cells_supported = None
+            if (accepted and grid is not None and grid.source in ('visual','camera','seam_consensus','reference')
+                    and len(whole)>len(current.candidates)
+                    and (grid.columns,grid.rows)==(candidate_grid.columns,candidate_grid.rows)
+                    and grid_distance(grid,candidate_grid)<.15):
+                from .logical_layout import layout_from_panel_grid
+                layout = layout_from_panel_grid([],grid)
+                def cell(candidate):
+                    c,r = layout.coordinates(*(candidate.layout_center_px or candidate.center_px))
+                    return int(np.floor(c+.5)),int(np.floor(r+.5))
+                occupied = {cell(c) for c in current.candidates}
+                added = {cell(c) for c in whole}-occupied
+                # A uniform printed tile is stable ink at several global
+                # thresholds too. A previously empty cell needs local evidence
+                # before such a rectangle becomes a detected composition.
+                local = self.detect_in_grid(image,settings,grid,cell_filter=added) if added else []
+                added_cells_supported = added <= {cell(c) for c in local}
+                accepted = accepted and added_cells_supported
             self._plans.append({'stage':'whole_layout_comparison','accepted':accepted,
-                'existing_content_preserved':before,'proposal_already_preserved':reverse,**support})
+                'existing_content_preserved':before,'proposal_already_preserved':reverse,
+                'added_printed_cells_locally_supported':added_cells_supported,**support})
             if accepted:return DetectionResult(whole,candidate_grid),True
         # Colour-panel evidence is measured even if the camera proposal failed.
         # A complete established layout remains intact; this recovers fragments.
@@ -383,7 +514,9 @@ class MotifDetector:
         if printed is not None:
             candidate_grid,support=printed
             if grid is not None:
-                if (grid.columns,grid.rows)==(candidate_grid.columns,candidate_grid.rows) and len(current.candidates)==grid.columns*grid.rows:
+                if ((grid.columns,grid.rows)==(candidate_grid.columns,candidate_grid.rows)
+                        and (len(current.candidates)==grid.columns*grid.rows or
+                             grid.source in ('visual','camera','seam_consensus') and grid_distance(grid,candidate_grid)<.08)):
                     return current,False
                 pitch_x=float(np.median(np.diff(grid.x_lines_px)));pitch_y=float(np.median(np.diff(grid.y_lines_px)))
                 if any(c.bounding_box_px[2]>pitch_x*1.35 or c.bounding_box_px[3]>pitch_y*1.35 for c in current.candidates):
@@ -392,7 +525,21 @@ class MotifDetector:
             evidence=grid_evidence(image,candidate_grid,whole)
             accepted=(len(whole)==candidate_grid.columns*candidate_grid.rows
                 and evidence['occupied_fraction']>=.90 and evidence['unique_assignment_fraction']>=.90)
-            self._plans.append({'stage':'sustained_fabric_recovery','accepted':accepted,**support,**evidence})
+            retained_complete = None
+            if (grid is not None and grid.source in ('visual','camera','reference','seam_consensus')
+                    and len(current.candidates)==grid.columns*grid.rows
+                    and all(.8 <= np.median(np.diff(proposed))/np.median(np.diff(existing)) <= 1.2
+                            for existing,proposed in ((grid.x_lines_px,candidate_grid.x_lines_px),
+                                                      (grid.y_lines_px,candidate_grid.y_lines_px)))):
+                # A new extraction cannot erase a known complete row merely
+                # because shadow weakens its seams in the original view.
+                retained_complete = all(max((
+                    max(0,min(x+w,bx+bw)-max(x,bx))*max(0,min(y+h,by+bh)-max(y,by))/max(1,w*h)
+                    for c in whole for bx,by,bw,bh in [c.bounding_box_px]),default=0.)>=.85
+                    for before in current.candidates for x,y,w,h in [before.bounding_box_px])
+                accepted = accepted and retained_complete
+            self._plans.append({'stage':'sustained_fabric_recovery','accepted':accepted,
+                                'complete_layout_bounds_preserved':retained_complete,**support,**evidence})
             if accepted:return DetectionResult(whole,candidate_grid),True
         return current,False
 
@@ -1195,6 +1342,48 @@ class MotifDetector:
         sensitivity = int(np.clip(settings.sensitivity, 0, 100))
         cleanup = float(np.clip(settings.morphological_cleanup, 0.0, 1.0))
 
+        if local_context and max(image_bgr.shape[:2]) > POLICY.max_extent_side:
+            h,w = image_bgr.shape[:2]
+            factor = POLICY.max_extent_side/max(h,w)
+            small = cv2.resize(image_bgr,(round(w*factor),round(h*factor)),interpolation=cv2.INTER_AREA)
+            sx,sy = small.shape[1]/w,small.shape[0]/h
+            local = replace(settings,minimum_area_px=max(1,round(settings.minimum_area_px*sx*sy)),
+                merge_distance_px_x=settings.merge_distance_px_x*sx,
+                merge_distance_px_y=settings.merge_distance_px_y*sy)
+            return [_scale_candidate(c,1/sx,1/sy,w,h)
+                    for c in self._detect_once(small,local,local_context=True)]
+
+        cache = getattr(self,'_contrast_cache',None)
+        cached = cache.get(id(image_bgr)) if cache is not None else None
+        if cached is not None and cached[0] is image_bgr:
+            distance,distance_u8 = cached[1:]
+        else:
+            distance,distance_u8 = self._contrast_fields(image_bgr)
+            if cache is not None and image_bgr.shape[0]*image_bgr.shape[1] >= 200000:
+                if len(cache) >= 4:
+                    del cache[next(iter(cache))]
+                cache[id(image_bgr)] = (image_bgr,distance,distance_u8)
+
+        threshold = int(round(np.interp(sensitivity, [0, 100], [60, 6])))
+        _, mask = cv2.threshold(distance_u8, threshold, 255, cv2.THRESH_BINARY)
+
+        if cleanup > 0:
+            open_size = _odd_size(1.0 + cleanup * 8.0)
+            close_size = _odd_size(3.0 + cleanup * 16.0)
+            open_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (open_size, open_size))
+            close_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (close_size, close_size))
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, open_kernel)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
+        if not local_context:
+            mask = self._remove_camera_surround(mask)
+        candidates = self._components(mask,distance,max(1,int(settings.minimum_area_px)),
+            image_bgr.shape[1]*image_bgr.shape[0],threshold,
+            max(0.,float(settings.merge_distance_px_x)),max(0.,float(settings.merge_distance_px_y)),
+            center_strength=distance_u8)
+        return sorted(candidates,key=lambda item:(item.center_px[1],item.center_px[0]))
+
+    def _contrast_fields(self,image_bgr):
+
         lab = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
         background_lab = self._estimate_background(lab)
 
@@ -1226,35 +1415,7 @@ class MotifDetector:
 
         # Local illumination correction reduces the measured distance compared
         # with a single global reference, so its useful threshold range is lower.
-        threshold = int(round(np.interp(sensitivity, [0, 100], [60, 6])))
-        _, mask = cv2.threshold(distance_u8, threshold, 255, cv2.THRESH_BINARY)
-
-        if cleanup > 0:
-            open_size = _odd_size(1.0 + cleanup * 8.0)
-            close_size = _odd_size(3.0 + cleanup * 16.0)
-            open_kernel = cv2.getStructuringElement(
-                cv2.MORPH_ELLIPSE, (open_size, open_size)
-            )
-            close_kernel = cv2.getStructuringElement(
-                cv2.MORPH_ELLIPSE, (close_size, close_size)
-            )
-            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, open_kernel)
-            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
-
-        if not local_context:
-            mask = self._remove_camera_surround(mask)
-
-        candidates = self._components(
-            mask,
-            distance,
-            max(1, int(settings.minimum_area_px)),
-            image_bgr.shape[1] * image_bgr.shape[0],
-            threshold,
-            max(0.0, float(settings.merge_distance_px_x)),
-            max(0.0, float(settings.merge_distance_px_y)),
-            center_strength=distance_u8,
-        )
-        return sorted(candidates, key=lambda item: (item.center_px[1], item.center_px[0]))
+        return distance,distance_u8
 
     @staticmethod
     def _validate_image(image_bgr: np.ndarray) -> None:
@@ -1339,12 +1500,12 @@ class MotifDetector:
         components: list[_RawComponent] = []
         maximum_area = total_area_px * 0.30
         fragment_floor = max(4, int(round(minimum_area_px * 0.04)))
+        contrast_sums = np.bincount(labels.ravel(),weights=distance.ravel(),minlength=count)
         for label in range(1, count):
             x, y, width, height, area = (int(value) for value in stats[label])
             if area < fragment_floor or area > maximum_area:
                 continue
-            component_values = distance[labels == label]
-            contrast = float(component_values.mean()) if component_values.size else 0.0
+            contrast = float(contrast_sums[label]/area)
             components.append(
                 _RawComponent(
                     (x, y, width, height),

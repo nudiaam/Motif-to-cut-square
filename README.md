@@ -398,6 +398,17 @@ Match **Export units** to **Working units** and verify the page size during impo
 
 ## Current limitations
 
+- Cuts assigned to a reliable grid must remain inside their detected or confirmed
+  cell regions, including after manual movement. Crossings block SVG export;
+  an oversized cut is not silently reduced. Region accuracy and physical scale
+  still require review, particularly where printed divisions are not visible.
+  See the [25 October correction and validation](docs/qa/customer-20261025/correccion.md)
+  and its [preceding diagnosis](docs/qa/customer-20261025/README.md).
+- Processing time must be validated on representative production hardware.
+  Local measurements on the unusually powerful development workstation do not
+  establish acceptable customer performance; reported 150–300 second runs still
+  require reproduction with the customer originals and diagnostic packages.
+
 - The current catalogue coverage and outstanding original-image tests are listed
   in [the collection audit](docs/qa/composition-recovery/catalogue-coverage.md).
   Hexagonal cutting is not supported. Mini-charms require their actual size to

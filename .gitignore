@@ -9,3 +9,7 @@ lalikul_cut_*.svg
 lalikul_cut_*.json
 Lalikul Cut Prep.lnk
 docs/~$*.docx
+# Client data and internal QA — never publish
+Analisis_Lalikul/
+output/
+docs/qa/

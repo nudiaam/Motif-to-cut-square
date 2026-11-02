@@ -35,7 +35,10 @@ class SVGExporterTests(unittest.TestCase):
         self.assertTrue(all(rect.attrib["width"] == "5" for rect in rectangles))
         self.assertTrue(all(rect.attrib["height"] == "5" for rect in rectangles))
 
-    def test_enabled_boundary_cuts_cannot_bypass_export_validation(self):
+    def test_enabled_impossible_cuts_cannot_bypass_export_validation(self):
+        # Hard-impossible cuts (off the bed / incomplete source) stay auto-excluded
+        # from export; a panel-boundary crossing on real fabric would instead be a
+        # red warning the user may still export (covered in test_cut_regions).
         mapper = CoordinateMapper(1800, 1200)
         cases = [
             Detection.from_pixel_center(1, (50, 50), mapper),
@@ -47,6 +50,7 @@ class SVGExporterTests(unittest.TestCase):
                 path = Path(directory) / 'existing.svg'
                 path.write_text('keep previous export')
                 detection.valid_cut = True  # Export checks geometry, not cached UI state.
+                self.assertIsNotNone(detection.cut_hard_block_reason(mapper))
                 with self.assertRaises(ValueError):
                     SVGExporter().export(path, mapper, [detection])
                 self.assertEqual(path.read_text(), 'keep previous export')

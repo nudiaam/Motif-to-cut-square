@@ -7,7 +7,7 @@ from dataclasses import replace
 
 import cv2
 import numpy as np
-from .scene_profile import background_evidence
+from .scene_profile import POLICY, background_evidence
 
 
 def review_extents(image, candidates, grid=None):
@@ -67,6 +67,21 @@ def review_extents(image, candidates, grid=None):
         if min(crop.shape[:2]) < 8:
             reviewed.append(candidate)
             continue
+        review_area = candidate.area_px
+        if max(crop.shape[:2]) > POLICY.max_extent_side:
+            factor = POLICY.max_extent_side/max(crop.shape[:2])
+            ch,cw = crop.shape[:2]
+            crop = cv2.resize(crop,(round(cw*factor),round(ch*factor)),interpolation=cv2.INTER_AREA)
+            sx,sy = crop.shape[1]/cw,crop.shape[0]/ch
+            # Everything below is local evidence; candidate/source geometry is
+            # left untouched. Scale support counts as well as box coordinates.
+            x,y = round((x-left)*sx),round((y-top)*sy)
+            w,h = max(1,round(w*sx)),max(1,round(h*sy))
+            left,top,right,bottom = 0,0,crop.shape[1],crop.shape[0]
+            scale *= min(sx,sy)
+            review_area *= sx*sy
+            if core is not None:
+                core = tuple(round(v*(sx if i%2 == 0 else sy)) for i,v in enumerate(core))
         evidence=background_evidence(crop,core)
         if evidence is None:
             reviewed.append(replace(candidate,review_reasons=tuple(dict.fromkeys(
@@ -88,7 +103,7 @@ def review_extents(image, candidates, grid=None):
             outside_counts = np.bincount(labels[beyond], minlength=count)
             # A neighbouring object outside the box is not automatically part
             # of this motif. Require substantial connected support inside it.
-            supported = ((inside_counts >= max(20, candidate.area_px*.15))
+            supported = ((inside_counts >= max(20, review_area*.15))
                          & (outside_counts >= np.maximum(12, inside_counts*.02)))
             supported[0] = False
             if np.any(supported):

@@ -17,7 +17,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QStyle, QStyleOptionSpinBox 
 from app.ui.help_widgets import DelayedHelpToolBar, InfoButton  # noqa: E402
 from app.ui.main_window import MainWindow  # noqa: E402
 from app.imaging.panel_grid import PanelGrid  # noqa: E402
-from app.imaging.detector import DetectionResult  # noqa: E402
+from app.imaging.detector import DetectionResult, MotifCandidate  # noqa: E402
 from tests.test_logical_layout import cut_fixture  # noqa: E402
 
 
@@ -41,8 +41,18 @@ class UISmokeTests(unittest.TestCase):
         window.change_grid_dimensions(3,2)
         self.assertEqual((window.panel_grid.columns,window.panel_grid.rows),(3,2))
         self.assertTrue(window.panel.confirm_grid_button.isEnabled())
-        window.panel.confirm_grid_button.click()
-        self.assertEqual(window._workflow_phase,'detect')
+        # The confirm-grid button now drives the background worker; wait for the
+        # guided re-detection to finish before inspecting its result.
+        with patch('app.ui.detection_worker.MotifDetector.detect_with_guides',
+                   return_value=DetectionResult(
+                       (MotifCandidate((150,120),(130,100,40,40),.9,1600),))):
+            window.panel.confirm_grid_button.click()
+            self.assertEqual(window._workflow_phase,'detect')
+            for _ in range(1500):
+                if window._detection_worker is None:
+                    break
+                QTest.qWait(10)
+        self.assertIsNone(window._detection_worker)
         self.assertGreater(len(window.detections),0)
         self.assertTrue(window.panel.review_grid_button.isEnabled())
 
@@ -74,7 +84,8 @@ class UISmokeTests(unittest.TestCase):
 
         previous_count = len(window.detections)
         assert window.mapper is not None
-        safe_center = window.mapper.inches_to_pixel(18.0, 12.0)
+        # The bed centre can lie on a printed division. Use a known cell centre.
+        safe_center = window.logical_layout.position(1,1)
         window.add_center(*safe_center)
         self.assertEqual(len(window.detections), previous_count + 1)
         self.assertTrue(window._find_detection(window.selected_id).valid_cut)  # type: ignore[arg-type, union-attr]
@@ -141,7 +152,14 @@ class UISmokeTests(unittest.TestCase):
             self.assertTrue(any(gap.covered_by_artwork for gap in window.logical_layout.missing))
             self.assertTrue(all(d.grid_positioned for d in window.detections))
             self.assertTrue(all(d.cut_width_inches == 5 for d in window.detections))
-            self.assertGreater(sum(d.overlaps_cut for d in window.detections), 0)
+            self.assertGreater(sum(bool(d.cut_block_reason(window.mapper)) for d in window.detections),0)
+            # Impossible cuts (off the bed / no fabric) are auto-excluded; a cut
+            # that only crosses its panel on real fabric stays red but enabled.
+            self.assertTrue(all(not d.enabled for d in window.detections
+                                if d.cut_hard_block_reason(window.mapper)))
+            self.assertTrue(all(d.enabled for d in window.detections
+                                if d.cut_block_reason(window.mapper)
+                                and not d.cut_hard_block_reason(window.mapper)))
             positions = {d.id: d.center_px for d in window.detections}
             for d in window.detections:
                 self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))

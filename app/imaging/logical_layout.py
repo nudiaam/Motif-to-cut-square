@@ -59,12 +59,18 @@ class LogicalLayout:
     reason: str = "At least six automatic artwork detections are needed."
     source: str = "observations"
     projection: tuple[tuple[float, float, float], ...] | None = None
+    x_boundaries_px: tuple[float, ...] = ()
+    y_boundaries_px: tuple[float, ...] = ()
+    cell_regions_px: tuple[tuple[tuple[float, float], ...], ...] = ()
 
     @property
     def reliable(self) -> bool:
         return self.confidence >= 0.78
 
     def position(self, column: int, row: int) -> tuple[float, float]:
+        if self.x_boundaries_px and self.y_boundaries_px:
+            return (_axis_position(self.x_boundaries_px,column),
+                    _axis_position(self.y_boundaries_px,row))
         if self.projection is not None:
             x, y, z = (line[0]*column + line[1]*row + line[2] for line in self.projection)
             return x/z, y/z
@@ -73,6 +79,9 @@ class LogicalLayout:
 
     def coordinates(self, x: float, y: float) -> tuple[float, float]:
         """Inverse of position, shared by scoring, ownership and boundary checks."""
+        if self.x_boundaries_px and self.y_boundaries_px:
+            return (_axis_coordinate(self.x_boundaries_px,x),
+                    _axis_coordinate(self.y_boundaries_px,y))
         if self.projection is not None:
             c, r, z = np.linalg.solve(np.asarray(self.projection), (x, y, 1.))
             return float(c/z), float(r/z)
@@ -80,11 +89,37 @@ class LogicalLayout:
         c, r = np.linalg.solve(basis, np.asarray((x,y))-self.origin_px)
         return float(c), float(r)
 
+    def cell_polygon(self, column, row):
+        if self.cell_regions_px and 0 <= column < self.columns and 0 <= row < self.rows:
+            return self.cell_regions_px[row*self.columns+column]
+        return tuple(self.position(column+dc,row+dr)
+                     for dc,dr in ((-.5,-.5),(.5,-.5),(.5,.5),(-.5,.5)))
+
     def cell_inside_image(self, column, row, width, height, tolerance=2.) -> bool:
-        corners = [self.position(column+dc, row+dr)
-                   for dc, dr in ((-.5,-.5),(.5,-.5),(.5,.5),(-.5,.5))]
+        corners = self.cell_polygon(column,row)
         return all(-tolerance <= x <= width+tolerance and -tolerance <= y <= height+tolerance
                    for x, y in corners)
+
+
+def _axis_nodes(lines):
+    values = [v for a,b in zip(lines,lines[1:]) for v in (a,(a+b)/2)] + [lines[-1]]
+    return np.arange(len(values))*.5-.5,np.asarray(values)
+
+
+def _interpolate_extrapolate(x, nodes, values):
+    index = int(np.clip(np.searchsorted(nodes,x)-1,0,len(nodes)-2))
+    t = (x-nodes[index])/(nodes[index+1]-nodes[index])
+    return float(values[index]+t*(values[index+1]-values[index]))
+
+
+def _axis_position(lines,index):
+    nodes,values = _axis_nodes(lines)
+    return _interpolate_extrapolate(index,nodes,values)
+
+
+def _axis_coordinate(lines,value):
+    nodes,values = _axis_nodes(lines)
+    return _interpolate_extrapolate(value,values,nodes)
 
 
 def layout_from_panel_grid(observations: list[LayoutObservation], grid: PanelGrid) -> LogicalLayout:
@@ -109,6 +144,10 @@ def layout_from_panel_grid(observations: list[LayoutObservation], grid: PanelGri
     if grid.lattice is not None:
         layout = replace(layout, origin_px=grid.lattice[0], column_vector_px=grid.lattice[1],
                          row_vector_px=grid.lattice[2], projection=grid.projection)
+    else:
+        layout = replace(layout,x_boundaries_px=grid.x_lines_px,y_boundaries_px=grid.y_lines_px)
+    layout = replace(layout,cell_regions_px=tuple(layout.cell_polygon(c,r)
+        for r in range(layout.rows) for c in range(layout.columns)))
     inverse = np.linalg.inv(np.column_stack([layout.column_vector_px, layout.row_vector_px]))
     inverse_projection = np.linalg.inv(np.asarray(grid.projection)) if grid.projection is not None else None
     assignments = []

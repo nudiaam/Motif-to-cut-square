@@ -116,6 +116,15 @@ Cada `Detection` diferencia tres condiciones:
 
 La propiedad `exportable` exige `enabled and valid_cut and not overlaps_cut`.
 
+**Corrección del 25-10-2026:** `cut_region_px` conserva la casilla asignada y
+`cut_block_reason` exige la contención del rectángulo completo, con un mínimo de
+0,01 pulgadas de separación y margen de precisión para fronteras automáticas.
+La región permanece tras un movimiento manual y se comprueba de
+nuevo al exportar. El bucle SVG escribe cortes habilitados después de comprobar
+estos bloqueos; otros avisos, como extensión del dibujo, siguen siendo distintos.
+`auto_blocked` distingue bloqueo automático de exclusión manual. Véase la
+[implementación y validación](qa/customer-20261025/correccion.md).
+
 `recalculate_cut_overlaps` considera conflicto tanto una intersección con área como el contacto exacto de bordes. Las detecciones desactivadas no participan. La interfaz recalcula después de mover, redimensionar, activar, desactivar, detectar o cambiar la colocación de la imagen. El exportador y el verificador vuelven a calcular como defensa adicional.
 
 `center_cuts_on_visual_anchors` centra primero cada corte usando los límites
@@ -443,11 +452,30 @@ No confundir `exportable` (geometría) con `READY` (sin problemas conocidos): un
 caja que cabe puede seguir requiriendo revisión de sus límites. Los huecos
 inferidos llevan aviso porque no hay dibujo detectado que los respalde.
 
-La suite actual tiene 166 pruebas. El [informe de evaluación](qa/global-rework/README.md)
+El [informe de evaluación de aquella revisión](qa/global-rework/README.md)
 describe los cambios, comandos de reproducción y límites aún observados. La
 cobertura de casillas no constituye una validación de siluetas completas.
 
-`SVGExporter` crea un SVG con el tamaño físico completo de la cama y un `viewBox` en la misma unidad. Solo escribe elementos `<rect>` exportables.
+`SVGExporter` crea un SVG con el tamaño físico completo de la cama y un `viewBox`
+en la misma unidad. Escribe un `<rect>` por corte habilitado después de comprobar
+bloqueos de cama, fuente incompleta y región de corte. No filtra por la propiedad
+`exportable`: los avisos de solape o dibujo recortado siguen el flujo de revisión,
+pero una invasión de la región asignada impide exportar.
+
+### Análisis acotado y divisiones locales (25-10-2026)
+
+Las imágenes de hasta 2048 píxeles de lado mayor mantienen su resolución; las
+mayores usan una vista de hasta 1536. La transformación escala cajas de forma
+conservadora, vectores y proyecciones; la geometría pública sigue en el original.
+Los planes internos declaran su sistema de coordenadas en `analysis_frame`.
+Los campos de contraste se reutilizan entre sensibilidades y las estadísticas
+por componente usan una agregación por etiquetas. Las comprobaciones locales
+de extensión tienen un límite de 512 píxeles.
+
+`LogicalLayout` conserva divisiones variables mediante `x_boundaries_px` y
+`y_boundaries_px`, y polígonos originales mediante `cell_regions_px`. Las guías
+impresas pueden refinarse con divisiones sostenidas; las inferidas no equivalen
+a una calibración ni garantizan el contorno de una tela deformada.
 
 `verify_export_geometry` convierte la geometría a la unidad SVG, la reconstruye a pulgadas y finalmente a píxeles. Este recorrido permite detectar errores de escala, offset o conversión.
 

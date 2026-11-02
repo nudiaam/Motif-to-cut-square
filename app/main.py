@@ -9,6 +9,7 @@ import sys
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
+from app.diagnostics_log import configure_logging, get_logger
 from app.ui.main_window import MainWindow
 
 
@@ -361,6 +362,8 @@ def main() -> int:
             )
         except (AttributeError, OSError):
             pass
+    configure_logging()
+    get_logger().info("Lalikul Cut Prep started")
     app = QApplication(sys.argv)
     app.setApplicationName("Lalikul Cut Prep")
     app.setApplicationDisplayName("Lalikul Cut Prep")
