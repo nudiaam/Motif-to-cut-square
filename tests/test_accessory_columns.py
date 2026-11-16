@@ -16,10 +16,11 @@ class AccessoryColumnTests(unittest.TestCase):
                 self.assertEqual(len(result.candidates),12)
                 self.assertEqual(assess(result,transform),{'whole_groups':12,'failed_groups':[]})
                 self.assertFalse(any(c.source_incomplete for c in result.candidates))
-                evidence=[p for p in detector.last_diagnostics['detection_plans'] if p['stage']=='camera_partition']
+                evidence=[p for p in detector.last_diagnostics['detection_plans']
+                          if p['stage'] in ('camera_partition','independent_printed_partition')]
                 self.assertTrue(evidence)
-                self.assertTrue(all(p['agreeing_views']>=4 for p in evidence))
-                if name=='diagonal_shadow':
+                self.assertTrue(all(p.get('agreeing_views',0)>=4 or p.get('agreeing_scales',0)>=2 for p in evidence))
+                if name=='diagonal_shadow' and not any(p['stage']=='independent_printed_partition' for p in evidence):
                     self.assertTrue(any(p['stage']=='original_pixel_geometry' for p in detector.last_diagnostics['detection_plans']))
 
 if __name__=='__main__':

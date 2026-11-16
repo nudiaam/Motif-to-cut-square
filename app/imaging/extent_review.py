@@ -56,13 +56,21 @@ def review_extents(image, candidates, grid=None):
                 core=(max(0,round(gx0)-left),max(0,round(gy0)-top),
                       min(right-left,round(gx1)-left),min(bottom-top,round(gy1)-top))
         issues = list(candidate.review_reasons)
-        boundary_artwork = x <= 0 or y <= 0 or x+w >= iw or y+h >= ih
+        boxes=(candidate.artwork_support_boxes_px if candidate.artwork_support_boxes_px or candidate.artwork_extent_uncertain
+               else (candidate.bounding_box_px,))
+        boundary_artwork=any(bx<=0 or by<=0 or bx+bw>=iw or by+bh>=ih for bx,by,bw,bh in boxes)
         if partial_cell:
             issues.append('Panel is only partly inside the source image; verify the complete composition')
         if boundary_artwork:
             issues.append('Artwork reaches the source-image boundary')
         candidate = replace(candidate, source_incomplete=(candidate.source_incomplete or partial_cell or boundary_artwork),
                             review_reasons=tuple(dict.fromkeys(issues)))
+        if candidate.extent_checked:
+            # This printed-section route already compared two outline readings
+            # and independent colour support. Reinterpreting raw weave against
+            # a global palette would turn the background into artwork again.
+            reviewed.append(candidate)
+            continue
         crop = image[top:bottom, left:right]
         if min(crop.shape[:2]) < 8:
             reviewed.append(candidate)

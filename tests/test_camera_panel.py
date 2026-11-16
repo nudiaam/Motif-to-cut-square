@@ -43,13 +43,17 @@ class CameraPanelTests(unittest.TestCase):
         result = detector.detect_with_layout(image, DetectorSettings())
         np.testing.assert_array_equal(image, original)
         self.assertEqual((result.panel_grid.columns,result.panel_grid.rows), (6,4))
-        self.assertEqual(result.panel_grid.source, 'camera')
-        self.assertEqual(len(result.candidates),22)
+        self.assertIn(result.panel_grid.source, ('camera','printed'))
+        self.assertEqual(len(result.candidates),24)
         layout = layout_from_panel_grid([LayoutObservation(i,c.center_px,c.bounding_box_px)
                                         for i,c in enumerate(result.candidates)],result.panel_grid)
         self.assertTrue(layout.reliable)
-        self.assertEqual([(p.column,p.row,p.review_state) for p in layout.missing],
-                         [(3,1,'proposed'),(1,3,'proposed')])
+        self.assertEqual(layout.missing,())
+        # The crescent and pale lamb were missed by the former colour route.
+        # Witnesses on the original photo, independent of the proposed grid.
+        for px,py in ((850,440),(435,870)):
+            self.assertEqual(sum(x<=px<x+w and y<=py<y+h
+                                 for c in result.candidates for x,y,w,h in [c.bounding_box_px]),1)
         self.assertTrue(all(m.status == 'matched' for m in layout.matches))
 
     def test_global_projection_preserves_cell_positions_and_straight_grid_lines(self):

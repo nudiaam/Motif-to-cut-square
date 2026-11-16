@@ -26,7 +26,7 @@ from app.models import Detection
 from app.geometry.units import LengthUnit, from_inches
 from app.imaging.panel_grid import PanelGrid
 from app.imaging.logical_layout import LogicalLayout
-from app.ui.cut_status import cut_status_color
+from app.ui.cut_status import cut_status_color, REVIEW_COLOR, present_cut
 
 
 class BedCanvas(QWidget):
@@ -39,6 +39,12 @@ class BedCanvas(QWidget):
     grid_line_moved = Signal(str, int, float)
     grid_edit_started = Signal()
     grid_edit_finished = Signal()
+    # Notify overview widgets only on state changes. Emitting from paintEvent
+    # makes a floating overview repaint its canvas background in a loop.
+    view_changed = Signal()
+
+    MIN_VIEW_SCALE = 0.25
+    MAX_VIEW_SCALE = 12.0
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -98,16 +104,16 @@ class BedCanvas(QWidget):
         self._bed_height_in = mapper.bed_height_in
         self._detections = detections
         self._verification_rectangles = {}
-        self.update()
+        self._refresh_view()
 
     def set_bed_configuration(self, width_in: float, height_in: float) -> None:
         self._bed_width_in = width_in
         self._bed_height_in = height_in
-        self.update()
+        self._refresh_view()
 
     def set_working_unit(self, unit: LengthUnit) -> None:
         self._working_unit = unit
-        self.update()
+        self._refresh_view()
 
     @property
     def view_scale(self) -> float:
@@ -117,7 +123,7 @@ class BedCanvas(QWidget):
         """Fit the complete bed in the canvas, like Illustrator's Ctrl+0."""
         self._view_scale = 1.0
         self._view_offset = QPointF()
-        self.update()
+        self._refresh_view()
 
     def zoom_in(self, anchor: QPointF | None = None) -> None:
         self._zoom_at(anchor or self.rect().center(), self._view_scale * 1.25)
@@ -125,24 +131,78 @@ class BedCanvas(QWidget):
     def zoom_out(self, anchor: QPointF | None = None) -> None:
         self._zoom_at(anchor or self.rect().center(), self._view_scale / 1.25)
 
+    def set_view_scale(self, scale: float) -> None:
+        """Zoom about the centre of the visible area (Navigator slider)."""
+        self._zoom_at(QPointF(self.rect().center()), scale)
+
+    def bed_size_inches(self) -> tuple[float, float]:
+        return self._bed_width_in, self._bed_height_in
+
+    def visible_bed_rect_inches(self) -> tuple[float, float, float, float]:
+        """The part of the bed currently visible in the canvas, in inches."""
+        bed = self._bed_rect()
+        if bed.width() <= 0 or bed.height() <= 0:
+            return 0.0, 0.0, self._bed_width_in, self._bed_height_in
+        visible = QRectF(self.rect()).intersected(bed)
+        if visible.isEmpty():
+            return 0.0, 0.0, 0.0, 0.0
+        sx = self._bed_width_in / bed.width()
+        sy = self._bed_height_in / bed.height()
+        return ((visible.left() - bed.left()) * sx, (visible.top() - bed.top()) * sy,
+                visible.width() * sx, visible.height() * sy)
+
+    def center_view_on_bed_inches(self, x_in: float, y_in: float) -> None:
+        """Pan so a bed point sits at the centre of the canvas (Navigator drag)."""
+        bed = self._bed_rect()
+        if bed.width() <= 0 or bed.height() <= 0:
+            return
+        point = QPointF(bed.left() + x_in / self._bed_width_in * bed.width(),
+                        bed.top() + y_in / self._bed_height_in * bed.height())
+        self._view_offset += QPointF(self.rect().center()) - point
+        self._constrain_view_offset()
+        self._refresh_view()
+
+    def paint_overview(self, painter: QPainter, target: QRectF) -> None:
+        """Draw the bed, photo and cut outlines into `target` (bed aspect)."""
+        painter.fillRect(target, QColor("#d9d7ce"))
+        if self._mapper is None:
+            return
+        sx = target.width() / self._bed_width_in
+        sy = target.height() / self._bed_height_in
+
+        def to_target(rectangle_in):
+            x, y, w, h = rectangle_in
+            return QRectF(target.left() + x * sx, target.top() + y * sy, w * sx, h * sy)
+
+        if not self._image.isNull():
+            painter.drawImage(to_target(self._mapper.image_bed_rect_inches), self._image)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        for detection in self._detections:
+            if not detection.enabled:
+                continue
+            pen = QPen(QColor(cut_status_color(detection,mapper=self._mapper)),1)
+            pen.setCosmetic(True)
+            painter.setPen(pen)
+            painter.drawRect(to_target(detection.square_inches.as_tuple()))
+
     def set_image_locked(self, locked: bool) -> None:
         self._image_locked = locked
         self._image_selected = not locked and not self._image.isNull()
         self._image_drag_mode = None
         self._image_scale_handle = None
         self._update_interaction_cursor()
-        self.update()
+        self._refresh_view()
 
     def set_detections(self, detections: list[Detection]) -> None:
         self._detections = detections
-        self.update()
+        self._refresh_view()
 
     def set_selected_id(self, detection_id: int | None) -> None:
         self.set_selected_ids({detection_id} if detection_id is not None else set())
 
     def set_selected_ids(self, detection_ids: set[int]) -> None:
         self._selected_ids = set(detection_ids)
-        self.update()
+        self._refresh_view()
 
     def set_add_mode(self, active: bool) -> None:
         self._add_mode = active
@@ -152,14 +212,14 @@ class BedCanvas(QWidget):
         self, rectangles: dict[int, tuple[float, float, float, float]]
     ) -> None:
         self._verification_rectangles = rectangles
-        self.update()
+        self._refresh_view()
 
     def set_panel_grid(self, panel_grid: PanelGrid | None) -> None:
         self._panel_grid = panel_grid
         if panel_grid is None:
             self._dragging_grid_line = None
             self._grid_edit_active = False
-        self.update()
+        self._refresh_view()
 
     def set_grid_edit_active(self, active: bool) -> None:
         self._grid_edit_active = bool(
@@ -167,7 +227,7 @@ class BedCanvas(QWidget):
         )
         self._dragging_grid_line = None
         self._update_interaction_cursor()
-        self.update()
+        self._refresh_view()
 
     def set_grid_visible(self, visible: bool) -> None:
         self._grid_visible = bool(visible)
@@ -175,7 +235,7 @@ class BedCanvas(QWidget):
             self._grid_edit_active = False
             self._dragging_grid_line = None
         self._update_interaction_cursor()
-        self.update()
+        self._refresh_view()
 
     @property
     def cut_preview_active(self) -> bool:
@@ -183,7 +243,15 @@ class BedCanvas(QWidget):
 
     def set_cut_preview(self, active: bool) -> None:
         self._cut_preview_active = active
+        self._refresh_view()
+
+    def _refresh_view(self) -> None:
         self.update()
+        self.view_changed.emit()
+
+    def resizeEvent(self, event) -> None:  # noqa: N802 - Qt API
+        super().resizeEvent(event)
+        self._refresh_view()
 
     def paintEvent(self, event) -> None:  # noqa: N802 - Qt API
         del event
@@ -224,27 +292,31 @@ class BedCanvas(QWidget):
 
         if self._mapper is None:
             self._paint_view_indicator(painter)
+            painter.end()
             return
         self._paint_detections(painter)
         self._paint_verification(painter)
         self._paint_view_indicator(painter)
+        painter.end()
 
     def _paint_cut_preview(self, painter: QPainter, bed: QRectF) -> None:
         if not self._cut_preview_active or self._mapper is None:
             return
         shaded_area = QPainterPath()
-        shaded_area.setFillRule(Qt.FillRule.OddEvenFill)
         shaded_area.addRect(bed)
+        cuts = QPainterPath()
         for detection in self._detections:
-            if not detection.enabled or detection.cut_block_reason(self._mapper):
+            if not detection.enabled:
                 continue
             square_px = self._mapper.inches_rect_to_pixel(
                 detection.square_inches.as_tuple()
             )
             square = self._pixel_rect_to_widget(square_px).intersected(bed)
             if not square.isEmpty():
-                shaded_area.addRect(square)
-        painter.fillPath(shaded_area, QColor(7, 10, 14, 178))
+                cut = QPainterPath()
+                cut.addRect(square)
+                cuts = cuts.united(cut)
+        painter.fillPath(shaded_area.subtracted(cuts), QColor(7, 10, 14, 178))
 
     def _paint_view_indicator(self, painter: QPainter) -> None:
         if abs(self._view_scale - 1.0) < 1e-9 and self._view_offset.isNull():
@@ -272,6 +344,12 @@ class BedCanvas(QWidget):
         )
         painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
+        if self._panel_grid.cell_regions_px and not self._grid_edit_active:
+            for polygon in self._panel_grid.cell_regions_px:
+                points = [self._pixel_to_widget(x,y) for x,y in polygon]
+                for a,b in zip(points,points[1:]+points[:1]):
+                    painter.drawLine(a,b)
+            return
         if self._panel_grid.projection is not None and not self._grid_edit_active:
             grid = self._panel_grid
             def position(c, r):
@@ -304,15 +382,15 @@ class BedCanvas(QWidget):
     def set_logical_layout(self, layout: LogicalLayout, cut_size: tuple[float, float] = (5.0, 5.0)) -> None:
         self._logical_layout = layout
         self._layout_cut_size = cut_size
-        self.update()
+        self._refresh_view()
 
     def set_layout_visible(self, visible: bool) -> None:
         self._layout_visible = visible
-        self.update()
+        self._refresh_view()
 
     def set_layout_review_details(self, visible: bool) -> None:
         self._layout_review_details = visible
-        self.update()
+        self._refresh_view()
 
     def _paint_logical_layout(self, painter: QPainter) -> None:
         if not self._layout_visible or self._cut_preview_active:
@@ -360,18 +438,29 @@ class BedCanvas(QWidget):
                                if m.status != "matched" or m.review_reason}
         for detection in self._detections:
             selected = detection.id in self._selected_ids
-            blocked = detection.cut_block_reason(self._mapper)
-            color = QColor(cut_status_color(detection, detection.id in assignment_warnings))
+            presentation=present_cut(detection,self._mapper)
+            color = QColor(presentation.color)
             if not detection.enabled:
                 color.setAlpha(135)
 
-            if detection.bounding_box_px is not None:
+            if detection.bounding_box_px is not None and (selected or self._layout_review_details):
                 bbox = self._pixel_rect_to_widget(detection.bounding_box_px)
-                bbox_pen = QPen(QColor(85, 230, 255, 190 if detection.enabled else 100), 1.5)
+                bbox_color=(QColor(REVIEW_COLOR) if detection.artwork_extent_uncertain
+                            else QColor(85,230,255))
+                bbox_color.setAlpha(190 if detection.enabled else 100)
+                bbox_pen = QPen(bbox_color, 1.5)
                 bbox_pen.setStyle(Qt.PenStyle.DashLine)
                 painter.setPen(bbox_pen)
                 painter.setBrush(Qt.BrushStyle.NoBrush)
                 painter.drawRect(bbox)
+                if detection.artwork_extent_uncertain and detection.artwork_support_boxes_px:
+                    supported=detection.artwork_support_boxes_px
+                    left=min(b[0] for b in supported);top=min(b[1] for b in supported)
+                    right=max(b[0]+b[2] for b in supported);bottom=max(b[1]+b[3] for b in supported)
+                    ink_pen=QPen(QColor(85,230,255,190 if detection.enabled else 100),1.5)
+                    ink_pen.setStyle(Qt.PenStyle.DashLine)
+                    painter.setPen(ink_pen)
+                    painter.drawRect(self._pixel_rect_to_widget((left,top,right-left,bottom-top)))
 
             square_px = self._mapper.inches_rect_to_pixel(
                 detection.square_inches.as_tuple()
@@ -389,10 +478,7 @@ class BedCanvas(QWidget):
                 if selected
                 else QColor(color.red(), color.green(), color.blue(), 18)
             )
-            # An excluded boundary observation is not a proposed cut. Reveal
-            # its rectangle only when selected so its placement can be fixed.
-            if not blocked or selected:
-                painter.drawRect(square)
+            painter.drawRect(square)
 
             center = self._pixel_to_widget(*detection.center_px)
             painter.setPen(QPen(QColor("#11151a"), 6 if selected else 4))
@@ -403,15 +489,17 @@ class BedCanvas(QWidget):
             painter.drawEllipse(center, 6.0 if selected else 3.5, 6.0 if selected else 3.5)
 
             painter.setFont(label_font)
-            label_rect = QRectF(center.x() + 7, center.y() - 19, 112 if blocked else 42, 18)
+            label_text = (f"#{detection.id:02d} · Excluded" if not detection.enabled
+                          else f"#{detection.id:02d} · Impossible" if presentation.state=='IMPOSSIBLE'
+                          else f"#{detection.id:02d} · Section crossing" if presentation.state=='SECTION CROSSING'
+                          else f"#{detection.id:02d}")
+            label_rect = QRectF(center.x() + 7, center.y() - 19,
+                                160 if ' · ' in label_text else 42, 18)
             painter.setPen(Qt.PenStyle.NoPen)
             painter.setBrush(selection_color if selected else QColor(15, 18, 23, 190))
             painter.drawRoundedRect(label_rect, 3, 3)
             painter.setPen(QColor("#071419") if selected else color)
-            painter.drawText(
-                label_rect, Qt.AlignmentFlag.AlignCenter,
-                f"#{detection.id:02d} · Excluded" if blocked else f"#{detection.id:02d}"
-            )
+            painter.drawText(label_rect, Qt.AlignmentFlag.AlignCenter, label_text)
         self._paint_logical_layout(painter)
 
     def _paint_verification(self, painter: QPainter) -> None:
@@ -582,11 +670,11 @@ class BedCanvas(QWidget):
                 self._image_selected = False
                 self._image_drag_mode = None
                 self._image_scale_handle = None
-                self.update()
+                self._refresh_view()
                 return
             self._image_drag_start_point_in = self._widget_to_bed_inches(point)
             self._image_drag_start_rect_in = self._mapper.image_bed_rect_inches
-            self.update()
+            self._refresh_view()
             return
 
         image_point = self._widget_to_pixel(point)
@@ -604,7 +692,7 @@ class BedCanvas(QWidget):
             if not additive and detection_id in self._selected_ids:
                 self._dragging_id = detection_id
                 self._drag_edit_announced = False
-        self.update()
+        self._refresh_view()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:  # noqa: N802
         if self._panning and self._pan_last_point is not None:
@@ -612,7 +700,7 @@ class BedCanvas(QWidget):
             self._view_offset += delta
             self._pan_last_point = event.position()
             self._constrain_view_offset()
-            self.update()
+            self._refresh_view()
             event.accept()
             return
         if (
@@ -718,7 +806,7 @@ class BedCanvas(QWidget):
                 movement = QPointF(delta.x() * 0.5, delta.y() * 0.5)
             self._view_offset += movement
             self._constrain_view_offset()
-            self.update()
+            self._refresh_view()
         event.accept()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:  # noqa: N802 - Qt API
@@ -920,7 +1008,7 @@ class BedCanvas(QWidget):
             return
         relative_x = (anchor_point.x() - old_rect.left()) / old_rect.width()
         relative_y = (anchor_point.y() - old_rect.top()) / old_rect.height()
-        new_scale = min(max(float(requested_scale), 0.25), 12.0)
+        new_scale = min(max(float(requested_scale), self.MIN_VIEW_SCALE), self.MAX_VIEW_SCALE)
         if abs(new_scale - self._view_scale) < 1e-12:
             return
         fitted = self._fit_bed_rect()
@@ -932,7 +1020,7 @@ class BedCanvas(QWidget):
         self._view_scale = new_scale
         self._view_offset = new_center - fitted.center()
         self._constrain_view_offset()
-        self.update()
+        self._refresh_view()
 
     def _constrain_view_offset(self) -> None:
         rectangle = self._bed_rect()

@@ -41,7 +41,8 @@ class GridGuidanceTests(unittest.TestCase):
                 cells = [(int((c.center_px[0]-origin[0])/spacing[0]),
                           int((c.center_px[1]-origin[1])/spacing[1])) for c in result.candidates]
                 self.assertEqual(set(cells), {(col, row) for row in range(4) for col in range(6)})
-                self.assertTrue(any("Extended" in note for note in detector.last_diagnostics["grid_notes"]))
+                self.assertTrue(any("Extended" in note or "printed divisions" in note
+                                    for note in detector.last_diagnostics["grid_notes"]))
                 np.testing.assert_array_equal(image, original)
 
     def test_generated_spanning_artwork_is_whole_and_does_not_occupy_twice(self):

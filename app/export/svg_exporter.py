@@ -29,14 +29,8 @@ class SVGExporter:
         detections: list[Detection],
         unit: LengthUnit = LengthUnit.INCHES,
     ) -> ET.ElementTree:
-        # A cut that only crosses its panel on real fabric is a red warning the
-        # user may still export. But an impossible cut (off the bed, no fabric,
-        # incomplete source) is never exported — a last-resort hard block.
-        blocked = [(d.id, d.cut_hard_block_reason(mapper)) for d in detections if d.enabled]
-        blocked = [(identifier, reason) for identifier, reason in blocked if reason]
-        if blocked:
-            raise ValueError("Cannot export blocked cuts: " + "; ".join(
-                f"#{identifier}: {reason}" for identifier, reason in blocked))
+        # Panel/source issues are warnings. Rectangles outside the physical
+        # machine bed are omitted, including for callers outside the UI.
         recalculate_cut_overlaps(detections)
         bed_width = from_inches(mapper.bed_width_in, unit)
         bed_height = from_inches(mapper.bed_height_in, unit)
@@ -51,8 +45,15 @@ class SVGExporter:
                 ),
             },
         )
+        # Request the physical bed page without browser margins. The print
+        # dialog and device driver must also use that size and 100% scaling;
+        # CSS cannot enforce printer settings or camera calibration.
+        style = ET.SubElement(root, f"{{{SVG_NAMESPACE}}}style")
+        style.text = (f"@page {{ size: {_format_number(bed_width)}{unit.value} "
+                      f"{_format_number(bed_height)}{unit.value}; margin: 0; }}")
         for detection in detections:
-            if not detection.enabled:
+            if not detection.enabled or not detection.square_inches.is_valid(
+                mapper.bed_width_in, mapper.bed_height_in):
                 continue
             square = detection.square_inches
             x = from_inches(square.x, unit)
@@ -86,7 +87,7 @@ class SVGExporter:
         tree = self.build_tree(mapper, detections, unit)
         ET.indent(tree, space="  ")
         tree.write(output_path, encoding="utf-8", xml_declaration=True)
-        count = sum(1 for item in detections if item.enabled)
+        count = len(tree.getroot().findall(f"{{{SVG_NAMESPACE}}}rect"))
         return SVGExportResult(output_path, count, unit)
 
 

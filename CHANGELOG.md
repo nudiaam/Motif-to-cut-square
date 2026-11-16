@@ -1,5 +1,108 @@
 # Change log
 
+## 0.13.4 — section boundaries, final-cut colours and Navigator (2026-11-16)
+
+Public release containing the changes below. Earlier candidate entries preserve
+the decisions made during development; the current colour/export contract is
+defined by 0.13.4 and `docs/CUTTING_RULES.md`.
+
+### Final correction — observed sections, real foreground and final-cut colours
+
+- Refine automatic projected section boundaries on original pixels, preserving
+  shared corners, individual centres and manual guide geometry.
+- Bound frame grids by observed closing rules and perpendicular seam endings;
+  unsupported cloth-margin extensions no longer create another printed row.
+- Remove automatic SVG cuts for layout gaps. Re-read missing positions only
+  when coherent foreground is supported by both image readings; retain genuine
+  faint compositions without filling empty cloth.
+- Use green for no measured section crossing, purple for a section crossing,
+  and red for impossible geometry. Keep artwork/guide-confidence and overlap
+  notes in details rather than colouring all cuts as review.
+- Keep requested sizes, checked in-bed warning exports and off-bed omissions;
+  diagnostic exportability now matches actual SVG inclusion.
+- Document the previously supplied AMD A6 / 4 GB customer laptop and its
+  historical 238.5-second run. Add 42 sequential measurements of frozen versions,
+  including two-logical-CPU affinity and process memory peaks. Report mixed
+  per-case performance and distinguish a proportional estimate from an actual
+  measurement on the customer's laptop; see `docs/PERFORMANCE_0_13_4.md`.
+
+
+### 0.13.3 — outer frame recovery (2026-11-16)
+
+- Rename the local 0.13.0-rc3 candidate to 0.13.3; detection, geometry and
+  export behaviour are unchanged. The original rc3 test evidence is retained.
+
+- Recheck an unobserved outer division when adjacent measured seams contradict
+  its old phase. The spacing prediction only opens a search window; two
+  sustained dark-stroke readings must agree on the observed frame centre.
+- Preserve the existing uncertainty floor, manual/projected guides and requested
+  cut dimensions. Unconfirmed exterior estimates retain an explicit guide
+  review reason instead of silently claiming a measured border.
+- Add the received framed-animal photo, four-sided recovery and missing-frame
+  controls, plus independent centre/corner and serialized SVG checks.
+
+### 0.13.0-rc2 — observed divisions and review severity (2026-11-15)
+
+- Distinguish observed divisions from spacing estimates at both outer edges.
+  Preserve explicit review for unsupported or disputed guides rather than
+  shrinking the first/last printed section to an inward guess.
+- Reject the unsupported filter response at the rectified analysis boundary;
+  the cloth/crop edge must not replace the actual printed bottom frame.
+- Keep uncertain clipping and near-guide measurement uncertainty purple with
+  an explanation; only resolved-outline clipping and crossings beyond measured
+  uncertainty are red. Geometry and SVG inclusion are independent of severity.
+- Add independently measured centre regressions, two reduced resolutions, a
+  controlled crop-versus-print-frame test, and the previously omitted straight
+  pastel control to independent boundary checks.
+- Give the application an explicit candidate version and preserve the rejected
+  rc1 snapshot; passing unit tests alone does not approve the photographic gate.
+
+- Correct printed seam positions using the centre of the filtered transition,
+  instead of one edge of its response plateau; preserve measured complete-row
+  divisions when the photograph truncates the last row.
+- Locate outer divisions from their adjacent measured seams so a repeated motif
+  edge cannot shorten the first row at one analysis scale and create overlaps.
+
+- Cuts extending outside the machine bed are removed from all views and SVG;
+  refreshing or resizing does not recreate an omitted grid row.
+- Separate conservative, uncertain artwork outlines from ink corroborated by
+  the image readings. Uncertain background or faint detail needs purple review;
+  even corroborated ink outside an unresolved outline is only possible clipping,
+  shown in purple with its reason. Resolved-outline clipping remains red. Preserve
+  source extents and accessories rather than shrinking boxes to hide warnings.
+- Border measurement uncertainty is purple review while the rectangle remains
+  inside its measured section. Only an actual crossing is a red panel conflict;
+  no fixed 1.3 mm warning margin is added. The summary distinguishes section
+  geometry from artwork review, and labels the combined queue "Review".
+- Confirmed panel crossings, resolved-outline clipping and incomplete photos
+  inside the bed remain checkable red warnings. Missing assignments and uncertain
+  boundaries remain purple review. Checked cuts export after normal confirmation.
+- Independent printed divisions now recover faint framed and pastel touching
+  panels in a cloth-relative plane, requiring two-axis, two-scale agreement.
+  Detached accessories belong to their section; faint ink receives a separate
+  extent check. Connected illustrations spanning sections retain whole-image
+  handling. Counts and physical cut sizes do not drive detection.
+- Camera geometry retains measured individual cell polygons and centres through
+  projection, scaling, trimming, display and cut placement. Automatic cuts keep
+  the geometric section centre, independently of artwork bounds or cut size.
+  Infeasible sizes remain red and exportable when checked; manual exclusions
+  stay off. See `docs/CUTTING_RULES.md` for the agreed contract.
+- Cropped photographs use measured internal divisions rather than distributing
+  complete rows across the partial last row. Off-bed cuts remain omitted.
+- Exported SVGs request a bed-size print page with no margins. Browser and
+  printer settings must also preserve that page size, 100% scale and origin;
+  the declaration alone does not guarantee physical alignment.
+- New Navigator panel (bottom-right of the bed, like Illustrator): overview
+  of the bed with the visible area in red — click or drag to move, double-click
+  to zoom there — plus zoom slider, −/+ and Fit. Opens by itself when zooming in.
+- Navigator updates follow scene/view changes rather than canvas repaints,
+  preventing a continuous repaint loop while the floating overview is open.
+- Geometry warnings retain their red status even when cuts also overlap.
+- The cut preview includes all checked warning cuts, including overlap areas.
+- Refine nearly axis-aligned artwork lattices against sustained visible print
+  seams. This prevents motif-centre offsets from becoming incorrect panel
+  boundaries; rotated, projective and manual guides retain their geometry.
+
 ## 2026-11-02 — Edge false positives, cut blocking by reason, faster analysis
 
 - Drop a regular lattice band extrapolated off the photographed cloth, and

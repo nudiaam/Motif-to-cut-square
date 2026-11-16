@@ -19,7 +19,12 @@ def scale_grid(grid: PanelGrid | None, sx: float, sy: float) -> PanelGrid | None
         projection = tuple(tuple(float(v) for v in row) for row in matrix)
     return replace(grid,x_lines_px=tuple(x*sx for x in grid.x_lines_px),
                    y_lines_px=tuple(y*sy for y in grid.y_lines_px),
-                   lattice=lattice,projection=projection)
+                   lattice=lattice,projection=projection,
+                   cell_regions_px=tuple(tuple((x*sx,y*sy) for x,y in polygon)
+                                         for polygon in grid.cell_regions_px),
+                   cell_centers_px=tuple((x*sx,y*sy) for x,y in grid.cell_centers_px),
+                   boundary_uncertainty_px=(grid.boundary_uncertainty_px*max(sx,sy)
+                       if grid.boundary_uncertainty_px is not None else None))
 
 
 def fabric_analysis_bounds(mask: np.ndarray) -> tuple[int, int, int, int]:
@@ -45,4 +50,7 @@ def translate_grid(grid: PanelGrid | None, x: float, y: float) -> PanelGrid | No
         projection = tuple(tuple(float(v) for v in line) for line in matrix)
     return replace(grid, x_lines_px=tuple(v+x for v in grid.x_lines_px),
                    y_lines_px=tuple(v+y for v in grid.y_lines_px),
-                   lattice=lattice, projection=projection)
+                   lattice=lattice, projection=projection,
+                   cell_regions_px=tuple(tuple((px+x,py+y) for px,py in polygon)
+                                         for polygon in grid.cell_regions_px),
+                   cell_centers_px=tuple((px+x,py+y) for px,py in grid.cell_centers_px))

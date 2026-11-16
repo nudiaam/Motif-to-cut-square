@@ -6,6 +6,12 @@
 
 A local Windows demo that converts an image of a laser cutter bed into motif centres and cut squares or rectangles that can be exported as SVG.
 
+The [cutting rules](docs/CUTTING_RULES.md) define section ownership, exact automatic
+centres, cut-state colours, off-bed omissions and SVG acceptance checks.
+
+The current version is **0.13.4**. Its source identity,
+comparisons and validation limits are recorded in the [version report](docs/RELEASE_0_13_4.md).
+
 The initial configuration uses an **Epilog Fusion Maker 36**, a **36 x 24 in** bed, and a global cut size of **5 x 5 in**. You can also create custom machine profiles, change working units, and adjust the cut size.
 
 > **Project status:** functional validation prototype. It does not control the laser cutter, start cutting jobs, or configure power, speed, frequency, focus, or materials.
@@ -20,11 +26,13 @@ The documentation is split so that non-technical users do not have to read devel
   - [Spanish user manual](docs/Lalikul_Cut_Prep_Manual_de_usuario_ES.docx)
   Both editions include detailed instructions, screenshots, states, settings,
   navigation controls, automatic overlap correction, and troubleshooting guidance.
+  Their screenshots and state descriptions predate 0.13.4; use the colour guide
+  below and the current cutting rules for current behaviour.
 - The [developer guide](docs/DEVELOPER_GUIDE.md) describes the architecture, virtual environment, tests, and technical decisions.
 - [CHANGELOG.md](CHANGELOG.md) lists the behavior included in each shared update.
-- [Current detection evaluation](docs/qa/joint-coordinator/README.md) records the
-  adaptive analysis, repeatable tests, CPU timings and remaining artwork-boundary
-  limitations.
+- The [0.13.4 validation](docs/RELEASE_0_13_4.md) and
+  [performance report](docs/PERFORMANCE_0_13_4.md) record the current checks and
+  their limits. Original customer photos and detailed QA captures stay private.
 
 ## Quick start for Windows users
 
@@ -92,7 +100,7 @@ does not open after successful setup.
 4. Select **Detect + check**. The application detects individual artwork and
    automatically fits a supported panel or geometric grid.
 5. Compare every cut with the image. Reliable grid geometry determines the final
-   aligned centres and creates normal squares for empty detected cells. The application stays in **Detect and
+   aligned centres. Empty grid positions do not create automatic cuts. The application stays in **Detect and
    check** and does not advance automatically. If the result is right, select
    **Detection is correct — continue**.
 6. If the automatic result needs correction, select **Adjust panel grid**,
@@ -102,19 +110,18 @@ does not open after successful setup.
    can be estimated, enter rows and columns to create it manually and retry.
 7. In **Review cuts**, select false positives or use `Shift+click` to select several,
    then choose **Delete selected** or press `Delete`. Add missing cuts when needed.
-8. Resolve orange cuts with **Fix overlaps**. This establishes a collision-free
-   layout before any final centring.
-9. Use **Center drawings**. Automatic cuts use stricter, stable
-   artwork bounds so printed panel marks do not pull the square away from the
-   drawing. Centring is constrained by the current layout: it approaches the
-   true artwork centre without recreating avoidable collisions. If a drawing is
-   genuinely larger than the configured cut, that size conflict remains visible.
+8. Inspect overlap notes and use **Fix overlaps** where appropriate. Grid cuts
+   keep their section centres; a size conflict may require a different cut size.
+9. Use **Center drawings**. Cuts assigned to a grid retain the measured centre
+   of their fabric section. Drawing bounds and changes of size cannot move that
+   centre. A section crossing is purple; artwork-size conflicts appear in the
+   details. Individual cuts without a grid use the artwork bounds.
 10. Check the output summary inside **Review cuts**. It updates automatically with ready cuts, cuts with warnings
-   (overlapping or clipped), and excluded cuts, including those outside the bed
-   or incomplete in the source image.
-11. Select **Export SVG**. Every checked cut is saved; if any carries a warning the
-    application asks for confirmation. Outside-bed and incomplete-image cuts
-    are blocked and cannot be exported.
+   (overlapping or clipped), and manually excluded cuts. Cuts extending outside
+   the bed are removed automatically.
+11. Select **Export SVG**. Every checked cut inside the bed is saved; if any carries
+    a warning the application asks for confirmation. Details retain artwork-size
+    and incomplete-image notes; these do not make every cut red or purple.
 
 ## Zooming and panning like Illustrator
 
@@ -183,20 +190,20 @@ that the comparison cannot establish identical inputs.
 
 | Colour | State | Action |
 |---|---|---|
-| Green | Ready | Ready for export. |
+| Green | Ready | No measured section crossing; check drawing and calibration details as needed. |
 | Bright cyan | Selected cut | Inspect, move, or delete it. |
-| Orange | Overlap | Separate the cuts or exclude one of them. |
-| Orange | Clipped artwork / Review | Check artwork extending beyond its cut, duplicated detections, or grid assignments. |
-| Red | Outside the bed | Move the centre or reduce the cut size. |
-| Grey | Excluded | Not included in the SVG. |
+| Purple | Section crossing | The cut crosses its measured section. Change size or inspect the guides; checked in-bed cuts can still be exported. |
+| Red | Impossible | Invalid geometry or a cut outside the bed. Off-bed cuts are normally removed before display and export. |
+| Grey | Excluded | Manually unchecked; not included in the SVG. |
 
 Two enabled cuts are considered to overlap if they cross or if their edges touch
-exactly. Both change to `OVERLAP`. This is a warning state, not a filter: a
-checked cut is still exported, so resolve or uncheck the ones you do not want.
+exactly. Overlap is retained as a detail note, independently of the final-cut
+colour. A checked in-bed cut is still exported; resolve or uncheck unwanted cuts.
 
 **Ready does not certify that all drawings were found.** Detection review now
 shows known assignment and clipping warnings before confirmation, and identifies
-cuts added from grid spacing. Always compare the complete result with the image.
+proposed empty grid positions without creating cuts there. Always compare the
+complete result with the image.
 
 After the centring step, **Fix Overlaps** is enabled when at least one collision
 exists. It keeps each complete drawing inside its cut, leaves
@@ -243,16 +250,16 @@ The top toolbar contains only image loading and the global **Undo** command.
 - **Lock image placement** protects the image while cut shapes are being edited.
 - When unlocked, drag inside the image to move it or drag a corner to scale it.
 - **IMAGE SCALE** shows how many pixels represent one physical unit horizontally and vertically.
-- **Preview Cuts** dims everything outside enabled, valid, collision-free cut
+- **Preview Cuts** dims everything outside checked in-bed cut
   rectangles. It changes only the display and never modifies export geometry.
 - A motif centre is calculated from robust high-confidence visual extents. Weak
   extreme fragments and fabric specks are trimmed, while the extent midpoint
   prevents dense lower areas from pulling the centre towards the ink mass.
-- Cut centring deliberately uses a separate reference: the full detected bounding
-  box. The overlap solver constrains later movement to positions that continue to
-  contain that box whenever the configured cut is large enough.
-- A cut that cannot contain its full detected drawing is marked **CLIPPED**. This
-  is a warning, not an exclusion: the cut still exports while checked. Increase the
+- A grid cut uses the geometric centre of its own printed section. The drawing
+  cannot translate the grid or pull that cut towards another background.
+  Individual cuts without a grid use the full detected bounding box.
+- A cut that cannot contain its full detected drawing retains an explanatory
+  detail note. It still exports while checked and inside the bed. Increase the
   global cut size or correct the detection, or uncheck the cut to leave it out.
 
 ### Global Cut Size
@@ -267,17 +274,17 @@ The top toolbar contains only image loading and the global **Undo** command.
   Reliable grids determine final cut centres immediately, keeping the chosen cut size.
   Visible panel bands provide additional evidence; continuous backgrounds use the
   arrangement of individually detected artwork. No row or column count is preset.
-- Empty cells in a reliable grid become ordinary cut squares automatically.
-  Their inferred origin remains internal; delete any square that is not wanted.
+- Empty cells remain proposals without automatic cuts. Recovering a faint figure
+  requires coherent image evidence; grid spacing alone is insufficient.
 - On continuous backgrounds, detection compares complete foreground regions across
   several thresholds before accepting a grid. Artwork spanning multiple cells stays
-  a single detection while the regular grid still supplies every cell square.
+  a single composition; the grid alone does not create missing figures.
 - A reliable grid preserves the chosen cut size. If cuts overlap at the current
   image scale, the overlap remains visible for review without shifting grid centres.
 - For touching panels photographed at an angle, an analysis copy is rectified and
   the regular grid is projected back to the original photo. Image placement and
-  physical cut dimensions stay unchanged. Faint undetected illustrations receive
-  their grid squares without an additional acceptance step.
+  physical cut dimensions stay unchanged. Faint illustrations require actual
+  foreground evidence before receiving a cut.
 - **Adjust panel grid** opens the existing fallback editor if the automatic
   result needs correction. Choose **Use a panel grid** to enter boundaries manually,
   or **No grid** to skip visual panel detection.
@@ -300,6 +307,11 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 ## Manual editing
 
+- Open **Navigator** at the bottom-right of the canvas for a miniature of the bed
+  and a red visible-area box. Click or drag the map to pan, double-click to zoom
+  there, and use the slider, −/+, or **Fit** to change magnification. It opens
+  automatically when zooming in. These controls change the view only; cut
+  coordinates and SVG geometry stay unchanged.
 - Click a centre or cut shape to select it; selected cuts use a high-contrast
   cyan border, cyan centre, and translucent cyan fill on the cut square itself.
 - Hold `Shift` while clicking the canvas or detection list to add or remove cuts
@@ -319,12 +331,12 @@ The top toolbar contains only image loading and the global **Undo** command.
 
 ## Export and verification
 
-The SVG contains **checked** (enabled) cuts. Cuts or artwork outside the configured
-bed, and compositions incomplete in the source image, are automatically excluded
-and cannot be re-enabled until the boundary problem is resolved. The exporter
-also rejects these cuts directly; a confirmation cannot bypass this check.
-Incomplete source images need a new, complete photo. Moving or shrinking a cut
-does not restore missing artwork. Excluded observations remain available to inspect.
+The SVG contains **every checked cut inside the bed**. Rectangles extending
+outside the machine bed are removed from the application and omitted by the
+exporter. Section crossings are purple. Clipped artwork, incomplete source images
+and uncertain assignments remain explanatory detail notes. Review the reasons before
+confirming export. Manually unchecked cuts are also omitted. Moving or shrinking a cut
+does not restore artwork missing from the source photograph.
 
 Overlaps, artwork larger than the selected cut, and uncertain ownership still
 require review and confirmation. Detection never silently shrinks the physical
@@ -334,12 +346,19 @@ It does not include the photograph, text, centres, labels, or detection bounding
 
 By default, **Export units** uses the same unit as **Working units**. The app displays a warning if you choose a different unit. Always verify the bed size in the receiving software.
 
+The SVG requests a print page matching the selected bed (36 × 24 in by default),
+with zero margins. When printing through a browser or another program, set the
+printer page to the same size, use 100% / actual size, disable headers and footers,
+and preserve the top-left origin. The file cannot override printer settings.
+Confirm alignment in Epilog Dashboard before cutting; see the manufacturer's
+[graphics software setup guide](https://support.epiloglaser.com/laser-machine/fusion-edge/usage-and-operation/system-requirements-setup/default-software-settings-printing-to-the-epilog-software-suite/).
+
 **Review cuts** also runs the geometry verification, enables the visual cut preview, and
 states how many cuts are ready, how many carry warnings (overlapping or clipped),
 and how many are excluded. **Export SVG**
 is available from this combined review, with the summary updated after edits and
 rechecked on export. There is no separate check step or second export click; if any checked cut carries a
-review warning, the app asks for confirmation. Hard boundary blocks cannot be overridden.
+review warning, the app asks for confirmation. Accepting exports all checked cuts.
 
 The internal debug JSON option is hidden and disabled by default for normal users.
 
@@ -398,16 +417,21 @@ Match **Export units** to **Working units** and verify the page size during impo
 
 ## Current limitations
 
-- Cuts assigned to a reliable grid must remain inside their detected or confirmed
-  cell regions, including after manual movement. Crossings block SVG export;
-  an oversized cut is not silently reduced. Region accuracy and physical scale
-  still require review, particularly where printed divisions are not visible.
-  See the [25 October correction and validation](docs/qa/customer-20261025/correccion.md)
-  and its [preceding diagnosis](docs/qa/customer-20261025/README.md).
-- Processing time must be validated on representative production hardware.
-  Local measurements on the unusually powerful development workstation do not
-  establish acceptable customer performance; reported 150–300 second runs still
-  require reproduction with the customer originals and diagnostic packages.
+- Automatic placement keeps the measured section centre. Manual movement tries
+  to keep the complete rectangle inside its assigned cell. A measured crossing
+  is purple; requested dimensions are never silently reduced. A checked in-bed
+  cut remains exportable. Region accuracy and physical scale still need checking,
+  particularly where printed divisions are not visible.
+- Very faint artwork, background decoration and weave can leave uncertain drawing
+  outlines. These remain detail notes without changing the final-cut colour.
+  Green means no measured section crossing; it does not certify the complete
+  silhouette, every guide, or physical calibration. Artwork overlays can be
+  inspected in the detailed view.
+- The customer laptop and its historical 238.5-second run are documented. New
+  local and constrained-resource comparisons are recorded in the
+  [0.13.4 performance report](docs/PERFORMANCE_0_13_4.md). Limiting the development
+  workstation to two logical CPUs does not emulate the customer's AMD A6 or 4 GB
+  RAM; the new time on that laptop still requires measurement there.
 
 - The current catalogue coverage and outstanding original-image tests are listed
   in [the collection audit](docs/qa/composition-recovery/catalogue-coverage.md).

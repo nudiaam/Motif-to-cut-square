@@ -13,6 +13,7 @@ from app.geometry.units import LengthUnit, from_inches
 from app.models import Detection, recalculate_cut_overlaps
 from app.imaging.logical_layout import LogicalLayout
 from app.geometry.review_summary import review_counts
+from app.geometry.cut_presentation import present_cut
 
 
 def export_debug_json(
@@ -62,13 +63,19 @@ def export_debug_json(
                 "position_source": ("manual" if detection.manual else "grid" if detection.grid_positioned else "individual"),
                 "inferred": detection.inferred,
                 "artwork_clipped": detection.artwork_clipped,
-                "review_reasons": detection.review_reasons,
+                "confirmed_artwork_clipped": detection.confirmed_artwork_clipped,
+                "artwork_extent_uncertain": detection.artwork_extent_uncertain,
+                "artwork_support_boxes_px": detection.artwork_support_boxes_px,
+                "review_reasons": detection.review_reasons_for(mapper),
                 "source_incomplete": detection.source_incomplete,
                 "cut_region_px": detection.cut_region_px,
                 "cut_region_required": detection.cut_region_required,
                 "auto_blocked": detection.auto_blocked,
                 "cut_region_uncertainty_px": detection.cut_region_uncertainty_px,
-                "cut_block_reason": detection.cut_block_reason(mapper),
+                "cut_warning_reason": detection.cut_warning_reason(mapper),
+                "measured_panel_boundary_reason": detection.panel_boundary_reason(mapper),
+                "confirmed_panel_boundary_reason": detection.confirmed_panel_boundary_reason(mapper),
+                "cut_block_reason": None,  # Legacy field: no automatic blocks.
                 "manual": detection.manual,
                 "score": detection.score,
                 "center_px": {
@@ -94,7 +101,11 @@ def export_debug_json(
                 },
                 "valid": detection.valid_cut,
                 "overlaps_cut": detection.overlaps_cut,
-                "exportable": detection.exportable,
+                "cut_state": present_cut(detection,mapper).state,
+                "cut_color": present_cut(detection,mapper).color,
+                "cut_state_reason": present_cut(detection,mapper).reason,
+                "legacy_solver_exportable": detection.exportable,
+                "exportable": detection.enabled and detection.square_inches.is_valid(mapper.bed_width_in,mapper.bed_height_in),
                 "enabled": detection.enabled,
             }
             for detection in detections

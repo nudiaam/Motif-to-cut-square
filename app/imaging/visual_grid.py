@@ -15,25 +15,86 @@ from .panel_grid import PanelGrid
 from .scene_profile import POLICY
 
 
+def _observed_outer_frame(crop, axis, expected, pitch, cloth_bounds):
+    """Read a sustained dark stroke, independently of its two gradient flanks.
+
+    Neighbouring measured divisions only place the search window. They never
+    supply the returned border: both readings must locate the same narrow,
+    continuous printed stroke, away from the cloth/bed transition.
+    """
+    from .printed_partition import _profiles, _response_center
+
+    lo, hi = cloth_bounds
+    inset = max(3., pitch*.035)
+    length = crop.shape[axis]
+    start = max(1, int(np.ceil(lo+inset)), int(expected-pitch*.18))
+    stop = min(length-1, int(np.floor(hi-inset))+1, int(expected+pitch*.18)+1)
+    if stop-start < 5:
+        return None
+    indices = np.arange(start, stop)
+    readings = []
+    for sigma in (.5, .8):
+        profile = _profiles(crop, 'frames', sigma)[1-axis]
+        values = profile[indices]
+        floor = float(np.median(values))
+        mad = float(np.median(abs(values-floor)))
+        high = float(values.max())
+        if high < max(4., floor+6*mad):
+            return None
+        peak = _response_center(profile, indices, floor, high, .6)
+        if peak is None or not start <= peak[0] < stop:
+            return None
+        # Separate strokes of comparable strength do not identify one border.
+        rivals = indices[(abs(indices-peak[0]) > max(5., pitch*.08)) &
+                         (values >= floor+(high-floor)*.65)]
+        if len(rivals):
+            return None
+        readings.append(peak[0])
+    if abs(readings[0]-readings[1]) > 2.:
+        return None
+    return float(np.mean(readings)), abs(readings[0]-readings[1])/2
+
+
 def refine_printed_boundaries(image_bgr,grid):
     """Refine sustained touching seams locally, without fitting a mean pitch.
 
     Gutter pairs and artwork-only edges do not establish a single seam. This
     refinement never changes dimensions or overrides manual/projective guides.
+    A nearly axis-aligned artwork lattice may also yield to independently
+    observed print seams; motif centres are not precise panel boundaries.
     """
-    if grid is None or grid.source not in ('visual','seam_consensus') or grid.lattice is not None:
+    if grid is not None and grid.source=='printed' and grid.cell_regions_px:
+        from .section_evidence import refine_projected_sections
+        return refine_projected_sections(image_bgr,grid)
+    if grid is None or grid.source == 'manual' or grid.projection is not None:
         return grid
     h,w = image_bgr.shape[:2]
     scale = min(1.,POLICY.max_scene_side/max(h,w))
+    artwork_lattice = grid.lattice is not None
+    if artwork_lattice:
+        if grid.source not in ('pattern','fabric','ink_lattice'):
+            return grid
+        _,column,row = grid.lattice
+        # Only discard fitting noise below the seam measurement resolution.
+        # A genuinely rotated/sheared lattice keeps its original geometry.
+        drift = max(abs(column[1])*grid.columns,abs(row[0])*grid.rows)
+        if drift*scale > 2.:
+            return grid
+    elif grid.source not in ('visual','seam_consensus'):
+        return grid
     small = cv2.resize(image_bgr,(round(w*scale),round(h*scale)),interpolation=cv2.INTER_AREA)
     lab = cv2.cvtColor(small,cv2.COLOR_BGR2LAB).astype(np.float32)
     fx,fy,fw,fh = _fabric_bounds(small)
     lines = (np.asarray(grid.x_lines_px)*scale,np.asarray(grid.y_lines_px)*scale)
     refined = []
+    outer_unconfirmed = False
+    frame_spread = 0.
     for axis,expected in zip((1,0),lines):
         perpendicular = lines[1 if axis == 1 else 0]
         a,b = int(np.ceil(perpendicular[0])),int(np.floor(perpendicular[-1]))
         crop = lab[max(0,a):min(small.shape[0],b)] if axis == 1 else lab[:,max(0,a):min(small.shape[1],b)]
+        bgr_crop = (small[max(0,a):min(small.shape[0],b)] if axis == 1 else
+                    small[:,max(0,a):min(small.shape[1],b)])
         if min(crop.shape[:2]) < 20:
             return grid
         readings = []
@@ -84,10 +145,37 @@ def refine_printed_boundaries(image_bgr,grid):
         # few motif edges into a replacement for a supported global layout.
         if sum(0<i<len(expected)-1 for i in accepted) < max(1,int(np.ceil((len(expected)-2)*.75))):
             return grid
+        for edge, neighbours in ((0, (1, 2)), (len(chosen)-1, (len(chosen)-2, len(chosen)-3))):
+            if edge in accepted or not all(i in accepted for i in neighbours):
+                continue
+            near, farther = neighbours
+            proposal = 2*chosen[near]-chosen[farther]
+            # Re-open an exterior search only when measured adjacent seams
+            # contradict its old phase. Leave already consistent grids alone.
+            if abs(proposal-chosen[edge]) <= pitch*.08:
+                continue
+            bounds = (fx, fx+fw) if axis == 1 else (fy, fy+fh)
+            observed = _observed_outer_frame(bgr_crop, axis, proposal,
+                                            abs(chosen[near]-chosen[farther]), bounds)
+            if observed is None:
+                outer_unconfirmed = True
+            else:
+                chosen[edge] = observed[0]
+                frame_spread = max(frame_spread, observed[1]/scale)
         if np.any(np.diff(chosen)<pitch*.65):
             return grid
         refined.append(tuple(float(v/scale) for v in chosen))
-    return replace(grid,x_lines_px=refined[0],y_lines_px=refined[1])
+    issues = grid.review_reasons
+    if outer_unconfirmed:
+        issues = tuple(dict.fromkeys((*issues,
+            'Outer printed boundary could not be confirmed; check section guides')))
+    return replace(grid,x_lines_px=refined[0],y_lines_px=refined[1],
+                   lattice=None if artwork_lattice else grid.lattice,
+                   source='visual' if artwork_lattice else grid.source,
+                   review_reasons=issues,
+                   boundary_uncertainty_px=(max(grid.boundary_uncertainty_px or
+                       POLICY.boundary_uncertainty_px/scale, frame_spread)
+                       if frame_spread else grid.boundary_uncertainty_px))
 
 
 def _fabric_bounds(image: np.ndarray) -> tuple[int, int, int, int]:

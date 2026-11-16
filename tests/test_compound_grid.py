@@ -128,14 +128,14 @@ class CompoundGridTests(unittest.TestCase):
         positions=[d.center_px for d in window.detections];window.confirm_detection()
         self.assertEqual([d.center_px for d in window.detections],positions)
 
-    def test_partial_source_groups_stay_excluded_after_resizing_cuts(self):
+    def test_partial_source_groups_stay_enabled_with_warnings_after_resizing(self):
         app=QApplication.instance() or QApplication([]);window=MainWindow();self.addCleanup(window.close)
         image=cv2.imread(str(SOURCE))[:815].copy()
         window._load_image(image,'Partial compact number groups');window.detect_motifs();app.processEvents()
         partial=[d.id for d in window.detections if d.source_incomplete]
         self.assertGreaterEqual(len(partial),5)
-        self.assertFalse(any(d.enabled for d in window.detections if d.id in partial))
+        self.assertTrue(all(d.enabled and d.cut_warning_reason(window.mapper) for d in window.detections if d.id in partial))
         window.change_cut_size(1,1);app.processEvents()
-        self.assertTrue(all(d.source_incomplete and not d.enabled for d in window.detections if d.id in partial))
+        self.assertTrue(all(d.source_incomplete and d.enabled and d.cut_warning_reason(window.mapper) for d in window.detections if d.id in partial))
 
 if __name__=='__main__':unittest.main()

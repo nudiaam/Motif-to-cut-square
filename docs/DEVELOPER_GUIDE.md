@@ -2,9 +2,55 @@
 
 Esta guía complementa el `README.md`. El README está escrito primero para usuarios de Windows y funciona como portada de GitHub; este documento concentra la información técnica para evitar mezclar instalación cotidiana con desarrollo.
 
+Las [reglas de corte](CUTTING_RULES.md) son el contrato vigente de colocación y
+exportación: la casilla impresa fija el centro automático; el dibujo y el tamaño
+no lo desplazan. Un aviso marcado puede exportarse dentro de la cama.
+
 La separación sigue la recomendación de GitHub de usar el README para explicar qué hace un proyecto, por qué es útil, cómo empezar y dónde obtener ayuda, dejando la documentación extensa en archivos enlazados.
 
 ## Stack
+
+`printed_partition.py` verifica divisiones impresas independientes del número
+de dibujos: rectifica solo una copia para análisis, compara reglas finas o cambios
+de color sostenidos en ambos ejes y exige acuerdo entre dos escalas. Si hay un
+dibujo conectado que atraviesa secciones y persiste con un umbral más estricto,
+cede a la lectura de imagen completa. La segmentación agrupa accesorios por
+sección y contrasta tinta tenue con una lectura de luminancia independiente.
+No utiliza nombres de colecciones, recuentos esperados ni pulgadas del corte.
+
+La combinación de escalas conserva qué divisiones fueron observadas, estimadas,
+respaldadas por una sola escala o discutidas. La concordancia incluye los bordes
+exteriores. Las posiciones extrapoladas no votan como observaciones; un exterior
+discutido conserva revisión obligatoria y su error de medida. En el modo de marcos
+se descarta la respuesta sin soporte bilateral del borde de la copia rectificada,
+para no confundir relleno oscuro de la transformación con el límite impreso.
+La normalización de escala se limita a la copia de análisis y conserva su inversa.
+
+`printed_composition.py` contrasta una silueta por mezclas de color suavizadas con
+la lectura local original. Descarta reglas y anillos apoyados en el borde; conserva
+partes separadas sustanciales y detalles próximos. En contraste muy bajo mantiene
+la extensión débil y comunica incertidumbre para no borrar orejas o adornos.
+La caja conservadora puede contener fondo; no se utiliza como prueba de recorte
+cuando `artwork_extent_uncertain=True`. `artwork_support_boxes_px` conserva las
+regiones de tinta corroboradas, proyectando sus píxeles a coordenadas de origen.
+`contains_artwork` conserva la comprobación del contorno completo para inspección;
+`contains_supported_artwork` conserva la comprobación de esas zonas, mientras
+`confirmed_artwork_clipped` exige además un contorno resuelto para afirmar un
+conflicto rojo. Si `artwork_extent_uncertain=True`, incluso tinta corroborada
+fuera del corte produce revisión morada y un motivo de posible recorte. Sin
+respaldo suficiente queda revisión obligatoria, nunca listo por falta de datos.
+La etapa `outline_confidence` aplica la misma distinción a secciones observadas y
+guías confirmadas, conservando cajas, recuentos y propiedad. Sus vistas locales
+están acotadas por `POLICY.max_region_side`.
+El [informe de diez fotos](qa/square-contract-20261115/index.html) separa recuentos,
+geometría, conflictos y contornos que necesitan inspección; no certifica una
+segmentación semántica completa únicamente por acertar el recuento.
+
+`PanelGrid.cell_regions_px` y `cell_centers_px` conservan las medidas individuales
+de cada sección al proyectar fotografías con perspectiva. Escalado, traslación y
+recorte de filas/columnas transforman ambos datos; editar líneas reinicia esa
+geometría. La incertidumbre medida de los bordes se propaga en píxeles de origen
+y se convierte a pulgadas al colocar y comprobar los cortes.
 
 La [evaluación del análisis adaptativo](qa/adaptive-planning/README.md) documenta
 la revisión `2026-09-22-adaptive-plan`. `scene_profile.py` calcula medidas de la
@@ -111,24 +157,48 @@ El zoom y el desplazamiento pertenecen exclusivamente a la vista del canvas. Mod
 Cada `Detection` diferencia tres condiciones:
 
 - `enabled`: inclusión manual solicitada;
-- `valid_cut`: el rectángulo está dentro de la cama;
+- `valid_cut`: indicador geométrico heredado; puede ser falso ante conflictos
+  de casilla o dibujo, además de un rectángulo fuera de cama;
 - `overlaps_cut`: el rectángulo toca o intersecta otro corte activo.
 
-La propiedad `exportable` exige `enabled and valid_cut and not overlaps_cut`.
+La propiedad heredada `exportable` exige `enabled and valid_cut and not overlaps_cut`.
+No determina la inclusión en la salida: el exportador SVG y el verificador usan
+`enabled` y `square_inches.is_valid(bed_width, bed_height)`. Los conflictos
+dentro de cama, incluidos los solapes, siguen exportándose si están marcados.
 
-**Corrección del 25-10-2026:** `cut_region_px` conserva la casilla asignada y
-`cut_block_reason` exige la contención del rectángulo completo, con un mínimo de
-0,01 pulgadas de separación y margen de precisión para fronteras automáticas.
-La región permanece tras un movimiento manual y se comprueba de
-nuevo al exportar. El bucle SVG escribe cortes habilitados después de comprobar
-estos bloqueos; otros avisos, como extensión del dibujo, siguen siendo distintos.
-`auto_blocked` distingue bloqueo automático de exclusión manual. Véase la
-[implementación y validación](qa/customer-20261025/correccion.md).
+**Contrato de presentación 0.13.4 (16-11-2026):** `cut_region_px` conserva
+la sección asignada. `present_cut` en `geometry/cut_presentation.py` determina
+el estado visible desde la geometría: verde sin cruce medido, morado cuando el
+rectángulo cruza su sección, rojo para geometría imposible. Las dudas de contorno,
+la asignación incierta, los recortes de dibujo y los solapes permanecen como notas.
+No se usan `valid_cut`, `exportable` heredado ni `review_reasons` como color final.
+`panel_boundary_reason` mide el cruce contra el polígono; la banda de medición
+se conserva en las notas y no convierte un rectángulo contenido en morado.
+`cut_warning_reason`, `confirmed_panel_boundary_reason` y `review_reasons_for`
+conservan evidencia para el solucionador y los detalles. El JSON distingue
+`cut_state`, `cut_color`, `cut_state_reason`, `legacy_solver_exportable` y la
+inclusión real `exportable` del SVG.
+
+Las divisiones automáticas proyectadas se afinan sobre píxeles originales con
+`section_evidence.refine_projected_sections`. Los vértices compartidos conservan
+la topología y los centros se calculan por intersección de diagonales. Las guías
+manuales y proyectivas del usuario se mantienen. El marco de cierre y la
+terminación de reglas perpendiculares delimitan el estampado frente a la tela.
+
+Los rectángulos que salen de la cama se retiran de las vistas y del SVG; sus
+celdas se suprimen para que un refresco no los vuelva a crear. El exportador y
+el verificador aplican también este filtro al usarlos sin interfaz.
+El SVG y la vista previa incluyen los demás marcados tras la confirmación normal.
+Una exclusión manual también omite un corte. `cut_hard_block_reason` se conserva
+como compatibilidad y devuelve siempre `None`. Los antiguos `auto_blocked` se
+recuperan sin reactivar exclusiones manuales. Véase la
+[corrección del 25 de octubre](qa/customer-20261025/correccion.md).
 
 `recalculate_cut_overlaps` considera conflicto tanto una intersección con área como el contacto exacto de bordes. Las detecciones desactivadas no participan. La interfaz recalcula después de mover, redimensionar, activar, desactivar, detectar o cambiar la colocación de la imagen. El exportador y el verificador vuelven a calcular como defensa adicional.
 
-`center_cuts_on_visual_anchors` centra primero cada corte usando los límites
-completos del dibujo. Después, `resolve_cut_overlaps` separa los conflictos dentro
+`center_cuts_on_visual_anchors` conserva las posiciones de las casillas. Para
+cortes sin casilla utiliza los límites completos del dibujo. Después,
+`resolve_cut_overlaps` separa los conflictos de esos cortes individuales dentro
 del intervalo que todavía contiene esos límites. Este orden evita el ciclo
 centrar → recrear solape → volver a separar.
 
@@ -357,27 +427,20 @@ El análisis usa bounding boxes originales, nunca centros corregidos. Mover un
 corte manualmente conserva su observación y deja una excepción explícita sin
 reajustar los demás. Borrar o excluir evidencia recalcula las asignaciones y,
 cuando el modelo procede de ilustraciones, también su ajuste. Un grid visual
-conserva su geometría aunque falten ilustraciones. Los cortes inferidos automáticos
-nunca aportan evidencia al ajuste. Al recalcular, siguen la posición exacta de su
-celda mientras el grid sea fiable. Si el usuario elimina uno, la celda queda
-suprimida hasta una nueva detección; Deshacer restaura también esa supresión. Deshacer
+conserva su geometría aunque falten ilustraciones. Los huecos no aportan evidencia
+al ajuste y no crean cortes automáticos. Las elecciones manuales, las exclusiones
+y la supresión de cortes retirados se conservan en el historial. Deshacer
 restaura geometría, fuentes, asignaciones e inclusiones. Cambiar unidades, zoom,
 tamaño de corte o calibración conserva las posiciones en píxeles del grid.
 
-Los huecos dentro de la extensión observada se guardan como `MissingPosition`:
-
-- `review_state` conserva internamente la fuerza de la evidencia para depuración.
-  No genera controles ni estados adicionales en la interfaz.
-- Cuando el grid global es fiable, cada hueco crea automáticamente un corte
-  `Detection.inferred=True`, sin bounding box ni centro del detector. Esa marca
-  no se muestra al usuario y solo permanece en el modelo y el JSON de diagnóstico.
-
-Un grid fiable materializa sus celdas vacías y esos cuadrados participan en el SVG
-como cualquier otro. El usuario puede borrarlos en Review cuts. Con confianza baja
-no se crean. Un bloque interior denso puede extender una única fila o columna
-adyacente cuando existe al menos una detección exterior muy próxima a la posición
-extrapolada; ese punto no reajusta la geometría y los outliers desalineados no
-amplían el grid.
+Los huecos dentro de la extensión observada se guardan como `MissingPosition`.
+Su `review_state` conserva la evidencia, pero no autoriza un corte. Desde 0.13.4,
+`_sync_automatic_grid_cuts` elimina antiguos rellenos automáticos; las posiciones
+sin composición quedan fuera del SVG. Una colocación explícitamente manual se
+conserva. `supported_missing_compositions` puede volver a leer un hueco: exige
+tinta coherente respaldada por silueta y lectura de fondo, rechaza apropiarse del
+dibujo de una vecina y conserva una caja real cuando recupera una figura tenue.
+Una predicción por espaciado nunca se materializa por sí sola como dibujo.
 
 **Show grid evidence** muestra puntos originales, bounding boxes, propuestas azules
 y guías inclinadas. La lista indica outliers/duplicados; el inspector muestra
@@ -391,8 +454,8 @@ duplicados, huecos, baja confianza, dibujos anchos, cortes manuales, colisiones,
 colocación exacta sin límites de desplazamiento, recorte del dibujo, límites de
 cama sin desplazar centros, solapes sin deformar el grid, SVG y round-trip en
 todas las unidades. Las pruebas de UI comprueban colocación automática antes de
-confirmar, redetección idéntica, excepciones manuales, creación automática de
-celdas vacías sin realimentación, borrado persistente, deshacer y nueva imagen.
+confirmar, redetección idéntica, excepciones manuales, ausencia de cortes de
+relleno en celdas vacías, borrado persistente, deshacer y nueva imagen.
 `test_visual_grid.py` añade la foto original de cámara como regresión (24 dibujos),
 otras seis distribuciones generadas, márgenes, fondo de cama, ausencia de bandas,
 celdas vacías y asignaciones independientes del centro del dibujo. La prueba UI
@@ -457,10 +520,10 @@ describe los cambios, comandos de reproducción y límites aún observados. La
 cobertura de casillas no constituye una validación de siluetas completas.
 
 `SVGExporter` crea un SVG con el tamaño físico completo de la cama y un `viewBox`
-en la misma unidad. Escribe un `<rect>` por corte habilitado después de comprobar
-bloqueos de cama, fuente incompleta y región de corte. No filtra por la propiedad
-`exportable`: los avisos de solape o dibujo recortado siguen el flujo de revisión,
-pero una invasión de la región asignada impide exportar.
+en la misma unidad. Escribe un `<rect>` por corte habilitado, incluidos los que
+tengan avisos de cama, fuente incompleta o región de corte. No filtra por la
+propiedad `exportable`: esta informa de calidad geométrica, mientras que la
+inclusión depende exclusivamente de la casilla marcada por el operador.
 
 ### Análisis acotado y divisiones locales (25-10-2026)
 

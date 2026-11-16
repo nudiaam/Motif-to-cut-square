@@ -3,7 +3,8 @@ from collections import Counter
 
 
 LABELS = {'overlap': 'Overlapping cuts', 'outside_bed': 'Outside bed',
-          'artwork_clipped': 'Artwork exceeds cut', 'layout_review': 'Layout / ownership review',
+          'artwork_clipped': 'Artwork exceeds cut', 'possible_clipping': 'Possible artwork clipping — inspect outline',
+          'layout_review': 'Layout / ownership review',
           'extent_review': 'Artwork detail review', 'inferred': 'No artwork detected',
           'partial_image': 'Partial image panels'}
 
@@ -16,16 +17,20 @@ def review_counts(detections, mapper, layout=None):
             continue
         counts['overlap'] += bool(d.overlaps_cut)
         counts['outside_bed'] += bool(mapper and not d.square_inches.is_valid(mapper.bed_width_in, mapper.bed_height_in))
-        counts['artwork_clipped'] += bool(d.artwork_clipped or (mapper and not d.contains_artwork(mapper)))
+        clipped=bool(d.artwork_clipped or (mapper and not d.contains_supported_artwork(mapper)))
+        counts['artwork_clipped'] += bool(clipped and not d.artwork_extent_uncertain)
+        counts['possible_clipping'] += bool(clipped and d.artwork_extent_uncertain)
         counts['inferred'] += bool(d.inferred)
         match = matches.get(d.id)
         reasons = ' '.join(d.review_reasons).lower()
         counts['layout_review'] += bool((match and (match.status != 'matched' or match.review_reason))
+                                       or (mapper and d.panel_boundary_review_reason(mapper))
+                                       or (d.cut_region_required and d.cut_region_px is None)
                                        or any(s in reasons for s in ('layout', 'ownership', 'outside the proposed printed grid')))
         counts['partial_image'] += bool('partly inside' in reasons or 'source-image boundary' in reasons)
-        counts['extent_review'] += any(not any(s in r.lower() for s in (
+        counts['extent_review'] += bool(d.artwork_extent_uncertain or (mapper and d.artwork_edge_review_reason(mapper)) or any(not any(s in r.lower() for s in (
             'layout', 'ownership', 'outside the proposed printed grid',
-            'partly inside', 'source-image boundary', 'no artwork detected')) for r in d.review_reasons)
+            'partly inside', 'source-image boundary', 'no artwork detected')) for r in d.review_reasons))
     return dict(counts)
 
 

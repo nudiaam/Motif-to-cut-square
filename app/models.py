@@ -36,6 +36,8 @@ class Detection:
     cut_region_required: bool = False
     auto_blocked: bool = False
     cut_region_uncertainty_px: float = 0.
+    artwork_extent_uncertain: bool = False
+    artwork_support_boxes_px: tuple[tuple[int,int,int,int], ...] = ()
 
     @classmethod
     def from_pixel_center(
@@ -53,6 +55,8 @@ class Detection:
         review_reasons: tuple[str, ...] = (),
         source_incomplete: bool = False,
         cut_region_uncertainty_px: float = 0.,
+        artwork_extent_uncertain: bool = False,
+        artwork_support_boxes_px: tuple[tuple[int,int,int,int], ...] = (),
     ) -> "Detection":
         center_inches = mapper.pixel_to_inches(*center_px)
         square = CutSquare.centered_at(
@@ -75,9 +79,13 @@ class Detection:
                 tuple(float(value) for value in layout_observation_px)
                 if layout_observation_px is not None else None
             ),
-            review_reasons=review_reasons,
+            review_reasons=tuple(dict.fromkeys((*review_reasons,
+                *(('Artwork outline is uncertain; check faint details and background',)
+                  if artwork_extent_uncertain else ())))),
             source_incomplete=source_incomplete,
             cut_region_uncertainty_px=cut_region_uncertainty_px,
+            artwork_extent_uncertain=artwork_extent_uncertain,
+            artwork_support_boxes_px=artwork_support_boxes_px,
         )
         detection._update_validity(mapper)
         return detection
@@ -155,15 +163,31 @@ class Detection:
         self, mapper: CoordinateMapper, tolerance: float = 1e-9
     ) -> bool:
         """Whether some placement can contain this artwork at the cut size."""
-        if self.bounding_box_px is None:
+        boxes=self.supported_artwork_boxes()
+        if not boxes:
             return True
-        _x, _y, artwork_width, artwork_height = mapper.pixel_rect_to_inches(
-            self.bounding_box_px
-        )
+        x0=min(b[0] for b in boxes);y0=min(b[1] for b in boxes)
+        x1=max(b[0]+b[2] for b in boxes);y1=max(b[1]+b[3] for b in boxes)
+        _x,_y,artwork_width,artwork_height=mapper.pixel_rect_to_inches((x0,y0,x1-x0,y1-y0))
         return (
             artwork_width <= self.cut_width_inches + tolerance
             and artwork_height <= self.cut_height_inches + tolerance
         )
+
+    def supported_artwork_boxes(self):
+        """Keep proven ink separate from a conservative, uncertain outline."""
+        if self.artwork_support_boxes_px or self.artwork_extent_uncertain:
+            return self.artwork_support_boxes_px
+        return (self.bounding_box_px,) if self.bounding_box_px is not None else ()
+
+    def contains_supported_artwork(self,mapper,tolerance=1e-9):
+        square=self.square_inches
+        for box in self.supported_artwork_boxes():
+            x,y,w,h=mapper.pixel_rect_to_inches(box)
+            if not (square.x<=x+tolerance and square.y<=y+tolerance and
+                    square.x+square.width>=x+w-tolerance and square.y+square.height>=y+h-tolerance):
+                return False
+        return True
 
     def has_feasible_placement(
         self, mapper: CoordinateMapper, tolerance: float = 1e-9
@@ -191,9 +215,12 @@ class Detection:
     ) -> None:
         clamped_x = min(max(float(center_px[0]), 0.0), float(mapper.image_width_px))
         clamped_y = min(max(float(center_px[1]), 0.0), float(mapper.image_height_px))
-        self.center_px = clamped_x, clamped_y
+        requested = mapper.pixel_to_inches(clamped_x, clamped_y)
+        target = self._contained_panel_center(requested, mapper)
+        self.center_px = ((clamped_x, clamped_y) if target == requested
+                          else mapper.inches_to_pixel(*target))
         self.preferred_center_px = self.center_px
-        self.center_inches = mapper.pixel_to_inches(clamped_x, clamped_y)
+        self.center_inches = target
         self.manual = True
         self.layout_anchor_px = None
         self._update_validity(mapper)
@@ -205,7 +232,7 @@ class Detection:
         preserve_preferred_center: bool = False,
     ) -> None:
         """Move a cut in bed coordinates and keep its image coordinates in sync."""
-        self.center_inches = float(center_inches[0]), float(center_inches[1])
+        self.center_inches = self._contained_panel_center(center_inches, mapper)
         self.center_px = mapper.inches_to_pixel(*self.center_inches)
         if not preserve_preferred_center:
             self.preferred_center_px = self.center_px
@@ -213,43 +240,116 @@ class Detection:
             self.layout_anchor_px = None
         self._update_validity(mapper)
 
+    def _contained_panel_center(self, target, mapper):
+        """Constrain movement to the assigned cell without resizing the cut.
+
+        An infeasible size retains its geometry with a red warning. Inclusion
+        remains the operator's choice; dimensions never silently shrink.
+        """
+        if self.cut_region_px is None:
+            return float(target[0]), float(target[1])
+        polygon = tuple(mapper.pixel_to_inches(*p) for p in self.cut_region_px)
+        hw, hh = self.cut_width_inches / 2, self.cut_height_inches / 2
+        fitted = fit_center_in_region(target, (2 * hw, 2 * hh), polygon,
+                                     self.required_panel_clearance_inches(mapper),
+                                     (hw, hh, mapper.bed_width_in - hw, mapper.bed_height_in - hh))
+        return fitted if fitted is not None else (float(target[0]), float(target[1]))
+
     def _update_validity(self, mapper: CoordinateMapper) -> None:
-        self.artwork_clipped = not self.contains_artwork(mapper)
+        self.artwork_clipped = not self.contains_supported_artwork(mapper)
         self.valid_cut = self.square_inches.is_valid(
             mapper.bed_width_in, mapper.bed_height_in
-        ) and (self.preserves_layout_position or not self.artwork_clipped) and not self.cut_block_reason(mapper)
+        ) and (self.preserves_layout_position or not self.confirmed_artwork_clipped) and not self.cut_block_reason(mapper)
 
-    def cut_hard_block_reason(self, mapper: CoordinateMapper) -> str | None:
-        """A cut that is impossible to make: no whole composition, off the bed,
-        or no safe panel to cut in. These are auto-excluded from the result and
-        from export — not worth showing as cuts. A cut that only crosses its
-        panel on real fabric is instead a red warning (see `cut_block_reason`)
-        the user may still export, because it is a cutting decision.
-        Checked from current geometry even when cached state is stale."""
+    @property
+    def confirmed_artwork_clipped(self) -> bool:
+        """Agreement on some ink does not resolve an explicitly uncertain outline."""
+        return self.artwork_clipped and not self.artwork_extent_uncertain
+
+    def cut_warning_reason(self, mapper: CoordinateMapper) -> str | None:
+        """Describe current geometry/source issues without blocking a cut."""
         if self.source_incomplete:
             return "Incomplete source image — load a photo showing the whole composition"
         if not self.square_inches.is_valid(mapper.bed_width_in, mapper.bed_height_in):
             return "Cut extends outside the bed"
-        if self.cut_region_required and self.cut_region_px is None:
-            return "No safe panel region assigned — review the panel guides before exporting"
-        if self.bounding_box_px is not None:
-            x, y, w, h = mapper.pixel_rect_to_inches(self.bounding_box_px)
+        for box in (() if self.artwork_extent_uncertain else self.supported_artwork_boxes()):
+            x, y, w, h = mapper.pixel_rect_to_inches(box)
             if x < -1e-9 or y < -1e-9 or x+w > mapper.bed_width_in+1e-9 or y+h > mapper.bed_height_in+1e-9:
                 return "Artwork extends outside the bed"
+        panel_reason = self.confirmed_panel_boundary_reason(mapper)
+        if panel_reason:
+            return panel_reason
+        if self.confirmed_artwork_clipped:
+            return "Cut does not contain the whole artwork — review cut size and position"
         return None
 
     def cut_block_reason(self, mapper: CoordinateMapper) -> str | None:
-        """Any reason a cut is flagged red: a hard block that cannot be cut, or a
-        panel-boundary crossing on real fabric (a warning the user may export)."""
-        hard = self.cut_hard_block_reason(mapper)
-        if hard is not None:
-            return hard
+        """Legacy name for a geometry warning; it never blocks export."""
+        return self.cut_warning_reason(mapper)
+
+    def cut_hard_block_reason(self, mapper: CoordinateMapper) -> None:
+        """Compatibility with older callers: cuts have warnings, never blocks."""
+        return None
+
+    def panel_boundary_reason(self, mapper: CoordinateMapper) -> str | None:
         if self.cut_region_px is not None:
             polygon = tuple(mapper.pixel_to_inches(*p) for p in self.cut_region_px)
-            if not rectangle_inside_region(self.center_inches,
-                    (self.cut_width_inches,self.cut_height_inches),polygon,self.region_clearance_inches(mapper)):
-                return "Cut crosses its panel boundary or lacks the required clearance — adjust the cut size or panel guides"
+            size = (self.cut_width_inches,self.cut_height_inches)
+            if not rectangle_inside_region(self.center_inches,size,polygon,0.):
+                return "Cut crosses its panel boundary — move it inside, or reduce the cut size / verify image scale and panel guides"
         return None
+
+    def panel_boundary_review_reason(self,mapper):
+        """A measured-border error band is uncertainty, not a proven crossing."""
+        if self.cut_region_px is None or self.confirmed_panel_boundary_reason(mapper):
+            return None
+        if self.panel_boundary_reason(mapper):
+            return 'Possible section crossing: the cut is within the guide measurement uncertainty; verify this boundary'
+        polygon=tuple(mapper.pixel_to_inches(*p) for p in self.cut_region_px)
+        if not rectangle_inside_region(self.center_inches,
+                (self.cut_width_inches,self.cut_height_inches),polygon,
+                self.required_panel_clearance_inches(mapper)):
+            return 'Panel boundary needs review near this cut; verify the guides and image scale'
+        return None
+
+    def confirmed_panel_boundary_reason(self,mapper):
+        reason=self.panel_boundary_reason(mapper)
+        if reason and self.cut_region_uncertainty_px>0:
+            polygon=tuple(mapper.pixel_to_inches(*p) for p in self.cut_region_px)
+            if rectangle_inside_region(self.center_inches,
+                    (self.cut_width_inches,self.cut_height_inches),polygon,
+                    -self.required_panel_clearance_inches(mapper)):
+                return None
+        return reason
+
+    def review_reasons_for(self,mapper=None):
+        reasons=list(self.review_reasons)
+        if self.artwork_extent_uncertain:
+            reasons.append('Artwork outline is uncertain; check faint details and background')
+        if mapper is not None:
+            edge=self.artwork_edge_review_reason(mapper)
+            if edge:reasons.append(edge)
+            border=self.panel_boundary_review_reason(mapper)
+            if border:reasons.append(border)
+        if self.cut_region_required and self.cut_region_px is None:
+            reasons.append('Panel assignment is uncertain; check the section guides before cutting')
+        return tuple(dict.fromkeys(reasons))
+
+    def artwork_edge_review_reason(self,mapper):
+        if self.artwork_extent_uncertain and not self.contains_supported_artwork(mapper):
+            return 'Possible artwork clipping: the estimated outline extends beyond the cut; inspect the figure and accessories'
+        if (self.artwork_support_boxes_px and not self.contains_artwork(mapper)
+                and self.contains_supported_artwork(mapper)):
+            return 'Cut is close to an uncertain artwork edge; inspect the full figure and accessories'
+        return None
+
+    def required_panel_clearance_inches(self, mapper):
+        """Respect the measurement error of automatically detected borders.
+
+        Confirmed guides have zero uncertainty and permit an exact full fit.
+        """
+        return max(self.cut_region_uncertainty_px/mapper.px_per_inch_x,
+                   self.cut_region_uncertainty_px/mapper.px_per_inch_y)
 
     def region_clearance_inches(self,mapper):
         return max(CUT_REGION_CLEARANCE_IN,self.cut_region_uncertainty_px/mapper.px_per_inch_x,
@@ -506,10 +606,10 @@ def center_cuts_on_visual_anchors(
 def apply_logical_layout(
     detections: list[Detection], mapper: CoordinateMapper, layout: LogicalLayout,
 ) -> tuple[list[int], list[int]]:
-    """Use the reliable lattice as the exact centre of each assigned cut.
+    """Use the measured cell centre, independent of artwork and cut size.
 
-    Artwork containment, bed edges and collisions never deform the grid.
-    Physical problems are reported after placement. No detections are invented.
+    An infeasible size is a warning, never a reason to translate the grid or
+    pull an individual cut towards another section's background.
     """
     if not layout.reliable:
         return [], []
@@ -540,23 +640,6 @@ def apply_logical_layout(
             continue
         original = detection.center_inches
         position = layout.position(match.column,match.row)
-        polygon = tuple(mapper.pixel_to_inches(*p) for p in detection.cut_region_px)
-        target = mapper.pixel_to_inches(*position)
-        size = (detection.cut_width_inches,detection.cut_height_inches)
-        clearance = detection.region_clearance_inches(mapper)
-        if not rectangle_inside_region(target,size,polygon,clearance):
-            hw,hh = size[0]/2,size[1]/2
-            bounds = (hw,hh,mapper.bed_width_in-hw,mapper.bed_height_in-hh)
-            artwork_bounds = bounds
-            if detection.bounding_box_px is not None:
-                x,y,w,h = mapper.pixel_rect_to_inches(detection.bounding_box_px)
-                artwork_bounds = (max(bounds[0],x+w-hw),max(bounds[1],y+h-hh),
-                                  min(bounds[2],x+hw),min(bounds[3],y+hh))
-            fitted = fit_center_in_region(target,size,polygon,clearance,artwork_bounds)
-            if fitted is None:
-                fitted = fit_center_in_region(target,size,polygon,clearance,bounds)
-            if fitted is not None:
-                position = mapper.inches_to_pixel(*fitted)
         detection.place_on_grid(position,
                                 (match.column, match.row), mapper)
         if _distance_squared(original, detection.center_inches) > 1e-12:

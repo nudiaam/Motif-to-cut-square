@@ -129,7 +129,7 @@ class CustomerDiagnosticsTests(unittest.TestCase):
         # Count is correct but the original detector misses faint extremities.
         # Until corroborated recovery exists this composition must require review.
         self.assertTrue(snowflake.review_reasons)
-        self.assertTrue(any('textured panel' in r for r in snowflake.review_reasons))
+        self.assertTrue(snowflake.artwork_extent_uncertain)
         # Cropping away the bottom of the last row must not certify that row.
         cropped=MotifDetector().detect_with_layout(original[:860].copy(),DetectorSettings())
         self.assertEqual(sum(any('partly inside' in r for r in c.review_reasons)

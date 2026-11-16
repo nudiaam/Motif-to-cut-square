@@ -35,8 +35,12 @@ class HoldoutGroupTests(unittest.TestCase):
                 for d in window.detections:
                     np.testing.assert_allclose(d.center_px,window.logical_layout.position(*d.layout_cell),atol=1e-6)
                 self.assertIn('Dashed cyan',window.panel.review_breakdown_label.text())
-                if any(d.artwork_clipped for d in window.detections):
-                    self.assertIn('do not contain',window.panel.review_breakdown_label.text())
+                if any(d.confirmed_artwork_clipped for d in window.detections):
+                    self.assertIn('Artwork bounds outside',window.panel.review_breakdown_label.text())
+                if any(d.artwork_clipped and d.artwork_extent_uncertain for d in window.detections):
+                    target=next(d for d in window.detections if d.artwork_clipped and d.artwork_extent_uncertain)
+                    window.panel._selected_id=target.id;window.panel._update_details()
+                    self.assertIn('Possible artwork clipping',window.panel.detail_label.text())
     def test_native_originals_keep_each_complete_group_exactly_once(self):
         for name,(shape,points) in CASES.items():
             with self.subTest(source=name):

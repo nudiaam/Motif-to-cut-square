@@ -1,0 +1,469 @@
+{
+  "date": "2026-11-16",
+  "version": "0.13.4",
+  "method": "42 sequential fresh-process runs, three per combination, alternating version order. Normal: 16 logical CPUs and 16 OpenCV threads; constrained: affinity to two logical CPUs and two OpenCV threads. BLAS/OMP thread environment set to one. Not an A6 or 4GB machine emulator.",
+  "environment": {
+    "host_cpu": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "host_logical_cpus": 16,
+    "host_ram_gib": 61.41146469116211,
+    "host_available_ram_gib_at_observation": 35.64029312133789,
+    "customer_cpu": "AMD A6-9225, 2 CPU cores, 2.60 GHz",
+    "customer_ram_gb": 4,
+    "customer_usable_ram_gb": 3.89,
+    "customer_ssd": "Kingston 240 GB",
+    "customer_os": "Windows 64-bit",
+    "method": "Fresh sequential processes, three repeats per combination, alternating version order. Affinity constrains logical CPU availability only; no A6 instruction throughput or 4GB OS emulation."
+  },
+  "runtime": {
+    "python": "3.12.13",
+    "opencv": "4.14.0",
+    "numpy": "2.5.2"
+  },
+  "historic_client_detector_seconds": 238.5014146999456,
+  "measurements": [
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "historic",
+      "median_detector_seconds": 11.779726400000072,
+      "range_detector_seconds": [
+        11.502558799998951,
+        15.776991000002454
+      ],
+      "median_ui_apply_seconds": 0.005051599997386802,
+      "maximum_peak_working_set_mib": 601.3125,
+      "maximum_peak_private_commit_mib": 658.51953125,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "0591549ab5a24090a446e9721b061c7a6c14833a4ee7923098bb89d01f4fd344",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "0.13.3",
+      "median_detector_seconds": 7.735004400001344,
+      "range_detector_seconds": [
+        7.369858599999134,
+        11.24614130000191
+      ],
+      "median_ui_apply_seconds": 0.007358099999692058,
+      "maximum_peak_working_set_mib": 349.73828125,
+      "maximum_peak_private_commit_mib": 407.11328125,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "0.13.4",
+      "median_detector_seconds": 9.997335100000782,
+      "range_detector_seconds": [
+        7.498592399999325,
+        10.45898070000112
+      ],
+      "median_ui_apply_seconds": 0.007959700000355951,
+      "maximum_peak_working_set_mib": 350.11328125,
+      "maximum_peak_private_commit_mib": 408.13671875,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "normal",
+      "case": "01",
+      "version": "0.13.3",
+      "median_detector_seconds": 3.805645899999945,
+      "range_detector_seconds": [
+        3.7402292000006128,
+        4.018588899998576
+      ],
+      "median_ui_apply_seconds": 0.00707450000118115,
+      "maximum_peak_working_set_mib": 228.5859375,
+      "maximum_peak_private_commit_mib": 287.0546875,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "6227476a581a22e5099600a082afbb61a65b3df4b5ee1f8a97930106ca99f02a"
+    },
+    {
+      "mode": "normal",
+      "case": "01",
+      "version": "0.13.4",
+      "median_detector_seconds": 3.8166870000022755,
+      "range_detector_seconds": [
+        3.811674900000071,
+        5.70346040000004
+      ],
+      "median_ui_apply_seconds": 0.007933799999591429,
+      "maximum_peak_working_set_mib": 228.2265625,
+      "maximum_peak_private_commit_mib": 287.7578125,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "6227476a581a22e5099600a082afbb61a65b3df4b5ee1f8a97930106ca99f02a"
+    },
+    {
+      "mode": "normal",
+      "case": "02",
+      "version": "0.13.3",
+      "median_detector_seconds": 5.798463900002389,
+      "range_detector_seconds": [
+        5.358086899999762,
+        10.012976099998923
+      ],
+      "median_ui_apply_seconds": 0.012228699997649528,
+      "maximum_peak_working_set_mib": 228.05859375,
+      "maximum_peak_private_commit_mib": 288.1875,
+      "enabled_counts": [
+        30,
+        30,
+        30
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "0308c1fba659feabb8ad0d6651eaba1ad31e98ff60d8b5d158b8c98fe95b24bb"
+    },
+    {
+      "mode": "normal",
+      "case": "02",
+      "version": "0.13.4",
+      "median_detector_seconds": 6.851848099999188,
+      "range_detector_seconds": [
+        4.911793900002522,
+        7.585828600000241
+      ],
+      "median_ui_apply_seconds": 0.007372300002316479,
+      "maximum_peak_working_set_mib": 228.3203125,
+      "maximum_peak_private_commit_mib": 287.625,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "0308c1fba659feabb8ad0d6651eaba1ad31e98ff60d8b5d158b8c98fe95b24bb"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "historic",
+      "median_detector_seconds": 27.811450400000467,
+      "range_detector_seconds": [
+        23.99644000000262,
+        29.84174079999866
+      ],
+      "median_ui_apply_seconds": 0.004433800000697374,
+      "maximum_peak_working_set_mib": 413.31640625,
+      "maximum_peak_private_commit_mib": 469.109375,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "0591549ab5a24090a446e9721b061c7a6c14833a4ee7923098bb89d01f4fd344",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "0.13.3",
+      "median_detector_seconds": 9.066865799999505,
+      "range_detector_seconds": [
+        8.275659099999757,
+        9.19883789999949
+      ],
+      "median_ui_apply_seconds": 0.007675699998799246,
+      "maximum_peak_working_set_mib": 286.64453125,
+      "maximum_peak_private_commit_mib": 341.69140625,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "0.13.4",
+      "median_detector_seconds": 8.530112699998426,
+      "range_detector_seconds": [
+        8.358213100000285,
+        8.787360199999966
+      ],
+      "median_ui_apply_seconds": 0.008577800002967706,
+      "maximum_peak_working_set_mib": 287.11328125,
+      "maximum_peak_private_commit_mib": 342.27734375,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "3f6f18920358baa0fb9663f2c5fe92d183cdb2526bc543012a2b8010ee0b9593"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "01",
+      "version": "0.13.3",
+      "median_detector_seconds": 3.7693255999984103,
+      "range_detector_seconds": [
+        3.743217300001561,
+        5.794259099999181
+      ],
+      "median_ui_apply_seconds": 0.007154099999752361,
+      "maximum_peak_working_set_mib": 226.15625,
+      "maximum_peak_private_commit_mib": 284.46484375,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "6227476a581a22e5099600a082afbb61a65b3df4b5ee1f8a97930106ca99f02a"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "01",
+      "version": "0.13.4",
+      "median_detector_seconds": 3.815571600000112,
+      "range_detector_seconds": [
+        3.8091058999998495,
+        6.985424200000125
+      ],
+      "median_ui_apply_seconds": 0.00767690000066068,
+      "maximum_peak_working_set_mib": 226.1328125,
+      "maximum_peak_private_commit_mib": 284.828125,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "6227476a581a22e5099600a082afbb61a65b3df4b5ee1f8a97930106ca99f02a"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "02",
+      "version": "0.13.3",
+      "median_detector_seconds": 5.543199899999308,
+      "range_detector_seconds": [
+        5.515962400000717,
+        6.879631800002244
+      ],
+      "median_ui_apply_seconds": 0.008265399999800138,
+      "maximum_peak_working_set_mib": 225.96875,
+      "maximum_peak_private_commit_mib": 285.20703125,
+      "enabled_counts": [
+        30,
+        30,
+        30
+      ],
+      "source_sha256": "3405516d9bc52ec43ec26c5d8668633c77049df61e379749114fc997827ba57d",
+      "input_sha256": "0308c1fba659feabb8ad0d6651eaba1ad31e98ff60d8b5d158b8c98fe95b24bb"
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "02",
+      "version": "0.13.4",
+      "median_detector_seconds": 5.155084900001384,
+      "range_detector_seconds": [
+        5.121314599997277,
+        10.497082700003375
+      ],
+      "median_ui_apply_seconds": 0.007870299999922281,
+      "maximum_peak_working_set_mib": 226.6484375,
+      "maximum_peak_private_commit_mib": 286.09375,
+      "enabled_counts": [
+        24,
+        24,
+        24
+      ],
+      "source_sha256": "f834d2574eb1d4728a5c9de53786753daaed136fb246c778e809af850d372af0",
+      "input_sha256": "0308c1fba659feabb8ad0d6651eaba1ad31e98ff60d8b5d158b8c98fe95b24bb"
+    }
+  ],
+  "result_stability": [
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "historic",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae",
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae",
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "customer",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "01",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd",
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd",
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "01",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d",
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d",
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "02",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11",
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11",
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11"
+      ]
+    },
+    {
+      "mode": "normal",
+      "case": "02",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0",
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0",
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "historic",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae",
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae",
+        "14ec10f620d6713d58ccf7c6ec3025bfb1efac2fdfb71e3293a50842a43fccae"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "customer",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023",
+        "f6baa59779054fa870828351598006760813efd4a4b137bb5366c6852f970023"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "01",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd",
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd",
+        "6b32561cf37d07312441e5a0b53101be503a891327b45404a3718d31103b5afd"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "01",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d",
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d",
+        "874fd0fa77e176de7977f06dbecb02c365c309e91c6556133e81ef8c2a83d49d"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "02",
+      "version": "0.13.3",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11",
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11",
+        "e0a1cdf6c025b73330a56e7201b1a2d02f24cbb0d1c483ec357a1e7db9c78f11"
+      ]
+    },
+    {
+      "mode": "two_logical_cpus",
+      "case": "02",
+      "version": "0.13.4",
+      "distinct_result_hashes": 1,
+      "result_hashes": [
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0",
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0",
+        "292248561a1ba44947a2b472674f4477f5516aa189e014ab1a6515dde3f50db0"
+      ]
+    }
+  ],
+  "unvalidated_proportional_estimate_seconds": 73.15130700625248,
+  "estimate_assumption": "The entire old-to-new ratio measured on two Ryzen logical CPUs would transfer unchanged to the A6. This assumption is NOT established; do not promise this duration.",
+  "limitations": [
+    "Not a dedicated host; preserve ranges and do not treat three-run medians as statistically conclusive.",
+    "No RAM cap, OS paging, SSD latency, A6 instruction throughput, thermal or frequency emulation.",
+    "Detector and UI-apply times exclude installation and image loading. Memory peaks include Qt and writing diagnostic JSON/overlay; no screenshot render.",
+    "Original customer photos and full per-cut reports remain private."
+  ]
+}

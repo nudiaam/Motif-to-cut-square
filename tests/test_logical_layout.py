@@ -218,9 +218,9 @@ class LayoutCutIntegrationTests(unittest.TestCase):
     def test_exact_grid_centres_preserve_observations_size_and_export_round_trip(self):
         mapper, detections, layout = cut_fixture(missing=((2, 2),))
         original = copy.deepcopy(detections)
-        moved, blocked = apply_logical_layout(detections, mapper, layout)
+        moved, warnings = apply_logical_layout(detections, mapper, layout)
         self.assertIn(8, moved)
-        self.assertEqual(blocked, [])
+        self.assertEqual(warnings, [])
         self.assertEqual(len(detections), 19)
         self.assertEqual(len(layout.missing), 1)
         for before, after in zip(original, detections):
@@ -262,31 +262,35 @@ class LayoutCutIntegrationTests(unittest.TestCase):
         detections[1].enabled = False
         detections[2].bounding_box_px = (350, 75, 200, 80)
         untouched = copy.deepcopy(detections[:3])
-        moved, blocked = apply_logical_layout(detections, mapper, layout)
+        moved, warnings = apply_logical_layout(detections, mapper, layout)
         self.assertNotIn(1, moved)
         self.assertNotIn(2, moved)
-        self.assertNotIn(3, blocked)
-        self.assertEqual(detections[2].center_px, layout.position(2, 0))
+        self.assertIn(3, warnings)
+        np.testing.assert_allclose(detections[2].center_px, layout.position(2, 0),atol=1e-9)
         self.assertTrue(detections[2].artwork_clipped)
-        self.assertTrue(detections[2].exportable)
+        self.assertTrue(detections[2].enabled)
+        self.assertIsNotNone(detections[2].cut_warning_reason(mapper))
+        self.assertIsNone(detections[2].cut_hard_block_reason(mapper))
         for before, after in zip(untouched[:2], detections[:2]):
             self.assertEqual(before.center_px, after.center_px)
             self.assertIsNone(after.layout_anchor_px)
 
-    def test_artwork_extent_does_not_limit_grid_target(self):
+    def test_offcentre_artwork_keeps_measured_centre_and_reports_clipping(self):
         mapper, detections, layout = cut_fixture()
         target = detections[7]
-        # A wide illustration leaves only a small interval for safe centring.
-        # The grid centre must remain exact even when part of the box is cropped.
+        # Even a feasible offset cannot override the geometric section centre.
         target.bounding_box_px = (379, 225, 122, 60)
         moved, _ = apply_logical_layout(detections, mapper, layout)
         self.assertIn(target.id, moved)
         self.assertFalse(target.contains_artwork(mapper))
         self.assertTrue(target.artwork_clipped)
-        self.assertTrue(target.exportable)
+        self.assertTrue(target.enabled)
         self.assertEqual(target.center_px, layout.position(2, 1))
+        self.assertIsNotNone(target.cut_warning_reason(mapper))
+        self.assertIsNone(target.panel_boundary_reason(mapper))
+        accepted = target.center_px
         center_cuts_on_visual_anchors(detections, mapper)
-        self.assertEqual(target.center_px, layout.position(2, 1))
+        self.assertEqual(target.center_px, accepted)
 
     def test_collision_is_reported_without_deforming_grid(self):
         mapper, detections, layout = cut_fixture()
@@ -303,7 +307,8 @@ class LayoutCutIntegrationTests(unittest.TestCase):
         for d in detections[:-1]:
             self.assertEqual(d.center_px, layout.position(*d.layout_cell))
 
-    def test_grid_centre_outside_bed_is_reported_without_clamping(self):
+    def test_bed_edge_cannot_pull_measured_grid_centre_inwards(self):
+        import cv2
         mapper = CoordinateMapper(900, 650)
         detections = [Detection.from_pixel_center(
             p.detection_id, (p.center_px[0] - 75, p.center_px[1]), mapper,
@@ -312,12 +317,16 @@ class LayoutCutIntegrationTests(unittest.TestCase):
         layout = fit_logical_layout([LayoutObservation(d.id, d.artwork_center_px()) for d in detections])
         self.assertFalse(detections[0].valid_cut)
         moved, blocked = apply_logical_layout(detections, mapper, layout)
-        self.assertEqual(blocked, [1, 6, 11, 16])
-        self.assertFalse(detections[0].valid_cut)
-        self.assertAlmostEqual(detections[0].center_inches[0], 2.2)
+        self.assertTrue(blocked)
+        self.assertLess(detections[0].center_inches[0], 2.5)
         self.assertEqual(detections[0].cut_width_inches, 5.0)
+        for detection in detections:
+            self.assertEqual(detection.center_px,layout.position(*detection.layout_cell))
+            if detection.square_inches.x<0:
+                self.assertIsNotNone(detection.cut_warning_reason(mapper))
+        fitted_positions = [d.center_px for d in detections]
         center_cuts_on_visual_anchors(detections, mapper)
-        self.assertEqual(detections[0].center_px, layout.position(0, 0))
+        self.assertEqual([d.center_px for d in detections],fitted_positions)
 
     def test_existing_cut_displacement_has_no_limit_and_packing_cannot_move_grid(self):
         mapper, detections, layout = cut_fixture()

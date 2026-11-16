@@ -16,6 +16,9 @@ class PanelGrid:
     lattice: tuple[tuple[float, float], tuple[float, float], tuple[float, float]] | None = None
     projection: tuple[tuple[float, float, float], ...] | None = None
     review_reasons: tuple[str, ...] = ()
+    cell_regions_px: tuple[tuple[tuple[float, float], ...], ...] = ()
+    cell_centers_px: tuple[tuple[float, float], ...] = ()
+    boundary_uncertainty_px: float | None = None
 
     def __post_init__(self) -> None:
         if len(self.x_lines_px) < 3 or len(self.y_lines_px) < 3:
@@ -105,6 +108,8 @@ class PanelGrid:
                 x_lines_px=tuple(lines),
                 lattice=None,
                 projection=None,
+                cell_regions_px=(),
+                cell_centers_px=(),
                 confidence=0.0,
                 source="manual",
             )
@@ -113,6 +118,8 @@ class PanelGrid:
             y_lines_px=tuple(lines),
             lattice=None,
             projection=None,
+            cell_regions_px=(),
+            cell_centers_px=(),
             confidence=0.0,
             source="manual",
         )
@@ -130,6 +137,8 @@ class PanelGrid:
                 x_lines_px=distributed,
                 lattice=None,
                 projection=None,
+                cell_regions_px=(),
+                cell_centers_px=(),
                 confidence=0.0,
                 source="manual",
             )
@@ -138,6 +147,8 @@ class PanelGrid:
             y_lines_px=distributed,
             lattice=None,
             projection=None,
+            cell_regions_px=(),
+            cell_centers_px=(),
             confidence=0.0,
             source="manual",
         )

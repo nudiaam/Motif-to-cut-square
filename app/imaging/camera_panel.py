@@ -263,10 +263,28 @@ def source_grid(panel: CameraPanel) -> PanelGrid:
     origin, col, row = model
     xs = tuple(float(origin[0] + (c-.5)*col[0] + (grid.rows-1)*row[0]/2) for c in range(grid.columns+1))
     ys = tuple(float(origin[1] + (r-.5)*row[1] + (grid.columns-1)*col[1]/2) for r in range(grid.rows+1))
-    step_x, step_y = grid.x_lines_px[1]-grid.x_lines_px[0], grid.y_lines_px[1]-grid.y_lines_px[0]
+    step_x = (grid.x_lines_px[-1]-grid.x_lines_px[0])/grid.columns
+    step_y = (grid.y_lines_px[-1]-grid.y_lines_px[0])/grid.rows
     cell_to_rectified = np.array([[step_x,0,grid.x_lines_px[0]+step_x/2],
                                   [0,step_y,grid.y_lines_px[0]+step_y/2], [0,0,1.]])
     projection = panel.to_source @ cell_to_rectified
     projection /= projection[2,2]
-    return PanelGrid(xs, ys, grid.confidence, "camera", tuple(tuple(float(v) for v in p) for p in model),
-                     tuple(tuple(float(v) for v in p) for p in projection), grid.review_reasons)
+    polygons = tuple(tuple(tuple(float(v) for v in p) for p in project_points(
+        [(grid.x_lines_px[c],grid.y_lines_px[r]),(grid.x_lines_px[c+1],grid.y_lines_px[r]),
+         (grid.x_lines_px[c+1],grid.y_lines_px[r+1]),(grid.x_lines_px[c],grid.y_lines_px[r+1])],
+        panel.to_source)) for c,r in cells)
+    uncertainty = grid.boundary_uncertainty_px
+    if uncertainty is not None:
+        # A projective camera changes scale across the sheet. Use the worst
+        # local magnification for this conservative shared boundary allowance.
+        magnifications = []
+        for center in centers:
+            x,y = center
+            p = project_points([(x,y),(x+1,y),(x,y+1)],panel.to_source)
+            magnifications.append(np.linalg.norm(p[1:]-p[0],axis=1).max())
+        uncertainty *= max(magnifications)
+    return PanelGrid(xs, ys, grid.confidence, grid.source if grid.source == 'printed' else "camera",
+                     tuple(tuple(float(v) for v in p) for p in model),
+                     tuple(tuple(float(v) for v in p) for p in projection), grid.review_reasons,polygons,
+                     tuple(tuple(float(v) for v in p) for p in projected),
+                     float(uncertainty) if uncertainty is not None else None)

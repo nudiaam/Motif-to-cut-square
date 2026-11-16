@@ -79,8 +79,14 @@ class UISmokeTests(unittest.TestCase):
         self.assertIn("Maximum round-trip error", window.panel.verification_label.text())
 
         first_id = window.detections[0].id
+        original_region = window.detections[0].cut_region_px
         window.move_detection(first_id, 0.0, 0.0)
-        self.assertFalse(window.detections[0].valid_cut)
+        self.assertTrue(window.detections[0].enabled)
+        self.assertIsNone(window.detections[0].panel_boundary_reason(window.mapper))
+        if window.detections[0].artwork_clipped:
+            self.assertIsNotNone(window.detections[0].cut_warning_reason(window.mapper))
+        self.assertEqual(window.detections[0].cut_region_px,original_region)
+        self.assertNotEqual(window.detections[0].center_px,(0.,0.))
 
         previous_count = len(window.detections)
         assert window.mapper is not None
@@ -108,7 +114,7 @@ class UISmokeTests(unittest.TestCase):
             np.testing.assert_array_equal(window.image_bgr,image)
             self.assertEqual((window.logical_layout.columns,window.logical_layout.rows),(6,4))
             self.assertEqual(len(window.detections),24)
-            self.assertEqual(sum(d.inferred for d in window.detections),2)
+            self.assertEqual(sum(d.inferred for d in window.detections),0)
             self.assertTrue(all(d.review_reasons for d in window.detections if d.inferred))
             self.assertEqual(window._workflow_phase,'detect')
             self.assertTrue(all(d.grid_positioned and d.cut_width_inches == 4 for d in window.detections))
@@ -118,19 +124,21 @@ class UISmokeTests(unittest.TestCase):
             self.assertFalse(window.canvas._layout_review_details)
             window.confirm_detection()
             self.assertTrue(window.canvas._layout_review_details)
-            inferred = next(d for d in window.detections if d.inferred)
-            window.selected_ids = {inferred.id}
-            window.selected_id = inferred.id
+            detected = window.detections[0]
+            window.selected_ids = {detected.id}
+            window.selected_id = detected.id
             window.delete_selected()
             self.assertEqual(len(window.detections),23)
-            self.assertIn(inferred.layout_cell, window._suppressed_grid_cells)
+            self.assertIn(detected.layout_cell, window._suppressed_grid_cells)
             window._refresh()
             self.assertEqual(len(window.detections),23)
             window.undo()
             self.assertEqual(len(window.detections),24)
             window.center_cuts()
             self.assertEqual({d.id:d.center_px for d in window.detections},positions)
-            window.change_cut_size(3.9,3.9)
+            # Individual measured top-row cells are narrower than the former
+            # average camera lattice. Use a size that fits their real widths.
+            window.change_cut_size(3.2,3.2)
             self.assertFalse(any(d.overlaps_cut for d in window.detections))
             window.undo()
             self.assertEqual({d.id:d.center_px for d in window.detections},positions)
@@ -153,13 +161,8 @@ class UISmokeTests(unittest.TestCase):
             self.assertTrue(all(d.grid_positioned for d in window.detections))
             self.assertTrue(all(d.cut_width_inches == 5 for d in window.detections))
             self.assertGreater(sum(bool(d.cut_block_reason(window.mapper)) for d in window.detections),0)
-            # Impossible cuts (off the bed / no fabric) are auto-excluded; a cut
-            # that only crosses its panel on real fabric stays red but enabled.
-            self.assertTrue(all(not d.enabled for d in window.detections
-                                if d.cut_hard_block_reason(window.mapper)))
-            self.assertTrue(all(d.enabled for d in window.detections
-                                if d.cut_block_reason(window.mapper)
-                                and not d.cut_hard_block_reason(window.mapper)))
+            # All detected cuts stay included; geometry issues are warnings.
+            self.assertTrue(all(d.enabled for d in window.detections))
             positions = {d.id: d.center_px for d in window.detections}
             for d in window.detections:
                 self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
@@ -228,7 +231,7 @@ class UISmokeTests(unittest.TestCase):
         finally:
             window.close()
 
-    def test_bed_reference_completes_missing_row_in_detection(self):
+    def test_bed_reference_does_not_turn_an_empty_row_into_cuts(self):
         import cv2
         from tests.test_bed_reference import REFERENCE
         reference=cv2.imread(str(REFERENCE))
@@ -243,8 +246,8 @@ class UISmokeTests(unittest.TestCase):
             window._load_image(image,'reference integration')
             window.detect_motifs()
             self.assertEqual((window.logical_layout.columns,window.logical_layout.rows),(6,4))
-            self.assertEqual(len(window.detections),24)
-            self.assertEqual(sum(d.inferred for d in window.detections),6)
+            self.assertEqual(len(window.detections),18)
+            self.assertEqual(sum(d.inferred for d in window.detections),0)
             self.assertTrue(all(d.grid_positioned for d in window.detections))
             self.assertEqual(window._workflow_phase,'detect')
             self.assertIsNotNone(window.panel.load_bed_reference_button)
@@ -278,12 +281,14 @@ class UISmokeTests(unittest.TestCase):
             self.assertEqual(window.logical_layout.source, "ink_lattice")
             self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
             self.assertEqual(len(window.detections), 24)
-            self.assertTrue(all(d.grid_positioned and d.valid_cut and not d.overlaps_cut
+            self.assertTrue(all(d.grid_positioned and d.enabled and not d.overlaps_cut
+                                for d in window.detections))
+            self.assertTrue(all(not d.artwork_clipped or d.cut_warning_reason(window.mapper) or d.review_reasons_for(window.mapper)
                                 for d in window.detections))
             positions = {d.id: d.center_px for d in window.detections}
             boxes = {d.id: d.bounding_box_px for d in window.detections}
             for d in window.detections:
-                self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
+                self.assertIsNone(d.panel_boundary_reason(window.mapper))
             self.assertTrue(any(d.center_px != d.original_center_px for d in window.detections))
             window.confirm_detection()
             self.assertEqual(window._workflow_phase, "review")
@@ -305,6 +310,7 @@ class UISmokeTests(unittest.TestCase):
             window.close()
 
     def test_logical_layout_is_automatic_and_manual_override_does_not_deform_it(self) -> None:
+        import cv2
         window = MainWindow()
         try:
             window._load_image(np.full((650, 900, 3), 245, dtype=np.uint8), "layout test")
@@ -323,17 +329,25 @@ class UISmokeTests(unittest.TestCase):
             self.assertEqual(target.center_px, adjusted)
             self.assertIsNotNone(target.layout_anchor_px)
             self.assertTrue(window.canvas._layout_visible)
-            self.assertEqual(len(window.detections), 20)
+            self.assertEqual(len(window.detections), 19)
             positions = {d.id: d.center_px for d in window.detections}
             window.move_detection(8, 444., 263.)
             self.assertTrue(target.manual)
             self.assertIsNone(target.layout_anchor_px)
+            constrained_position = target.center_px
+            # The requested drag crossed the assigned cell. Preserve the
+            # constrained manual position, rather than permitting that crossing.
+            self.assertNotEqual(constrained_position,(444.,263.))
+            polygon = np.asarray(target.cut_region_px,np.float32)
+            x,y,w,h = window.mapper.inches_rect_to_pixel(target.square_inches.as_tuple())
+            for point in ((x,y),(x+w,y),(x+w,y+h),(x,y+h)):
+                self.assertGreaterEqual(cv2.pointPolygonTest(polygon,point,True),-1e-4)
             self.assertEqual({d.id: d.center_px for d in window.detections if d.id != 8},
                              {i: p for i, p in positions.items() if i != 8})
             self.assertTrue(all(d.grid_positioned for d in window.detections if d.id != 8))
             window._review_centering_complete = False
             window.center_cuts()
-            self.assertEqual(target.center_px, (444., 263.))
+            self.assertEqual(target.center_px, constrained_position)
             window.undo()  # centring
             window.undo()
             target = next(d for d in window.detections if d.id == 8)
@@ -349,7 +363,7 @@ class UISmokeTests(unittest.TestCase):
             for d in window.detections:
                 self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
             window.undo()
-            self.assertEqual(len(window.detections), 20)
+            self.assertEqual(len(window.detections), 19)
             self.assertIsNotNone(next(d for d in window.detections if d.id == 8).layout_anchor_px)
             window._load_image(np.full((600, 800, 3), 240, dtype=np.uint8), "replacement")
             self.assertEqual(window.logical_layout.matches, ())
@@ -357,45 +371,32 @@ class UISmokeTests(unittest.TestCase):
         finally:
             window.close()
 
-    def test_missing_grid_cut_is_automatic_internal_and_deletion_is_respected(self) -> None:
+    def test_missing_grid_position_requires_an_explicit_manual_cut(self) -> None:
         from app.export.svg_exporter import SVG_NAMESPACE
         window = MainWindow()
         try:
-            window._load_image(np.full((650, 900, 3), 240, dtype=np.uint8), "gap test")
-            window.mapper, window.detections, _ = cut_fixture(missing=((2, 2),))
+            window._load_image(np.full((650,900,3),240,dtype=np.uint8),"gap test")
+            window.mapper,window.detections,_=cut_fixture(missing=((2,2),))
             window._refresh()
-            initial_layout = window.logical_layout
-            self.assertEqual(len(window.detections), 20)
-            self.assertFalse(hasattr(window.panel, "inferred_positions_list"))
-            inferred = next(d for d in window.detections if d.inferred)
-            self.assertIsNone(inferred.bounding_box_px)
-            self.assertIsNone(inferred.original_center_px)
-            self.assertEqual(inferred.center_px, initial_layout.position(2, 2))
-            self.assertEqual(window.logical_layout, initial_layout)
-            self.assertEqual(len(window.svg_exporter.build_tree(window.mapper, window.detections).findall(
-                f"{{{SVG_NAMESPACE}}}rect")), 20)
+            initial=window.logical_layout
+            self.assertEqual(len(window.detections),19)
+            self.assertEqual(len(initial.missing),1)
+            self.assertFalse(any(d.inferred for d in window.detections))
+            self.assertEqual(len(window.svg_exporter.build_tree(window.mapper,window.detections).findall(f"{{{SVG_NAMESPACE}}}rect")),19)
             window.confirm_detection()
-            window.selected_ids = {inferred.id}
-            window.selected_id = inferred.id
-            window.delete_selected()
-            self.assertEqual(len(window.detections), 19)
-            self.assertIn((2, 2), window._suppressed_grid_cells)
-            window._refresh()
-            self.assertEqual(len(window.detections), 19)
-            self.assertEqual(len(window.svg_exporter.build_tree(window.mapper, window.detections).findall(
-                f"{{{SVG_NAMESPACE}}}rect")), 19)
+            window.add_center(*initial.position(2,2))
+            manual=next(d for d in window.detections if d.manual)
+            self.assertIsNone(manual.bounding_box_px)
+            self.assertEqual(len(window.detections),20)
+            window.selected_id=manual.id;window.selected_ids={manual.id};window.delete_selected()
+            self.assertEqual(len(window.detections),19)
+            window._refresh();self.assertEqual(len(window.detections),19)
             window.undo()
-            self.assertEqual(len(window.detections), 20)
-            inferred = next(d for d in window.detections if d.inferred)
-            self.assertEqual(inferred.center_px, window.logical_layout.position(*inferred.layout_cell))
-            window.selected_ids = {1}
-            window.selected_id = 1
-            window.delete_selected()
-            self.assertEqual(len(window.logical_layout.matches), 18)  # inferred cut is not evidence
-            inferred = next(d for d in window.detections if d.inferred)
-            self.assertEqual(inferred.center_px, window.logical_layout.position(*inferred.layout_cell))
-            window.undo()  # deletion
-            self.assertEqual(len(window.detections), 20)
+            self.assertEqual(len(window.detections),20)
+            self.assertTrue(next(d for d in window.detections if d.id==manual.id).manual)
+            window.undo()
+            self.assertEqual(len(window.detections),19)
+            window._refresh();self.assertEqual(len(window.detections),19)
         finally:
             window.close()
 
@@ -432,7 +433,7 @@ class UISmokeTests(unittest.TestCase):
                 self.assertTrue(window.logical_layout.reliable)
                 self.assertFalse(window._detection_review_complete)
                 self.assertEqual(window._workflow_phase, "detect")
-                self.assertEqual(len(window.detections), 20)
+                self.assertEqual(len(window.detections), 19)
                 for d in window.detections:
                     self.assertEqual(d.center_px, window.logical_layout.position(*d.layout_cell))
                 self.assertTrue(any(np.linalg.norm(np.array(d.center_px) - d.original_center_px) > 5
@@ -640,7 +641,12 @@ class UISmokeTests(unittest.TestCase):
 
         self.assertEqual(initial_width, 360)
         self.assertEqual(window.panel.width(), initial_width)
-        self.assertIn("OVERLAP", window.panel.detection_list.item(0).text())
+        # Exercise the longest current state instead of the retired orange
+        # overlap label; the numerical controls must still remain visible.
+        d=window.detections[0];x,y=d.center_px
+        d.cut_region_px=((x-25,y-25),(x+25,y-25),(x+25,y+25),(x-25,y+25))
+        window._refresh();self.application.processEvents()
+        self.assertIn("SECTION CROSSING",window.panel.detection_list.item(0).text())
         for spin in (window.panel.cut_width_spin, window.panel.cut_height_spin):
             option = QStyleOptionSpinBox()
             spin.initStyleOption(option)
@@ -671,8 +677,8 @@ class UISmokeTests(unittest.TestCase):
         self.assertFalse(window.review_strip.isHidden())
         self.assertFalse(window.center_cuts_button.isEnabled())
         self.assertTrue(window.fix_overlaps_button.isEnabled())
-        self.assertEqual(window.panel.valid_value_label.text(), "0")
-        self.assertEqual(window.panel.invalid_value_label.text(), "2")
+        self.assertEqual(window.panel.valid_value_label.text(), "2")
+        self.assertEqual(window.panel.invalid_value_label.text(), "0")
         self.assertEqual(window.panel.disabled_value_label.text(), "0")
         window.set_detection_enabled(window.detections[1].id, False)
         self.assertFalse(window.detections[0].overlaps_cut)

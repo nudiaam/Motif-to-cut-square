@@ -15,7 +15,7 @@ from app.imaging.logical_layout import LayoutObservation, layout_from_panel_grid
 from app.imaging.panel_grid import PanelGrid
 from app.models import Detection
 from app.ui.main_window import MainWindow
-from app.ui.cut_status import OVERLAP_COLOR, REVIEW_COLOR, cut_status_color
+from app.ui.cut_status import OVERLAP_COLOR, REVIEW_COLOR, READY_COLOR, cut_status_color
 
 
 class DetectionDiagnosticsUITests(unittest.TestCase):
@@ -75,27 +75,28 @@ class DetectionDiagnosticsUITests(unittest.TestCase):
         self.assertIn("confirmed panel guides", window.detection_diagnostics["reference_status"])
         self.assertEqual(window.detection_diagnostics["grid"]["source"], "manual")
 
-    def test_clipped_grid_artwork_is_a_warning_even_when_cut_is_inside_bed(self):
+    def test_clipped_grid_artwork_is_a_note_without_a_section_crossing(self):
         window = self.window
         mapper = CoordinateMapper(600, 400)
         detection = Detection.from_pixel_center(1, (300, 200), mapper,
                                                bounding_box_px=(250, 170, 100, 60),
                                                cut_width_inches=1, cut_height_inches=1)
         detection.place_on_grid((300, 200), (0, 0), mapper)
-        self.assertTrue(detection.valid_cut)
+        self.assertFalse(detection.valid_cut)
         self.assertTrue(detection.artwork_clipped)
         window.panel.set_image_info(mapper)
         window.panel.set_detections([detection], set())
-        self.assertIn("CLIPPED", window.panel.detection_list.item(0).text())
-        self.assertEqual(window.panel.valid_value_label.text(), "0")
-        self.assertEqual(window.panel.invalid_value_label.text(), "1")
+        self.assertIn("READY", window.panel.detection_list.item(0).text())
+        self.assertEqual(window.panel.detection_list.item(0).foreground().color().name(),READY_COLOR)
+        self.assertEqual(window.panel.valid_value_label.text(), "1")
+        self.assertEqual(window.panel.invalid_value_label.text(), "0")
         window.mapper = mapper
         window.detections = [detection]
         window._detection_review_complete = True
         window.show_preflight()
-        self.assertIn("WITH WARNINGS", window.panel.verification_label.text())
+        self.assertNotIn("WITH WARNINGS", window.panel.verification_label.text())
 
-    def test_duplicate_warning_is_visible_before_detection_confirmation(self):
+    def test_duplicate_note_remains_visible_without_recolouring_the_cut(self):
         window = self.window
         mapper = CoordinateMapper(600, 400)
         grid = PanelGrid.regular(600, 400, 4, 4, confidence=.95, source="visual")
@@ -109,10 +110,11 @@ class DetectionDiagnosticsUITests(unittest.TestCase):
         window.panel.set_detections(detections, set())
         self.assertIn("outliers/duplicates need review", window.panel.layout_status_label.text())
         texts = [window.panel.detection_list.item(i).text() for i in range(2)]
-        self.assertTrue(any("REVIEW" in text and "duplicate" in text for text in texts))
-        self.assertEqual(window.panel.invalid_value_label.text(), "1")
+        self.assertTrue(all("READY" in text for text in texts))
+        self.assertTrue(any("duplicate" in window.panel.detection_list.item(i).toolTip() for i in range(2)))
+        self.assertEqual(window.panel.invalid_value_label.text(), "0")
 
-    def test_extent_uncertainty_is_not_ready_even_when_detected_box_fits(self):
+    def test_extent_uncertainty_remains_a_secondary_note_when_box_fits(self):
         window = self.window
         window._load_image(np.full((400, 600, 3), 230, np.uint8), "extent review test")
         mapper = CoordinateMapper(600, 400)
@@ -126,10 +128,10 @@ class DetectionDiagnosticsUITests(unittest.TestCase):
         window.panel.set_image_info(mapper)
         window.panel.set_detections([detection], {1}, 1)
         window.detection_diagnostics = {"detector_revision": "controlled extent review test"}
-        self.assertIn("REVIEW", window.panel.detection_list.item(0).text())
-        self.assertEqual(window.panel.valid_value_label.text(), "0")
-        self.assertIn("Review required", window.panel.detail_label.text())
-        self.assertEqual(window._cut_warning_count(), 1)
+        self.assertIn("READY", window.panel.detection_list.item(0).text())
+        self.assertEqual(window.panel.valid_value_label.text(), "1")
+        self.assertIn("Image notes", window.panel.detail_label.text())
+        self.assertEqual(window._cut_warning_count(), 0)
         window._detection_review_complete = True
         window.show_preflight()
         self.assertIn("Uncertain artwork extent: 1", window.panel.verification_label.text())
@@ -140,7 +142,7 @@ class DetectionDiagnosticsUITests(unittest.TestCase):
             report = json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(report["detections"][0]["review_reasons"], list(detection.review_reasons))
 
-    def test_artwork_review_and_overlap_have_distinct_consistent_colours(self):
+    def test_artwork_and_overlap_notes_do_not_change_section_colour(self):
         mapper = CoordinateMapper(600, 400)
         review = Detection.from_pixel_center(1, (160, 200), mapper,
             review_reasons=("Check full artwork",))
@@ -151,13 +153,13 @@ class DetectionDiagnosticsUITests(unittest.TestCase):
         self.window.panel.set_detections([review, overlap], set())
         colours = [self.window.panel.detection_list.item(i).foreground().color().name()
                    for i in range(2)]
-        self.assertEqual(colours, [REVIEW_COLOR, OVERLAP_COLOR])
+        self.assertEqual(colours, [READY_COLOR, READY_COLOR])
         self.assertEqual(cut_status_color(review), colours[0])
         self.assertEqual(cut_status_color(overlap), colours[1])
-        self.assertIn("REVIEW", self.window.panel.detection_list.item(0).text())
-        self.assertIn("OVERLAP", self.window.panel.detection_list.item(1).text())
+        self.assertIn("READY", self.window.panel.detection_list.item(0).text())
+        self.assertIn("READY", self.window.panel.detection_list.item(1).text())
         self.assertIn("Check full artwork", self.window.panel.detection_list.item(1).toolTip())
-        self.assertIn("Overlapping cuts", self.window.panel.cut_color_legend.text())
+        self.assertIn("crosses a section boundary", self.window.panel.cut_color_legend.text())
 
 
 if __name__ == "__main__":

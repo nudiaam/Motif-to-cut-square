@@ -12,7 +12,7 @@ from PySide6.QtCore import (
     Signal,
 )
 from PySide6.QtGui import QColor, QPainter, QPen
-from app.ui.cut_status import cut_status_color, OVERLAP_COLOR, REVIEW_COLOR
+from app.ui.cut_status import cut_status_color, OVERLAP_COLOR, REVIEW_COLOR, INVALID_COLOR, READY_COLOR, present_cut
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -108,8 +108,8 @@ HELP = {
     "detections_section": "Lists every automatically detected or manually added motif center. A row checkbox controls export inclusion.",
     "total": "The total number of detections currently present.",
     "valid": "Enabled cuts without known geometry or assignment problems. This does not confirm that every intended figure was found: compare the result with the image.",
-    "invalid": "Enabled cuts with overlap, clipped-artwork or assignment warnings. Cuts outside their panel or bed, unassigned cuts and incomplete source panels are blocked from export.",
-    "disabled": "Cuts excluded manually or blocked by bed limits, incomplete source or panel boundaries. Blocked cuts must be corrected before they can be enabled.",
+    "invalid": "Purple means the rectangle crosses its measured section. Red means impossible rectangle geometry. Artwork and guide-confidence notes remain in the selected cut details. Checked cuts inside the bed can be exported.",
+    "disabled": "Cuts you have manually unchecked. Only unchecked cuts are omitted from the SVG.",
     "selected_section": "Shows pixel coordinates, physical coordinates, global cut geometry, boundary status, and export state for the selected detection.",
     "export_units": "SVG units normally follow the working units. Choosing another unit triggers a warning before export because downstream software may interpret unit conversions differently.",
 }
@@ -751,7 +751,7 @@ class SidePanel(QWidget):
             (
                 ("Total", self.total_value_label, HELP["total"]),
                 ("Ready", self.valid_value_label, HELP["valid"]),
-                ("Problems", self.invalid_value_label, HELP["invalid"]),
+                ("Conflicts", self.invalid_value_label, HELP["invalid"]),
                 ("Excluded", self.disabled_value_label, HELP["disabled"]),
             )
         ):
@@ -770,14 +770,15 @@ class SidePanel(QWidget):
         layout.addWidget(self.spacing_label)
 
         self.cut_color_legend = QLabel(
-            f'<span style="color:{OVERLAP_COLOR}">■ Overlapping cuts</span><br>'
-            f'<span style="color:{REVIEW_COLOR}">■ Artwork / layout needs review</span>'
+            f'<span style="color:{READY_COLOR}">■ Green: no measured section crossing</span><br>'
+            f'<span style="color:{REVIEW_COLOR}">■ Purple: crosses a section boundary</span><br>'
+            f'<span style="color:{INVALID_COLOR}">■ Red: impossible geometry</span>'
         )
         self.cut_color_legend.setWordWrap(True)
         self.cut_color_legend.setToolTip(
-            "Orange means cuts overlap. Purple means artwork may be clipped, "
-            "its extent is uncertain, or its grid assignment needs review. "
-            "If both apply, overlap takes priority; all reasons remain in the cut details."
+            "Colours describe the cut rectangle. Artwork confidence, possible clipping, "
+            "overlap and guide notes remain available in the selected cut details. "
+            "Green does not certify the complete artwork outline or machine calibration."
         )
         layout.addWidget(self.cut_color_legend)
 
@@ -1115,55 +1116,31 @@ class SidePanel(QWidget):
         warning_ids = set()
         for detection in detections:
             match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
-            blocked = detection.cut_hard_block_reason(self._mapper) if self._mapper else None
-            if blocked:
-                state = "BLOCKED"
-            elif not detection.enabled:
-                state = "EXCLUDED"
-            elif detection.overlaps_cut:
-                state = "OVERLAP"
-            elif not detection.valid_cut:
-                state = (
-                    "TOO SMALL"
-                    if self._mapper is not None
-                    and not detection.contains_artwork(self._mapper)
-                    and not detection.preserves_layout_position
-                    else "OUTSIDE"
-                )
-            elif detection.artwork_clipped:
-                state = "CLIPPED"
-            elif detection.review_reasons:
-                state = "REVIEW"
-            elif match is not None and (match.status != "matched" or match.review_reason):
-                state = "REVIEW"
-            else:
-                state = "READY"
+            warning = detection.cut_warning_reason(self._mapper) if self._mapper else None
+            reasons=detection.review_reasons_for(self._mapper)
+            presentation=present_cut(detection,self._mapper)
+            state=presentation.state
             if detection.enabled and state != "READY":
                 warning_ids.add(detection.id)
             source = ("manual" if detection.manual else "automatic") if detection.inferred else (
                 "manual" if detection.manual else f"{detection.score:.0%}"
             )
             item = QListWidgetItem(f"#{detection.id:02d}   {state:<9}   {source}")
+            item.setToolTip(presentation.reason)
             if match is not None:
-                item.setToolTip(f"Layout: {match.status}; residual {match.residual_px:.2f} px")
-                if match.status != "matched":
-                    item.setText(item.text() + f" · {match.status}")
+                item.setToolTip(item.toolTip()+f"\nLayout: {match.status}; residual {match.residual_px:.2f} px")
                 if match.review_reason:
-                    item.setText(item.text() + " · spans cells")
                     item.setToolTip(item.toolTip() + "\n" + match.review_reason)
-            if detection.review_reasons:
-                item.setToolTip(item.toolTip() + "\n" + "\n".join(detection.review_reasons))
-                item.setText(item.text() + " · check full artwork")
+            if reasons:
+                item.setToolTip(item.toolTip() + "\n" + "\n".join(reasons))
             item.setData(Qt.ItemDataRole.UserRole, detection.id)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            if blocked:
-                # Red warning with the reason, but the cut stays checkable: the
-                # user may still include a cut that does not fit its panel.
-                item.setToolTip(blocked + "\n" + item.toolTip())
+            if warning:
+                item.setToolTip(warning + "\n" + item.toolTip())
             item.setCheckState(
                 Qt.CheckState.Checked if detection.enabled else Qt.CheckState.Unchecked
             )
-            item.setForeground(QColor(cut_status_color(detection, state == "REVIEW")))
+            item.setForeground(QColor(presentation.color))
             self.detection_list.addItem(item)
             if detection.id in self._selected_ids:
                 item.setSelected(True)
@@ -1182,24 +1159,30 @@ class SidePanel(QWidget):
         self.invalid_value_label.setText(str(invalid))
         self.disabled_value_label.setText(str(disabled))
         counts = review_counts(detections, self._mapper, self._logical_layout)
-        lines = [f'{LABELS[key]}: {count}' for key,count in counts.items() if count]
-        clipped=sum((d.enabled or d.auto_blocked) and d.artwork_clipped for d in detections)
+        lines = []
+        if self._mapper:
+            assigned=[d for d in detections if d.enabled and d.cut_region_px is not None]
+            if assigned:
+                crossing=sum(bool(d.panel_boundary_reason(self._mapper)) for d in assigned)
+                lines.insert(0,f'Section limits: {len(assigned)-crossing} inside measured sections; {crossing} crossing.')
+        clipped=sum((d.enabled or d.auto_blocked) and d.confirmed_artwork_clipped for d in detections)
         if clipped and detections:
             unit=self._working_unit
             width=from_inches(detections[0].cut_width_inches,unit)
             height=from_inches(detections[0].cut_height_inches,unit)
-            lines.insert(0,f'Selected {width:g} × {height:g} {unit.value} cuts do not contain {clipped} artwork groups. Adjust cut size or verify image scale.')
+            lines.append(f'Artwork bounds outside the selected {width:g} × {height:g} {unit.value} cut: {clipped}. See image notes in the cut details.')
         if detections:
             lines.append('Dashed cyan: detected artwork. Solid outlines: cuts.')
-        region_blocked = sum(bool((d.cut_block_reason(self._mapper) or '').startswith(
-            ('Cut crosses its panel','No safe panel region'))) for d in detections) if self._mapper else 0
-        blocked_count = (sum(bool(d.cut_block_reason(self._mapper)) for d in detections)-region_blocked
-                         if self._mapper else 0)
-        if blocked_count:
-            lines.append(f'Excluded — outside bed / incomplete image: {blocked_count}')
-        if region_blocked:
-            lines.append(f'Blocked — panel boundary / unassigned region: {region_blocked}. Adjust cut size, image scale or panel guides.')
-        self.review_breakdown_label.setText('\n'.join(lines) + ('\nA cut can have several warnings.' if lines else ''))
+        image_notes=sum(d.enabled and bool(d.review_reasons_for(self._mapper) or
+                                          d.cut_warning_reason(self._mapper) or d.overlaps_cut)
+                        for d in detections) if self._mapper else 0
+        if image_notes:
+            lines.append(f'Additional image notes: {image_notes} cuts. Select a cut to inspect its artwork and guide evidence.')
+        panel_edge_count = (sum(d.enabled and bool(d.panel_boundary_reason(self._mapper))
+                                for d in detections) if self._mapper else 0)
+        if panel_edge_count:
+            lines.append(f'Section crossing: {panel_edge_count}. Checked cuts inside the bed remain included in the SVG.')
+        self.review_breakdown_label.setText('\n'.join(lines))
         self.review_breakdown_label.setVisible(bool(lines))
         spacing = physical_spacing(self._mapper, self._logical_layout,
                                    detections[0].cut_width_inches if detections else 0,
@@ -1291,8 +1274,9 @@ class SidePanel(QWidget):
             self.detail_label.setText("Select a cut area to inspect it.")
             del blocker
             return
-        blocked = detection.cut_block_reason(self._mapper) if self._mapper else None
-        self.include_checkbox.setEnabled(not blocked)
+        warning = detection.cut_warning_reason(self._mapper) if self._mapper else None
+        reasons=detection.review_reasons_for(self._mapper)
+        self.include_checkbox.setEnabled(True)
         self.include_checkbox.setChecked(detection.enabled)
         square = detection.square_inches
         unit = self._working_unit
@@ -1302,25 +1286,14 @@ class SidePanel(QWidget):
         y = from_inches(square.y, unit)
         width = from_inches(square.width, unit)
         height = from_inches(square.height, unit)
-        if blocked:
-            status = "Excluded from the SVG\n" + blocked
-        elif not detection.enabled:
-            status = "Excluded from the SVG"
-        elif detection.overlaps_cut:
-            status = "Overlap - check separation before export"
-        elif not detection.valid_cut:
-            status = (
-                "Cut is too small for the drawing - review before export"
-                if self._mapper is not None
-                and not detection.contains_artwork(self._mapper)
-                and not detection.preserves_layout_position
-                else "Outside bed - cannot export"
-            )
-        elif detection.review_reasons:
-            status = "Review required\n" + "\n".join(detection.review_reasons)
-        else:
-            status = "Ready for export"
-        if detection.grid_positioned and detection.artwork_clipped:
+        presentation=present_cut(detection,self._mapper)
+        status=("Excluded from the SVG" if not detection.enabled else
+                f"{presentation.state}\n{presentation.reason}\nChecked cuts inside the bed are included in the SVG")
+        notes=list(reasons)
+        if warning:notes.append(warning)
+        if detection.overlaps_cut:notes.append('This rectangle touches or overlaps another checked cut')
+        if notes:status+='\n\nImage notes:\n'+'\n'.join(dict.fromkeys(notes))
+        if detection.grid_positioned and detection.confirmed_artwork_clipped:
             status += "\nArtwork extends beyond cut; grid centre retained"
         match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
         layout_detail = "Manual position retained" if detection.manual else "No layout assignment"

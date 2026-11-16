@@ -1,4 +1,4 @@
-"""Regression inputs supplied by the customer and hard cut boundaries."""
+"""Customer source and boundary problems remain visible, exportable warnings."""
 import os
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 from pathlib import Path
@@ -44,10 +44,10 @@ class CustomerCutBoundaryTests(unittest.TestCase):
         self.assertEqual(len(set(owners)), 12)
         self.assertFalse(any(c.source_incomplete for c in result.candidates))
         checks = [p for p in detector.last_diagnostics['detection_plans']
-                  if p['stage'] == 'appearance_ownership_recheck']
-        self.assertTrue(any(p['corroborated'] for p in checks))
+                  if p['stage'] in ('appearance_ownership_recheck','independent_printed_partition')]
+        self.assertTrue(any(p.get('corroborated') or p.get('agreeing_scales',0)>=2 for p in checks))
 
-    def test_partial_row_stays_excluded_even_with_a_small_cut_or_manual_move(self):
+    def test_partial_row_stays_enabled_with_a_warning_after_size_or_position_edits(self):
         image = cv2.imread(str(ROOT / 'generated/customer_20261012/alphabet_6x4.png'))[:860]
         window = MainWindow()
         self.addCleanup(window.close)
@@ -55,57 +55,51 @@ class CustomerCutBoundaryTests(unittest.TestCase):
         window.detect_motifs()
         incomplete = [d for d in window.detections if d.source_incomplete]
         self.assertEqual(len(incomplete), 6)
-        self.assertTrue(all(not d.enabled for d in incomplete))
+        self.assertTrue(all(d.enabled and d.cut_warning_reason(window.mapper) for d in incomplete))
         window.change_cut_size(1, 1)
         for d in incomplete:
             window.set_detection_enabled(d.id, True)
-            self.assertFalse(d.enabled)
+            self.assertTrue(d.enabled)
         first = incomplete[0]
         window.move_detection(first.id, 500, 400)
         window.set_detection_enabled(first.id, True)
-        self.assertFalse(first.enabled)
+        self.assertTrue(first.enabled)
         window._refresh()
         self.assertEqual(len(window.detections), 24)  # No replacement grid cuts.
-        self.assertEqual(sum(d.enabled for d in window.detections), 18)
+        self.assertEqual(sum(d.enabled for d in window.detections), 24)
         tree = window.svg_exporter.build_tree(window.mapper, window.detections)
-        self.assertEqual(len(tree.findall(f'{{{SVG_NAMESPACE}}}rect')), 18)
-        self.assertIn('incomplete image: 6', window.panel.review_breakdown_label.text())
+        self.assertEqual(len(tree.findall(f'{{{SVG_NAMESPACE}}}rect')), 24)
+        window.panel._selected_id=first.id;window.panel._update_details()
+        self.assertIn('Incomplete source image',window.panel.detail_label.text())
+        self.assertTrue(all(d.cut_warning_reason(window.mapper) for d in incomplete))
 
-    def test_outside_cut_is_excluded_and_can_be_enabled_only_after_moving_inside(self):
+    def test_outside_cut_is_removed_from_the_application_and_export(self):
         import numpy as np
         window = MainWindow()
         self.addCleanup(window.close)
         window._load_image(np.full((600,900,3),230,np.uint8), 'boundary test')
         window.add_center(10, 10)
-        d = window.detections[0]
-        self.assertFalse(d.enabled)
-        window.set_detection_enabled(d.id, True)
-        self.assertFalse(d.enabled)
-        window.move_detection(d.id, 450, 300)
-        window.set_detection_enabled(d.id, True)
-        self.assertTrue(d.enabled)
-        self.assertIsNone(d.cut_block_reason(window.mapper))
-        self.assertEqual(d.cut_width_inches, 5)
+        self.assertEqual(window.detections,[])
+        self.assertEqual(window.canvas._detections,[])
+        self.assertEqual(window.panel.detection_list.count(),0)
+        self.assertEqual(len(window.svg_exporter.build_tree(window.mapper,window.detections)
+                             .findall(f'{{{SVG_NAMESPACE}}}rect')),0)
 
-    def test_customer_birds_keep_eighteen_complete_and_exclude_six_partial(self):
+    def test_customer_birds_omit_the_six_cuts_outside_the_bed(self):
         image = cv2.imread(str(ROOT / 'customer_20261012/birds_partial_6x4.png'))
         window = MainWindow()
         self.addCleanup(window.close)
         window._load_image(image, 'customer birds')
         window.detect_motifs()
-        self.assertEqual(len(window.detections), 24)
-        self.assertEqual(sum(d.source_incomplete for d in window.detections), 6)
-        self.assertEqual(sum(d.enabled for d in window.detections), 18)
-        self.assertEqual({d.layout_cell for d in window.detections if d.source_incomplete},
-                         {(column, 3) for column in range(6)})
-        self.assertTrue(all(d.bounding_box_px[1]+d.bounding_box_px[3] == image.shape[0]
-                            for d in window.detections if d.source_incomplete))
+        self.assertEqual(len(window.detections), 18)
+        self.assertFalse(any(d.source_incomplete for d in window.detections))
+        self.assertTrue(all(d.enabled for d in window.detections))
         window.change_cut_size(1, 1)
         self.assertEqual(sum(d.enabled for d in window.detections), 18)
         tree = window.svg_exporter.build_tree(window.mapper, window.detections)
         self.assertEqual(len(tree.findall(f'{{{SVG_NAMESPACE}}}rect')), 18)
 
-    def test_partial_cells_are_blocked_on_every_image_edge(self):
+    def test_partial_cells_are_identified_on_every_image_edge(self):
         import numpy as np
         image = np.full((200,200,3),230,np.uint8)
         cases = [((-40,0,200,200),(20,50)), ((0,0,240,200),(180,50)),
@@ -118,7 +112,7 @@ class CustomerCutBoundaryTests(unittest.TestCase):
                 self.assertTrue(checked.source_incomplete)
                 self.assertEqual(checked.bounding_box_px,c.bounding_box_px)
 
-    def test_missing_partial_grid_cells_cannot_become_enabled_inferred_cuts(self):
+    def test_partial_empty_positions_remain_proposals_without_automatic_cuts(self):
         import numpy as np
         window = MainWindow()
         self.addCleanup(window.close)
@@ -128,12 +122,14 @@ class CustomerCutBoundaryTests(unittest.TestCase):
         candidates = tuple(MotifCandidate((x,y),(x-15,y-15,30,30),.9,900)
                            for y in (160,360) for x in (200,400,600))
         window._apply_detection_result(DetectionResult(candidates,grid), {})
-        self.assertEqual(len(window.detections), 9)
+        self.assertEqual(len(window.detections), 6)
         partial = [d for d in window.detections if d.source_incomplete]
-        self.assertEqual(len(partial), 3)
-        self.assertTrue(all(d.inferred and not d.enabled for d in partial))
+        self.assertEqual(len(partial), 0)
+        self.assertFalse(any(d.inferred for d in window.detections))
+        self.assertEqual(len(window.logical_layout.missing),3)
         window._refresh()
         self.assertEqual(sum(d.enabled for d in window.detections), 6)
+        self.assertEqual(len(window.svg_exporter.build_tree(window.mapper,window.detections).findall(f'{{{SVG_NAMESPACE}}}rect')),6)
 
 if __name__ == '__main__':
     unittest.main()

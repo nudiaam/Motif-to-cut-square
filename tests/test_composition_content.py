@@ -84,15 +84,17 @@ class CommonCompositionPhaseTests(unittest.TestCase):
             detections.append(d);observations.append(LayoutObservation(i,(x+24,y),box,(x,y)))
         return mapper,detections,layout_from_panel_grid(observations,grid)
 
-    def test_common_translation_contains_bounds_without_deforming_rows_or_columns(self):
+    def test_offcentre_compositions_cannot_translate_measured_sections(self):
         mapper,detections,layout=self.scene()
         shifted=contain_automatic_compositions(layout,detections,mapper,4,4)
         self.assertEqual(shifted.column_vector_px,layout.column_vector_px)
         self.assertEqual(shifted.row_vector_px,layout.row_vector_px)
-        self.assertNotEqual(shifted.origin_px,layout.origin_px)
+        self.assertEqual(shifted,layout)
         for d,m in zip(detections,sorted(shifted.matches,key=lambda m:m.detection_id)):
             d.place_on_grid(shifted.position(m.column,m.row),(m.column,m.row),mapper)
-            self.assertTrue(d.contains_artwork(mapper));self.assertTrue(d.valid_cut)
+            self.assertEqual(d.center_px,layout.position(m.column,m.row))
+            self.assertFalse(d.contains_artwork(mapper))
+            self.assertIsNotNone(d.cut_warning_reason(mapper))
 
     def test_impossible_size_or_manual_guides_keep_the_layout(self):
         mapper,detections,layout=self.scene()

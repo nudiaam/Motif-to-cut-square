@@ -49,7 +49,6 @@ from app.geometry.units import LengthUnit
 from app.imaging.detector import MotifDetector, infer_panel_grid
 from app.imaging.panel_grid import PanelGrid
 from app.imaging.logical_layout import LogicalLayout, LayoutObservation, fit_logical_layout, layout_from_panel_grid
-from app.geometry.composition_phase import contain_automatic_compositions
 from app.models import (
     Detection,
     apply_logical_layout,
@@ -60,6 +59,7 @@ from app.models import (
 from app.ui.canvas import BedCanvas
 from app.ui.help_widgets import DelayedHelpToolBar
 from app.ui.machine_dialog import AddMachineDialog
+from app.ui.navigator import NavigatorPanel
 from app.ui.side_panel import SidePanel
 from app.ui.detection_worker import DetectionWorker
 
@@ -84,12 +84,12 @@ TOOLBAR_HELP = {
         "shapes to the nearest feasible positions. Cut sizes are preserved."
     ),
     "center": (
-        "Keep grid-assigned cuts at their exact cell centres. Centre remaining "
-        "individual cuts on their artwork while respecting existing grid positions."
+        "Keep grid-assigned cuts inside their own cells. Where feasible, contain "
+        "the whole artwork without changing the selected cut size."
     ),
     "preview": (
         "Preview the exported cut areas at normal brightness while dimming the "
-        "rest of the bed. Invalid, colliding, and disabled cuts stay dimmed."
+        "rest of the bed. Checked warning cuts are included; disabled cuts stay dimmed."
     ),
     "add": (
         "Toggle manual cut-square placement. While active, click anywhere on the bed "
@@ -102,7 +102,7 @@ TOOLBAR_HELP = {
         "as a purple overlay, and report the maximum round-trip error."
     ),
     "export": (
-        "Save only enabled, valid cuts in an SVG sized to the selected machine bed. "
+        "Save checked cuts inside the machine bed, including confirmed warnings. "
         "The background image is never included. Shortcut: Ctrl+E."
     ),
 }
@@ -306,6 +306,13 @@ class MainWindow(QMainWindow):
             0,
             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom,
         )
+        self.navigator = NavigatorPanel(self.canvas)
+        workspace_layout.addWidget(
+            self.navigator,
+            0,
+            0,
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom,
+        )
         self.cut_preview_toggle = QToolButton()
         self.cut_preview_toggle.setObjectName("cutPreviewToggle")
         self.cut_preview_toggle.setText("Preview cuts")
@@ -468,6 +475,7 @@ class MainWindow(QMainWindow):
             "<b>Pan</b>&nbsp;&nbsp; Space + drag / H + drag / middle-button drag"
             "<br><b>Zoom</b>&nbsp;&nbsp; Z + click / Alt + click out / Ctrl + wheel"
             "<br><b>Fit bed</b>&nbsp;&nbsp; Ctrl + 0"
+            "<br><b>Navigator</b>&nbsp;&nbsp; bottom-right map: drag the red box"
             "<br><b>Edit mode</b>&nbsp;&nbsp; V or Esc"
         )
         controls.setObjectName("navigationText")
@@ -513,10 +521,8 @@ class MainWindow(QMainWindow):
             self.canvas.set_layout_review_details(False)
 
     def _cut_warning_count(self) -> int:
-        assignment_warnings = {m.detection_id for m in self.logical_layout.matches
-                               if m.status != "matched" or m.review_reason}
-        return sum(d.enabled and (not d.exportable or d.artwork_clipped or bool(d.review_reasons) or d.id in assignment_warnings)
-                   for d in self.detections)
+        from app.geometry.cut_presentation import present_cut
+        return sum(d.enabled and present_cut(d,self.mapper).state!='READY' for d in self.detections)
 
     def show_preflight(self) -> None:
         """Open the combined review, including its current output summary."""
@@ -549,7 +555,7 @@ class MainWindow(QMainWindow):
             item.enabled and not item.valid_cut for item in self.detections
         )
         skipped = sum(not item.enabled for item in self.detections)
-        grid_crop = sum(d.enabled and d.grid_positioned and d.artwork_clipped for d in self.detections)
+        grid_crop = sum(d.enabled and d.grid_positioned and d.confirmed_artwork_clipped for d in self.detections)
         spanning = sum(bool(m.review_reason) for m in self.logical_layout.matches)
         warnings = self._cut_warning_count()
         result = verify_export_geometry(
@@ -560,6 +566,8 @@ class MainWindow(QMainWindow):
             f"READY TO EXPORT: {exported} CUTS"
             if warnings == 0
             else f"EXPORTING {exported} CUTS · {warnings} WITH WARNINGS"
+            if any(d.enabled and (d.cut_warning_reason(self.mapper) or d.overlaps_cut) for d in self.detections)
+            else f"EXPORTING {exported} CUTS · {warnings} TO REVIEW"
         )
         self.panel.verification_label.setText(
             f"{headline}\n"
@@ -567,7 +575,8 @@ class MainWindow(QMainWindow):
             f"Skipped (unchecked): {skipped}\n"
             f"Artwork spanning cells: {spanning} (review assignment)\n"
             f"Artwork beyond grid cuts: {grid_crop} (centres retained)\n"
-            f"Uncertain artwork extent: {sum(d.enabled and bool(d.review_reasons) for d in self.detections)}\n"
+            f"Uncertain artwork extent: {sum(d.enabled and bool(d.review_reasons or d.artwork_extent_uncertain or d.artwork_edge_review_reason(self.mapper)) for d in self.detections)}\n"
+            f"Uncertain panel borders: {sum(d.enabled and bool(d.panel_boundary_review_reason(self.mapper)) for d in self.detections)}\n"
             f"Geometry check: maximum error "
             f"{max(result.maximum_error_x_px, result.maximum_error_y_px):.6g} px"
         )
@@ -886,7 +895,11 @@ class MainWindow(QMainWindow):
                 layout_observation_px=candidate.layout_center_px,
                 review_reasons=candidate.review_reasons,
                 source_incomplete=candidate.source_incomplete,
+                artwork_extent_uncertain=candidate.artwork_extent_uncertain,
+                artwork_support_boxes_px=candidate.artwork_support_boxes_px,
                 cut_region_uncertainty_px=(0. if result.panel_grid and result.panel_grid.source=='manual'
+                    else result.panel_grid.boundary_uncertainty_px
+                    if result.panel_grid and result.panel_grid.boundary_uncertainty_px is not None
                     else POLICY.boundary_uncertainty_px*max(1.,max(self.image_bgr.shape[:2])/POLICY.max_scene_side)),
             )
             for index, candidate in enumerate(candidates, start=1)
@@ -1304,16 +1317,9 @@ class MainWindow(QMainWindow):
         if detection is None or (detection.enabled == enabled and not (detection.auto_blocked and not enabled)):
             return
         if enabled and self.mapper is not None:
-            hard = detection.cut_hard_block_reason(self.mapper)
-            if hard:
-                # An impossible cut (off the bed, no fabric) cannot be enabled.
-                self.statusBar().showMessage(hard, 7000)
-                self.panel.set_detections(self.detections, self.selected_ids, self.selected_id)
-                return
-            reason = detection.cut_block_reason(self.mapper)
-            if reason:
-                # A panel-boundary crossing on real fabric is a red warning only.
-                self.statusBar().showMessage(reason, 7000)
+            warning = detection.cut_warning_reason(self.mapper)
+            if warning:
+                self.statusBar().showMessage(warning, 7000)
         self._push_history("Change export inclusion")
         detection.enabled = enabled
         detection.auto_blocked = False
@@ -1516,11 +1522,6 @@ class MainWindow(QMainWindow):
         if self.mapper is None:
             self._request_image()
             return
-        blocked = [d for d in self.detections if d.enabled and d.cut_block_reason(self.mapper)]
-        if blocked:
-            QMessageBox.warning(self, "Cuts cannot be exported", "\n".join(
-                f"#{d.id}: {d.cut_block_reason(self.mapper)}" for d in blocked))
-            return
         if not self._detection_review_complete:
             self.show_preflight()
             return
@@ -1539,8 +1540,8 @@ class MainWindow(QMainWindow):
                 self,
                 "Some cuts have warnings",
                 f"All {exported} checked cuts will be exported, but {warnings} "
-                "have warnings (clipped artwork, overlap, or grid assignment). "
-                "The review summary shows the reasons. Continue?",
+                "cross their section boundary or have impossible rectangle geometry. "
+                "The cut details show the reasons. Continue?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
                 QMessageBox.StandardButton.Cancel,
             )
@@ -1736,9 +1737,6 @@ class MainWindow(QMainWindow):
             self.logical_layout = (layout_from_panel_grid(observations, grid)
                                    if grid is not None and (grid.confidence >= .78 or grid.source == "manual")
                                    else fit_logical_layout(observations))
-            if self.mapper is not None:
-                self.logical_layout=contain_automatic_compositions(self.logical_layout,self.detections,self.mapper,
-                    self.cut_width_inches,self.cut_height_inches)
             self._layout_signature = signature
             if not self._restoring_history:
                 for item in self.detections:
@@ -1763,67 +1761,34 @@ class MainWindow(QMainWindow):
         self._sync_layout_display()
 
     def _sync_automatic_grid_cuts(self) -> None:
-        """Fill grid gaps, but never cut again through a spanning illustration."""
-        if self.mapper is None:
-            return
-        disputed = bool(self.detection_panel_grid and any(
-            'Competing panel layouts' in reason or 'Insufficient independent' in reason
-            or 'Sparse composition layout' in reason
-            for reason in self.detection_panel_grid.review_reasons))
-        desired = ({(gap.column, gap.row) for gap in self.logical_layout.missing
-                    if not gap.covered_by_artwork}
-                   if self.logical_layout.reliable and not disputed else set())
-        # A moved inferred square becomes an explicit manual choice and is no
-        # longer managed by the automatic grid synchronizer.
-        managed = [item for item in self.detections if item.inferred and not item.manual]
-        for item in managed:
-            if item.layout_cell in desired:
-                item.source_incomplete = not self.logical_layout.cell_inside_image(
-                    *item.layout_cell, self.mapper.image_width_px, self.mapper.image_height_px)
-                item.cut_region_px = self.logical_layout.cell_polygon(*item.layout_cell)
-                item.cut_region_required = True
-                item.place_on_grid(
-                    self.logical_layout.position(*item.layout_cell),
-                    item.layout_cell,
-                    self.mapper,
-                )
-        stale_ids = {item.id for item in managed if item.layout_cell not in desired}
-        if stale_ids:
-            self.detections = [item for item in self.detections if item.id not in stale_ids]
-        existing = {item.layout_cell for item in self.detections if item.layout_cell is not None}
-        next_id = max((item.id for item in self.detections), default=0) + 1
-        for cell in sorted(desired - existing - self._suppressed_grid_cells,
-                           key=lambda value: (value[1], value[0])):
-            position = self.logical_layout.position(*cell)
-            detection = Detection.from_pixel_center(
-                next_id, position, self.mapper, score=0.0,
-                cut_width_inches=self.cut_width_inches,
-                cut_height_inches=self.cut_height_inches,
-            )
-            detection.inferred = True
-            detection.source_incomplete = not self.logical_layout.cell_inside_image(
-                *cell, self.mapper.image_width_px, self.mapper.image_height_px)
-            detection.review_reasons = ("No artwork detected here; verify this proposed position",)
-            detection.original_center_px = None
-            detection.cut_region_uncertainty_px = max((d.cut_region_uncertainty_px for d in self.detections),default=2.)
-            detection.cut_region_px = self.logical_layout.cell_polygon(*cell)
-            detection.cut_region_required = True
-            detection.place_on_grid(position, cell, self.mapper)
-            self.detections.append(detection)
-            next_id += 1
+        """A layout gap is a proposal, never evidence for an automatic cut.
+
+        Remove old managed placeholders on refresh/undo too. An inferred cut
+        explicitly moved by the user is a manual choice and remains available.
+        """
+        self.detections = [item for item in self.detections
+                           if not item.inferred or item.manual]
 
     def _refresh(self) -> None:
         self.panel.set_detection_diagnostics(self.detection_diagnostics)
         self._preflight_complete = False
         self._update_logical_layout()
-        # A cut that only crosses its panel on real fabric stays enabled and is
-        # shown in red; the user decides. An impossible cut (off the bed, no
-        # fabric to cut) is auto-excluded — it is not a real cut.
+        # A rectangle outside the machine bed is not a cut proposal. Keep
+        # panel/artwork conflicts as warnings, but omit these rectangles from
+        # every view and prevent gap filling from recreating them on refresh.
         if self.mapper is not None:
-            for detection in self.detections:
-                if detection.enabled and detection.cut_hard_block_reason(self.mapper):
-                    detection.enabled = False
-                    detection.auto_blocked = True
+            outside = [d for d in self.detections if not d.square_inches.is_valid(
+                self.mapper.bed_width_in, self.mapper.bed_height_in)]
+            self._suppressed_grid_cells.update(d.layout_cell for d in outside
+                                               if d.layout_cell is not None)
+            outside_ids = {d.id for d in outside}
+            self.detections = [d for d in self.detections if d.id not in outside_ids]
+        # Restore exclusions made by the former blocking policy. Explicit
+        # manual exclusions have auto_blocked=False and remain untouched.
+        for detection in self.detections:
+            if detection.auto_blocked:
+                detection.enabled = True
+                detection.auto_blocked = False
         active = [d for d in self.detections if d.enabled]
         if any(d.grid_positioned for d in active) and all(d.preserves_layout_position for d in active):
             self._review_centering_complete = True

@@ -26,7 +26,7 @@ from .composition_evidence import shared_compositions
 from .content_preservation import foreground_mask, preservation
 
 
-DETECTOR_REVISION = "2026-10-25-bounded-analysis-and-cut-regions"
+DETECTOR_REVISION = "2026-11-16-source-sections-closed-frames"
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +49,9 @@ class MotifCandidate:
     layout_center_px: tuple[float, float] | None = None
     review_reasons: tuple[str, ...] = ()
     source_incomplete: bool = False
+    extent_checked: bool = False
+    artwork_extent_uncertain: bool = False
+    artwork_support_boxes_px: tuple[tuple[int,int,int,int], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +67,10 @@ def _scale_candidate(candidate,sx,sy,width,height):
     return replace(candidate,center_px=(candidate.center_px[0]*sx,candidate.center_px[1]*sy),
         bounding_box_px=(left,top,max(1,right-left),max(1,bottom-top)),
         area_px=max(1,round(candidate.area_px*sx*sy)),
+        artwork_support_boxes_px=tuple((int(np.floor(bx*sx)),int(np.floor(by*sy)),
+            max(1,int(np.ceil((bx+bw)*sx))-int(np.floor(bx*sx))),
+            max(1,int(np.ceil((by+bh)*sy))-int(np.floor(by*sy))))
+            for bx,by,bw,bh in candidate.artwork_support_boxes_px),
         layout_center_px=((candidate.layout_center_px[0]*sx,candidate.layout_center_px[1]*sy)
                           if candidate.layout_center_px is not None else None))
 
@@ -74,6 +81,19 @@ def _inside_fabric(candidate: MotifCandidate, mask: np.ndarray | None) -> bool:
     x, y = candidate.center_px
     h, w = mask.shape
     return 0 <= x < w and 0 <= y < h and bool(mask[int(y), int(x)])
+
+
+def _project_support_boxes(contours,transform,offset=(0,0)):
+    boxes=[]
+    for contour in contours:
+        points=np.asarray(contour,float)+offset
+        # Project the supported pixel cells, not empty corners of their union.
+        cells=np.concatenate([points+delta for delta in ((0,0),(1,0),(1,1),(0,1))])
+        source=project_points(cells,transform)
+        x,y=np.floor(source.min(axis=0)).astype(int)
+        right,bottom=np.ceil(source.max(axis=0)).astype(int)
+        boxes.append((int(x),int(y),int(right-x),int(bottom-y)))
+    return tuple(boxes)
 
 
 def _consolidate_grid_candidates(
@@ -161,6 +181,10 @@ def _consolidate_grid_candidates(
             primary.layout_center_px,
             tuple(dict.fromkeys(reason for item in merged for reason in item.review_reasons)),
             any(item.source_incomplete for item in merged),
+            extent_checked=all(item.extent_checked for item in merged),
+            artwork_extent_uncertain=any(item.artwork_extent_uncertain for item in merged),
+            artwork_support_boxes_px=tuple(box for item in merged for box in (
+                item.artwork_support_boxes_px if item.artwork_extent_uncertain else (item.bounding_box_px,))),
         ))
     return tuple(sorted(consolidated + unresolved, key=lambda item: (
         item.center_px[1], item.center_px[0],
@@ -285,7 +309,15 @@ class MotifDetector:
         timings['reference_and_illumination'] = perf_counter()-started
         phase = perf_counter()
         self._progress('Comparing panel layouts')
-        if mask is not None and not np.any(mask):
+        printed = (self._detect_printed_partition(image_bgr,settings)
+                   if settings.adaptive_planning and settings.layout_mode == 'auto'
+                   and not matched_reference else None)
+        if printed is not None:
+            result = printed
+            # The independently verified cloth perimeter includes shadowed
+            # cells that a tentative bright foreground mask may have missed.
+            mask = fabric_mask = None
+        elif mask is not None and not np.any(mask):
             result = DetectionResult(())
         elif matched_reference:
             analysis = image_bgr.copy()
@@ -306,6 +338,8 @@ class MotifDetector:
                     center_px=(c.center_px[0]+left, c.center_px[1]+top),
                     bounding_box_px=(c.bounding_box_px[0]+left, c.bounding_box_px[1]+top,
                                      *c.bounding_box_px[2:]),
+                    artwork_support_boxes_px=tuple((bx+left,by+top,bw,bh)
+                        for bx,by,bw,bh in c.artwork_support_boxes_px),
                     layout_center_px=((c.layout_center_px[0]+left, c.layout_center_px[1]+top)
                                       if c.layout_center_px is not None else None),
                 ) for c in local.candidates)
@@ -316,7 +350,8 @@ class MotifDetector:
         timings['layout'] = perf_counter()-phase
         phase = perf_counter()
         self._progress('Checking composition ownership')
-        if settings.adaptive_planning and settings.layout_mode == 'auto' and not matched_reference:
+        if (settings.adaptive_planning and settings.layout_mode == 'auto'
+                and not matched_reference and printed is None):
             result, recovered = self._coordinate_appearance(image_bgr, settings, result, mask)
             result,whole_recovered=self._compare_whole_layout(image_bgr,settings,result)
             recovered=recovered or whole_recovered
@@ -411,6 +446,20 @@ class MotifDetector:
                 final_grid = replace(final_grid, review_reasons=tuple(dict.fromkeys((
                     *final_grid.review_reasons,
                     'Competing panel layouts have similar support; verify grid position'))))
+        from .section_evidence import supported_missing_compositions
+        recovered=supported_missing_compositions(image_bgr,candidates,final_grid,
+                                                layout=layout if final_grid is None else None)
+        if recovered:
+            additions=[]
+            for item in recovered:
+                x,y,w,h=item['box']
+                support=_project_support_boxes(item['support_contours'],item['inverse'])
+                additions.append(MotifCandidate((x+w/2,y+h/2),item['box'],item['score'],item['area'],
+                    item['anchor'],item['issues'],extent_checked=True,
+                    artwork_extent_uncertain=item['uncertain'],artwork_support_boxes_px=tuple(support)))
+            candidates=tuple(sorted((*candidates,*additions),key=lambda c:(c.center_px[1],c.center_px[0])))
+            self._plans.append({'stage':'supported_gap_recovery','cells':[item['cell'] for item in recovered],
+                                'requires_coherent_two_reading_ink':True})
         candidates = self.finalize_compositions(image_bgr, candidates, final_grid)
         if final_grid is not None and final_grid.lattice is not None and candidates:
             # The machine only cuts 5x5 squares. A detection that sits off the
@@ -467,6 +516,117 @@ class MotifDetector:
             "compositions_needing_extent_review": sum(bool(c.review_reasons) for c in candidates),
         }
         return DetectionResult(candidates, final_grid)
+
+    def _detect_printed_partition(self,image,settings):
+        """Let independently observed divisions establish composition ownership.
+
+        A cell's detached accessories are read together, not voted into a
+        different lattice by their individual object centres. Missing foreground
+        is uncertainty, not evidence for deleting an entire row or column.
+        """
+        from .printed_partition import infer_printed_partition
+        from .printed_composition import segment_printed_composition
+        panel = infer_printed_partition(image)
+        if panel is None:
+            return None
+        # Ownership at a printed division is revisable: a single connected
+        # illustration may span two sections. Do not crop it into two animals.
+        whole = self._detect_once(panel.image,replace(settings,
+            merge_distance_px_x=0.,merge_distance_px_y=0.))
+        dx = float(np.median(np.diff(panel.grid.x_lines_px)))
+        dy = float(np.median(np.diff(panel.grid.y_lines_px)))
+        def spans(c):
+            x,y,w,h = c.bounding_box_px
+            return ((1.35*dy < h < 2.4*dy and w < .95*dx)
+                    or (1.35*dx < w < 2.4*dx and h < .95*dy))
+        spanning = [c for c in whole if spans(c)]
+        strict = (self._detect_once(panel.image,replace(settings,
+            sensitivity=max(0,settings.sensitivity-15),merge_distance_px_x=0.,merge_distance_px_y=0.))
+            if spanning else [])
+        def agrees(a,b):
+            ax,ay,aw,ah = a.bounding_box_px;bx,by,bw,bh = b.bounding_box_px
+            overlap = max(0,min(ax+aw,bx+bw)-max(ax,bx))*max(0,min(ay+ah,by+bh)-max(ay,by))
+            return overlap/max(1,aw*ah+bw*bh-overlap) >= .60
+        if any(spans(b) and agrees(a,b) for a in spanning for b in strict):
+            self._plans.append({'stage':'independent_printed_partition','accepted':False,
+                                'reason':'Connected artwork spans printed sections'})
+            return None
+        candidates = []
+        for c,r,(x,y,w,h) in panel.grid.cells():
+            # A division establishes ownership, never an irreversible crop.
+            # Keep context so tails, ears and accessories close to a seam are
+            # available even when the measured border has a few pixels' error.
+            pad = max(3,round(min(w,h)*.04))
+            left,top = max(0,x-pad),max(0,y-pad)
+            right,bottom = min(panel.image.shape[1],x+w+pad),min(panel.image.shape[0],y+h+pad)
+            crop = panel.image[top:bottom,left:right]
+            if min(crop.shape[:2]) < 8:
+                continue
+            core = (max(0,x-left),max(0,y-top),min(right-left,x+w-left),min(bottom-top,y+h-top))
+            analysed = segment_printed_composition(crop,core)
+            if analysed is not None:
+                bounds=analysed['box']
+                bx,by,bw,bh=bounds
+                corners=project_points([(left+bx,top+by),(left+bx+bw,top+by),
+                    (left+bx+bw,top+by+bh),(left+bx,top+by+bh)],panel.to_source)
+                x0,y0=np.floor(corners.min(axis=0)).astype(int)
+                x1,y1=np.ceil(corners.max(axis=0)).astype(int)
+                anchor=project_points([((panel.grid.x_lines_px[c]+panel.grid.x_lines_px[c+1])/2,
+                    (panel.grid.y_lines_px[r]+panel.grid.y_lines_px[r+1])/2)],panel.to_source)[0]
+                support=_project_support_boxes(analysed['support_contours'],panel.to_source,(left,top))
+                candidates.append(MotifCandidate(((x0+x1)/2,(y0+y1)/2),
+                    (int(x0),int(y0),int(x1-x0),int(y1-y0)),analysed['score'],
+                    max(1,round(analysed['area']*cv2.contourArea(corners.astype(np.float32))/max(1,bw*bh))),
+                    tuple(anchor),analysed['issues'],extent_checked=True,
+                    artwork_extent_uncertain=analysed['extent_uncertain'],
+                    artwork_support_boxes_px=tuple(support)))
+                continue
+            component_fraction = (.002 if panel.partition_evidence['method'] == 'sustained_printed_colour' else 0.)
+            analysed = segment_zone(crop,max(20,settings.minimum_area_px*.25),
+                core,preserve_detached=True,
+                minimum_component_fraction=component_fraction)
+            if analysed is None and component_fraction:
+                # Pale line drawings may consist of several small connected
+                # parts. A failed denoising pass must not erase that section.
+                analysed = segment_zone(crop,max(20,settings.minimum_area_px*.25),
+                    core,preserve_detached=True)
+            compensated = False
+            if analysed is None and panel.partition_evidence['method'] == 'sustained_printed_frames':
+                gain = min(1.6,220./max(1.,float(np.median(cv2.cvtColor(crop,cv2.COLOR_BGR2GRAY)))))
+                if gain > 1.10:
+                    illuminated = np.clip(crop.astype(np.float32)*gain,0,255).astype(np.uint8)
+                    analysed = segment_zone(illuminated,max(20,settings.minimum_area_px*.25),
+                        core,preserve_detached=True)
+                    compensated = analysed is not None
+            if analysed is None:
+                continue
+            bounds = analysed['box']
+            if panel.partition_evidence['method'] == 'sustained_printed_frames':
+                from .printed_partition import include_faint_ink
+                bounds = include_faint_ink(crop,bounds,core_bounds=core)
+            bx,by,bw,bh = bounds
+            corners = project_points([(left+bx,top+by),(left+bx+bw,top+by),
+                                      (left+bx+bw,top+by+bh),(left+bx,top+by+bh)],panel.to_source)
+            x0,y0 = np.floor(corners.min(axis=0)).astype(int)
+            x1,y1 = np.ceil(corners.max(axis=0)).astype(int)
+            anchor = project_points([((panel.grid.x_lines_px[c]+panel.grid.x_lines_px[c+1])/2,
+                                      (panel.grid.y_lines_px[r]+panel.grid.y_lines_px[r+1])/2)],panel.to_source)[0]
+            issues = analysed['issues']
+            if compensated:
+                issues = (*issues,'Local illumination compensation used; check faint details')
+            candidates.append(MotifCandidate(((x0+x1)/2,(y0+y1)/2),(int(x0),int(y0),int(x1-x0),int(y1-y0)),
+                analysed['score'],max(1,round(analysed['area']*
+                    cv2.contourArea(corners.astype(np.float32))/max(1,bw*bh))),tuple(anchor),
+                issues))
+        complete_cells=sum(x>=-2 and y>=-2 and x+w<=panel.image.shape[1]+2 and y+h<=panel.image.shape[0]+2
+            for _,_,(x,y,w,h) in panel.grid.cells())
+        if len(candidates) < max(1,complete_cells)*.80:
+            return None
+        self._plans.append({'stage':'independent_printed_partition',**panel.partition_evidence,
+                            'columns':panel.grid.columns,'rows':panel.grid.rows,
+                            'segmented_cells':len(candidates)})
+        self._grid_notes.append('Two-scale printed divisions define complete composition ownership')
+        return DetectionResult(tuple(candidates),source_grid(panel))
 
     def _compare_whole_layout(self,image,settings,current):
         """Compare source-wide ink groups, including unresolved or extra parts."""
@@ -784,7 +944,7 @@ class MotifDetector:
     def detect_with_guides(self, image, settings, grid):
         """Same confirmed-guide contract for interactive and background jobs."""
         started = perf_counter()
-        if grid.source in {'pattern', 'camera', 'reference', 'fabric'}:
+        if grid.source in {'pattern', 'camera', 'reference', 'fabric', 'printed'}:
             settings = replace(settings, layout_mode='auto')
             result = self.detect_with_layout(image, settings)
             candidates = result.candidates
@@ -816,6 +976,8 @@ class MotifDetector:
         candidates = tuple(candidates)
         if grid is not None:
             candidates = _consolidate_grid_candidates(candidates, grid)
+            if grid.source in ('manual','camera','reference','visual','seam_consensus'):
+                candidates=self._review_observed_outlines(image_bgr,candidates,grid)
             issues = grid.review_reasons
             if grid.confidence < .78 and grid.source != "manual":
                 issues = (*issues, "Panel layout is uncertain; check composition ownership")
@@ -823,6 +985,58 @@ class MotifDetector:
                 candidates = tuple(replace(c, review_reasons=tuple(dict.fromkeys(
                     (*c.review_reasons, *issues)))) for c in candidates)
         return review_extents(image_bgr, candidates, grid)
+
+    def _review_observed_outlines(self,image,candidates,grid):
+        """Use the same outline evidence in automatic and confirmed sections.
+
+        This changes confidence only: existing conservative boxes, ownership,
+        counts and guide positions are retained. Each local check is bounded.
+        """
+        if grid.confidence<.78 and grid.source!='manual':return candidates
+        from .logical_layout import LayoutObservation,layout_from_panel_grid
+        from .printed_composition import segment_printed_composition
+        observations=[LayoutObservation(i,c.center_px,c.bounding_box_px,c.layout_center_px)
+                      for i,c in enumerate(candidates)]
+        layout=layout_from_panel_grid(observations,grid)
+        matches={m.detection_id:m for m in layout.matches};reviewed=[];checked=0
+        for i,c in enumerate(candidates):
+            match=matches.get(i)
+            if (c.extent_checked or match is None or match.status!='matched' or match.review_reason
+                    or match.column is None or match.row is None):
+                reviewed.append(c);continue
+            polygon=np.float32(layout.cell_polygon(match.column,match.row))
+            if cv2.contourArea(polygon)<=1. or not cv2.isContourConvex(polygon):
+                reviewed.append(c);continue
+            checked+=1
+            width=max(np.linalg.norm(polygon[1]-polygon[0]),np.linalg.norm(polygon[2]-polygon[3]))
+            height=max(np.linalg.norm(polygon[3]-polygon[0]),np.linalg.norm(polygon[2]-polygon[1]))
+            factor=min(1.,(POLICY.max_region_side-16)/max(width,height))
+            width,height=max(12,round(width*factor)),max(12,round(height*factor))
+            pad=max(3,round(min(width,height)*.04))
+            target=np.float32([(pad,pad),(pad+width,pad),(pad+width,pad+height),(pad,pad+height)])
+            transform=cv2.getPerspectiveTransform(polygon,target)
+            crop=cv2.warpPerspective(image,transform,(width+2*pad,height+2*pad),borderValue=(24,24,24))
+            analysed=segment_printed_composition(crop,(pad,pad,pad+width,pad+height))
+            issues=list(c.review_reasons)
+            support=() if analysed is None else _project_support_boxes(analysed['support_contours'],np.linalg.inv(transform))
+            uncertain=analysed is None or analysed['extent_uncertain']
+            if analysed is not None:
+                x,y,w,h=c.bounding_box_px
+                prior=project_points([(x,y),(x+w,y),(x+w,y+h),(x,y+h)],transform)
+                ax,ay,aw,ah=analysed['box']
+                extent=(ax,ay,ax+aw,ay+ah)
+                old=(*prior.min(axis=0),*prior.max(axis=0))
+                uncertain|=max(abs(a-b) for a,b in zip(extent,old))>min(width,height)*.04
+                issues.extend(analysed['issues'])
+            if uncertain:issues.append('Artwork outline is uncertain; check faint details and background')
+            reviewed.append(replace(c,extent_checked=True,artwork_extent_uncertain=bool(uncertain),
+                artwork_support_boxes_px=support,review_reasons=tuple(dict.fromkeys(issues))))
+        if checked:
+            self._plans=getattr(self,'_plans',[])
+            self._plans.append({'stage':'outline_confidence','source':grid.source,
+                'analysed_cells':checked,'max_region_side':POLICY.max_region_side,
+                'uncertain_outlines':sum(c.artwork_extent_uncertain for c in reviewed)})
+        return tuple(reviewed)
 
     def detect(
         self, image_bgr: np.ndarray, settings: DetectorSettings

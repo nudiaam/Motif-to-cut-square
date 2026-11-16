@@ -72,7 +72,11 @@ def _trim_unsupported_strips(grid, supported):
         matrix = np.asarray(projection) @ np.array([[1.,0.,left],[0.,1.,top],[0.,0.,1.]])
         projection = tuple(tuple(float(v) for v in row) for row in matrix)
     return replace(grid,x_lines_px=grid.x_lines_px[left:right+1],
-                   y_lines_px=grid.y_lines_px[top:bottom+1],lattice=lattice,projection=projection)
+                   y_lines_px=grid.y_lines_px[top:bottom+1],lattice=lattice,projection=projection,
+                   cell_regions_px=tuple(grid.cell_regions_px[r*grid.columns+c]
+                       for r in range(top,bottom) for c in range(left,right)) if grid.cell_regions_px else (),
+                   cell_centers_px=tuple(grid.cell_centers_px[r*grid.columns+c]
+                       for r in range(top,bottom) for c in range(left,right)) if grid.cell_centers_px else ())
 
 
 def clip_lattice_off_image(grid, image_shape):

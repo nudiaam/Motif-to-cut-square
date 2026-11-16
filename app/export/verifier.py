@@ -27,7 +27,8 @@ def verify_export_geometry(
     max_error_x = 0.0
     max_error_y = 0.0
     for detection in detections:
-        if not detection.enabled or detection.cut_hard_block_reason(mapper):
+        if not detection.enabled or not detection.square_inches.is_valid(
+            mapper.bed_width_in, mapper.bed_height_in):
             continue
         square = detection.square_inches
         exported = tuple(from_inches(value, export_unit) for value in square.as_tuple())

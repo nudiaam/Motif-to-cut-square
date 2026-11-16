@@ -149,11 +149,21 @@ QToolButton#cutPreviewToggle:checked {
     border-color: #55e6ff;
     color: white;
 }
-QFrame#navigationHelp {
+QFrame#navigationHelp, QFrame#navigatorPanel {
     background: #282e36;
     border: 1px solid #39424c;
     border-radius: 4px;
 }
+QFrame#navigatorPanel { margin: 0 10px 10px 0; }
+QToolButton#navigatorButton {
+    background: #2d3740;
+    border: 1px solid #4c5964;
+    border-radius: 3px;
+    color: #dce4e9;
+    padding: 2px 7px;
+    font-size: 9pt;
+}
+QToolButton#navigatorButton:hover { background: #3a4651; }
 QToolButton#navigationToggle {
     background: transparent;
     color: #9ca8b3;

@@ -62,12 +62,16 @@ class LogicalLayout:
     x_boundaries_px: tuple[float, ...] = ()
     y_boundaries_px: tuple[float, ...] = ()
     cell_regions_px: tuple[tuple[tuple[float, float], ...], ...] = ()
+    cell_centers_px: tuple[tuple[float, float], ...] = ()
 
     @property
     def reliable(self) -> bool:
         return self.confidence >= 0.78
 
     def position(self, column: int, row: int) -> tuple[float, float]:
+        if (self.cell_centers_px and int(column) == column and int(row) == row
+                and 0 <= column < self.columns and 0 <= row < self.rows):
+            return self.cell_centers_px[int(row)*self.columns+int(column)]
         if self.x_boundaries_px and self.y_boundaries_px:
             return (_axis_position(self.x_boundaries_px,column),
                     _axis_position(self.y_boundaries_px,row))
@@ -146,8 +150,8 @@ def layout_from_panel_grid(observations: list[LayoutObservation], grid: PanelGri
                          row_vector_px=grid.lattice[2], projection=grid.projection)
     else:
         layout = replace(layout,x_boundaries_px=grid.x_lines_px,y_boundaries_px=grid.y_lines_px)
-    layout = replace(layout,cell_regions_px=tuple(layout.cell_polygon(c,r)
-        for r in range(layout.rows) for c in range(layout.columns)))
+    layout = replace(layout,cell_regions_px=grid.cell_regions_px or tuple(layout.cell_polygon(c,r)
+        for r in range(layout.rows) for c in range(layout.columns)),cell_centers_px=grid.cell_centers_px)
     inverse = np.linalg.inv(np.column_stack([layout.column_vector_px, layout.row_vector_px]))
     inverse_projection = np.linalg.inv(np.asarray(grid.projection)) if grid.projection is not None else None
     assignments = []

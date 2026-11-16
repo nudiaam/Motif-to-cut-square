@@ -5,7 +5,8 @@ import numpy as np
 from .scene_profile import POLICY, background_evidence
 
 
-def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background_model=None, preserve_detached=False):
+def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background_model=None,
+                 preserve_detached=False, minimum_component_fraction=0., include_mask=False):
     h,w=image.shape[:2]
     scale=min(1.,POLICY.max_region_side/max(h,w))
     size=(max(1,round(w*scale)),max(1,round(h*scale)))
@@ -51,7 +52,7 @@ def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background
             # Sustained guides define ownership. Retain detached faint ink,
             # while excluding weave specks and thin full-height panel rules.
             rule=(bw<(right-left)*.025 and bh>(bottom-top)*.70) or (bh<(bottom-top)*.025 and bw>(right-left)*.70)
-            keep[i]=area>=max(4,inside.sum()*.0004) and not rule
+            keep[i]=area>=max(4,inside.sum()*max(.0004,minimum_component_fraction)) and not rule
         selected |= keep[components]
     if background_model is not None:
         # GrabCut can absorb a thin, weakly coloured stem into its background
@@ -65,7 +66,7 @@ def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background
         selected=connected[components]
     count,labels,stats,_=cv2.connectedComponentsWithStats(selected.astype(np.uint8))
     support=np.bincount(labels[inside],minlength=count)
-    keep=(support >= np.maximum(4,stats[:,cv2.CC_STAT_AREA]*.55))
+    keep=(support >= np.maximum(max(4,inside.sum()*minimum_component_fraction),stats[:,cv2.CC_STAT_AREA]*.55))
     keep[0]=False
     selected=keep[labels]
     area=int(selected.sum())
@@ -79,6 +80,10 @@ def segment_zone(image, minimum_area, core_bounds, *, shadow_gain=1., background
         issues.append('Foreground reaches the analysis boundary')
     if np.count_nonzero(selected & ~inside) > area*.08:
         issues.append('Artwork or background continues into a neighbouring cell; check ownership')
-    return {'box':box,'area':int(area/(scale*scale)),
+    result = {'box':box,'area':int(area/(scale*scale)),
             'score':float(np.clip(np.median(distance[selected])/80,.15,.95)),
             'issues':tuple(issues),'measurements':evidence['stats']}
+    if include_mask:
+        result['foreground_mask'] = cv2.resize(selected.astype(np.uint8),(w,h),
+                                               interpolation=cv2.INTER_NEAREST)>0
+    return result
