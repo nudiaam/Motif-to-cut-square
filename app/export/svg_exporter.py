@@ -15,6 +15,14 @@ SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NAMESPACE)
 
 
+def cuts_for_output(mapper: CoordinateMapper, detections: list[Detection]) -> list[Detection]:
+    """Return checked cuts within the bed, in their display order."""
+    return [
+        detection for detection in detections
+        if detection.enabled and detection.square_inches.is_valid(mapper.bed_width_in, mapper.bed_height_in)
+    ]
+
+
 @dataclass(frozen=True, slots=True)
 class SVGExportResult:
     path: Path
@@ -51,10 +59,7 @@ class SVGExporter:
         style = ET.SubElement(root, f"{{{SVG_NAMESPACE}}}style")
         style.text = (f"@page {{ size: {_format_number(bed_width)}{unit.value} "
                       f"{_format_number(bed_height)}{unit.value}; margin: 0; }}")
-        for detection in detections:
-            if not detection.enabled or not detection.square_inches.is_valid(
-                mapper.bed_width_in, mapper.bed_height_in):
-                continue
+        for detection in cuts_for_output(mapper, detections):
             square = detection.square_inches
             x = from_inches(square.x, unit)
             y = from_inches(square.y, unit)
@@ -92,4 +97,4 @@ class SVGExporter:
 
 
 def _format_number(value: float) -> str:
-    return f"{value:.6f}".rstrip("0").rstrip(".") or "0"
+    return f"{value:.12f}".rstrip("0").rstrip(".") or "0"

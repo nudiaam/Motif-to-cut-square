@@ -107,15 +107,36 @@ def locate_fabric(image: np.ndarray, reference: np.ndarray) -> FabricEvidence:
                        * cv2.GaussianBlur(bh*bh, (0, 0), 5))
     correlation = covariance / np.maximum(variance, 1)
     matching = (difference < 14) & (correlation > .65) & (variance > 3)
-    sh, sw = gray.shape
     # Visible matching texture must be distributed, not one accidental patch.
-    tiles = [matching[y:y+sh//4, x:x+sw//4].mean()
-             for y in range(0, sh-sh//4+1, sh//4)
-             for x in range(0, sw-sw//4+1, sw//4)]
-    if matching.mean() < .08 or sum(v > .12 for v in tiles) < 4:
-        return FabricEvidence(None, "Reference could not be matched to the visible bed")
+    def distributed(mask):
+        if mask.mean() < .08:
+            return False
+        tiles = [tile for band in np.array_split(mask, 4) for tile in np.array_split(band, 4, axis=1)]
+        return sum(tile.size > 0 and tile.mean() > .12 for tile in tiles) >= 4
+
+    lost_texture = np.zeros(gray.shape, dtype=bool)
+    if not distributed(matching):
+        # Use texture to select exposure samples only when the honeycomb itself
+        # aligns in several places. Fabric colours must not drive this fit.
+        anchors = (correlation > .85) & (variance > 8)
+        if distributed(anchors):
+            levels = np.percentile(ag[anchors], [20, 80])
+            if levels[1] - levels[0] >= 15:
+                dark = anchors & (ag <= levels[0])
+                light = anchors & (ag >= levels[1])
+                gain = ((np.median(bg[light])-np.median(bg[dark])) /
+                        (np.median(ag[light])-np.median(ag[dark])))
+                offset = np.median(bg[anchors]-gain*ag[anchors])
+                if .30 <= gain <= 2 and abs(offset) <= 64:
+                    difference = np.mean(abs(np.clip(a*gain+offset, 0, 255)-b), axis=2)
+                    matching = (difference < 14) & (correlation > .65) & (variance > 3)
+                    expected_power = cv2.GaussianBlur(ah*ah, (0, 0), 5) * gain**2
+                    observed_power = cv2.GaussianBlur(bh*bh, (0, 0), 5)
+                    lost_texture = (expected_power > 9) & (observed_power < expected_power*.08)
+        if not distributed(matching):
+            return FabricEvidence(None, "Too little visible honeycomb matches the empty-bed photo")
     noise = float(np.median(difference[matching]))
-    changed = ((difference > max(16., noise*4))
+    changed = (lost_texture | (difference > max(16., noise*4))
                | ((correlation < .25) & (variance > 3))).astype(np.uint8)*255
     radius = max(3, round(min(size)*.012) | 1)
     changed = cv2.morphologyEx(changed, cv2.MORPH_CLOSE, np.ones((radius, radius), np.uint8))

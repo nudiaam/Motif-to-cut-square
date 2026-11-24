@@ -63,6 +63,9 @@ def refine_printed_boundaries(image_bgr,grid):
     A nearly axis-aligned artwork lattice may also yield to independently
     observed print seams; motif centres are not precise panel boundaries.
     """
+    if grid is not None and grid.source in {'local_contrast','observations'}:
+        from .section_evidence import refine_artwork_sections
+        return refine_artwork_sections(image_bgr,grid)
     if grid is not None and grid.source=='printed' and grid.cell_regions_px:
         from .section_evidence import refine_projected_sections
         return refine_projected_sections(image_bgr,grid)

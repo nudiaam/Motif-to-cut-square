@@ -124,6 +124,131 @@ def refine_projected_sections(image,grid):
     return replace(grid,cell_regions_px=tuple(regions),cell_centers_px=tuple(centres))
 
 
+def _sample_print_transition(image, start, end, pitch):
+    """Locate a sustained panel transition, with independent strip/scale votes.
+
+    Read all Lab channels: grey neighbouring prints can have identical chroma.
+    A repeated stripe or several competing edges must abstain. This reader is
+    for internal divisions only; a cloth/bed edge is not a printed outer frame.
+    """
+    tangent=end-start
+    length=float(np.linalg.norm(tangent))
+    if length<35:return None
+    normal=np.array([-tangent[1],tangent[0]])/length
+    # Retain surrounding texture to estimate the noise floor. A tightly cropped
+    # profile can mistake the transition's own flanks for background variation.
+    radius=max(8.,min(50.,pitch*.15))
+    offsets=np.arange(-radius,radius+.25,.5,dtype=np.float32)
+    ts=np.linspace(.12,.88,150,dtype=np.float32)
+    points=start+ts[:,None,None]*tangent+offsets[None,:,None]*normal
+    if (points[:,:,0].min()<1 or points[:,:,1].min()<1 or
+            points[:,:,0].max()>image.shape[1]-2 or points[:,:,1].max()>image.shape[0]-2):
+        return None
+    pixels=cv2.remap(image,points[:,:,0].astype(np.float32),points[:,:,1].astype(np.float32),cv2.INTER_LINEAR)
+    lab=cv2.cvtColor(pixels,cv2.COLOR_BGR2LAB).astype(np.float32)
+    fits=[]
+    for distribution in (False,True):
+        readings=[];locations=[]
+        parts=5 if distribution else 3
+        for part,times in zip(np.array_split(lab,parts,axis=0),np.array_split(ts,parts)):
+            votes=[]
+            for sigma in (.7,1.):
+                if distribution:
+                    # Patterned neighbours can share a mean colour. Their local
+                    # distributions retain the transition without a motif count.
+                    features=np.percentile(part,[25,50,75],axis=0).transpose(1,0,2).reshape(len(offsets),-1)
+                    smooth=cv2.GaussianBlur(features,(1,0),sigmaX=0,sigmaY=sigma/.5)
+                    response=np.linalg.norm(smooth[8:]-smooth[:-8],axis=1)/3
+                else:
+                    smooth=cv2.GaussianBlur(part,(0,0),sigmaX=sigma/.5,sigmaY=.01)
+                    response=np.percentile(np.linalg.norm(smooth[:,8:]-smooth[:,:-8],axis=2),20,axis=0)
+                profile=np.pad(response,(4,4))
+                position=_ridge_position(profile,offsets,pitch)
+                if position is None:break
+                votes.append(position)
+            if len(votes)==2 and abs(votes[0]-votes[1])<=1.:
+                locations.append(float(times.mean()));readings.append(float(np.mean(votes)))
+        if len(readings)<3 or max(locations)-min(locations)<.4:continue
+        fit=np.polyfit(locations,readings,1)
+        if (max(abs(np.polyval(fit,locations)-readings))<=1.5 and
+                max(abs(np.polyval(fit,[0,1])))<=min(28.,pitch*.08)):
+            fits.append(fit)
+    if not fits:return None
+    if (len(fits)==2 and max(abs(np.polyval(fits[0],[0,1])-np.polyval(fits[1],[0,1])))
+            >max(2.,pitch*.02)):
+        return None
+    fit=np.mean(fits,axis=0)
+    return start+normal*np.polyval(fit,0),end+normal*np.polyval(fit,1)
+
+
+def refine_artwork_sections(image, grid):
+    """Replace a motif-spacing prior only where two-axis print evidence agrees.
+
+    Keep the original lattice for ownership, and explicit shared polygons for
+    the measured sections. Missing evidence never supplies a new boundary or
+    figure. Outer limits and manually supplied guides are left untouched.
+    """
+    if (grid.source not in {'local_contrast','observations'} or grid.confidence<.78
+            or grid.projection is not None):
+        return grid
+    from .logical_layout import layout_from_panel_grid
+    layout=layout_from_panel_grid([],grid)
+    rows,cols=grid.rows,grid.columns
+    polygons=np.asarray([layout.cell_polygon(c,r) for r in range(rows) for c in range(cols)])
+    polygons=polygons.reshape(rows,cols,4,2)
+    vertices=np.zeros((rows+1,cols+1,2));weights=np.zeros((rows+1,cols+1))
+    for r in range(rows):
+        for c in range(cols):
+            for p,(dr,dc) in zip(polygons[r,c],((0,0),(0,1),(1,1),(1,0))):
+                vertices[r+dr,c+dc]+=p;weights[r+dr,c+dc]+=1
+    vertices/=weights[:,:,None]
+    constraints={}
+    for vertical in (False,True):
+        pitch=float(np.median(np.linalg.norm(np.diff(vertices,axis=1 if vertical else 0),axis=2)))
+        supported=[]
+        for line in range(1,cols if vertical else rows):
+            readings=[]
+            for segment in range(rows if vertical else cols):
+                a=(segment,line) if vertical else (line,segment)
+                b=(segment+1,line) if vertical else (line,segment+1)
+                edge=_sample_print_transition(image,vertices[a],vertices[b],pitch)
+                if edge is not None:readings.append((a,b,edge))
+            # A figure edge in one cell cannot certify a panel division.
+            if len(readings)<max(2,int(np.ceil((rows if vertical else cols)/3))):
+                continue
+            supported.append(line)
+            for a,b,(u,v) in readings:
+                direction=v-u;normal=np.array([-direction[1],direction[0]])/np.linalg.norm(direction)
+                for index in (a,b):
+                    constraints.setdefault(index,[]).append((normal,float(normal@u)))
+        if len(supported)<max(1,int(np.ceil(((cols if vertical else rows)-1)*.5))):
+            return grid
+    adjusted=vertices.copy()
+    for index,lines in constraints.items():
+        # Exterior vertices define the unverified print extent; keep them fixed.
+        if index[0] in (0,rows) or index[1] in (0,cols):continue
+        point=vertices[index];normals=np.array([n for n,_ in lines])
+        residual=np.array([d-n@point for n,d in lines])
+        delta=np.linalg.lstsq(normals,residual,rcond=None)[0]
+        if np.linalg.norm(delta)<=min(28.,pitch*.08) and max(abs(normals@delta-residual))<=2.:
+            adjusted[index]=point+delta
+    if np.max(abs(adjusted-vertices))<.05:return grid
+    regions=[];centres=[]
+    for r in range(rows):
+        for c in range(cols):
+            poly=np.array([adjusted[r,c],adjusted[r,c+1],adjusted[r+1,c+1],adjusted[r+1,c]])
+            if (not cv2.isContourConvex(poly.astype(np.float32)) or
+                    cv2.contourArea(poly.astype(np.float32))<cv2.contourArea(polygons[r,c].astype(np.float32))*.8):
+                return grid
+            try:
+                t=np.linalg.solve(np.column_stack([poly[2]-poly[0],poly[1]-poly[3]]),poly[1]-poly[0])[0]
+            except np.linalg.LinAlgError:return grid
+            regions.append(tuple(map(tuple,poly)));centres.append(tuple(poly[0]+t*(poly[2]-poly[0])))
+    note='Local printed divisions refined; unmeasured section limits remain estimated'
+    return replace(grid,cell_regions_px=tuple(regions),cell_centers_px=tuple(centres),
+                   review_reasons=tuple(dict.fromkeys((*grid.review_reasons,note))))
+
+
 def trim_unprinted_extensions(image,axes,observations):
     """An observed closing frame with terminated stems ends the printed sheet.
 
@@ -168,7 +293,61 @@ def trim_unprinted_extensions(image,axes,observations):
     return tuple(tuple(lines) for lines in axes),removed
 
 
-def supported_missing_compositions(image,candidates,grid,layout=None):
+def supported_outer_columns(image, candidates, grid):
+    """Keep the affine anchors and grow only across independently occupied cloth."""
+    from dataclasses import replace
+    from .logical_layout import layout_from_panel_grid
+    from .printed_partition import _cloth_plane
+    if not candidates or grid.lattice is None or grid.projection or grid.cell_regions_px:
+        return grid, [], False
+    step = grid.lattice[1][0]
+    if step <= 0 or min(grid.x_lines_px[0], image.shape[1]-grid.x_lines_px[-1]) < -step:
+        return grid, [], False
+    if max(grid.x_lines_px[0], image.shape[1]-grid.x_lines_px[-1]) < step*.8:
+        return grid, [], False
+    plane = _cloth_plane(image)
+    if plane is None:
+        return grid, [], False
+    view, matrix = plane
+    h, w = view.shape[:2]
+    cloth = cv2.perspectiveTransform(np.float32([[(0,0),(w-1,0),(w-1,h-1),(0,h-1)]]), matrix)[0]
+    additions = []
+    uncertain = False
+    for left in (True, False):
+        while True:
+            xs = grid.x_lines_px
+            origin, col, row = grid.lattice
+            if left:
+                xs = (xs[0]-step, *xs)
+                origin = (origin[0]-col[0], origin[1]-col[1])
+            else:
+                xs = (*xs, xs[-1]+step)
+            trial = replace(grid, x_lines_px=xs, lattice=(origin,col,row))
+            layout = layout_from_panel_grid([], trial)
+            c = 0 if left else trial.columns-1
+            cells = {(c,r) for r in range(trial.rows)}
+            if not all(layout.cell_inside_image(c,r,image.shape[1],image.shape[0])
+                       and cv2.pointPolygonTest(cloth, layout.position(c,r), True) >= step*.3
+                       for _,r in cells):
+                break
+            reads = supported_missing_compositions(image,candidates,trial,only_cells=cells)
+            remaining = cells - {item['cell'] for item in reads}
+            if reads and remaining:
+                reads.extend(supported_missing_compositions(image,candidates,trial,
+                             only_cells=remaining,max_side=160))
+            if len(reads) != len(cells):
+                uncertain |= len(reads) >= 2
+                break
+            if left:
+                for item in additions:
+                    c0,r0 = item['cell']
+                    item['cell'] = (c0+1,r0)
+            additions.extend(reads)
+            grid = trial
+    return grid, additions, uncertain
+
+
+def supported_missing_compositions(image,candidates,grid,layout=None,*,only_cells=None,max_side=300):
     """Re-read a layout gap only when two image readings support actual ink.
 
     A missing position supplies a search region, never permission to invent a
@@ -187,12 +366,14 @@ def supported_missing_compositions(image,candidates,grid,layout=None):
         layout=layout_from_panel_grid(observations,grid)
     recovered=[]
     for gap in layout.missing:
+        if only_cells is not None and (gap.column,gap.row) not in only_cells:
+            continue
         if gap.covered_by_artwork or not layout.cell_inside_image(gap.column,gap.row,image.shape[1],image.shape[0]):
             continue
         polygon=np.asarray(layout.cell_polygon(gap.column,gap.row),np.float32)
         width=max(np.linalg.norm(polygon[1]-polygon[0]),np.linalg.norm(polygon[2]-polygon[3]))
         height=max(np.linalg.norm(polygon[3]-polygon[0]),np.linalg.norm(polygon[2]-polygon[1]))
-        scale=min(1.,300/max(width,height));width,height=max(12,round(width*scale)),max(12,round(height*scale))
+        scale=min(1.,max_side/max(width,height));width,height=max(12,round(width*scale)),max(12,round(height*scale))
         pad=max(3,round(min(width,height)*.04))
         target=np.float32([(pad,pad),(pad+width,pad),(pad+width,pad+height),(pad,pad+height)])
         transform=cv2.getPerspectiveTransform(polygon,target)

@@ -26,7 +26,7 @@ from .composition_evidence import shared_compositions
 from .content_preservation import foreground_mask, preservation
 
 
-DETECTOR_REVISION = "2026-11-16-source-sections-closed-frames"
+DETECTOR_REVISION = "2026-11-24-bed-exposure-and-loose-motif-alignment"
 
 
 @dataclass(frozen=True, slots=True)
@@ -58,6 +58,7 @@ class MotifCandidate:
 class DetectionResult:
     candidates: tuple[MotifCandidate, ...]
     panel_grid: PanelGrid | None = None
+    blank_margin_rows: tuple[int, ...] = ()
 
 
 def _scale_candidate(candidate,sx,sy,width,height):
@@ -247,9 +248,12 @@ class MotifDetector:
             merge_distance_px_y=settings.merge_distance_px_y*sy)
         result = self._detect_at_analysis_resolution(small,local_settings)
         grid = scale_grid(result.panel_grid,1/sx,1/sy)
-        candidates = tuple(_scale_candidate(c,1/sx,1/sy,w,h) for c in result.candidates)
-        self._progress('Verifying artwork detail in original-image regions')
+        self._progress('Verifying section boundaries and artwork in original-image regions')
         fine_started = perf_counter()
+        if grid is not None and grid.source in {'local_contrast','observations'}:
+            from .section_evidence import refine_artwork_sections
+            grid = refine_artwork_sections(image_bgr,grid)
+        candidates = tuple(_scale_candidate(c,1/sx,1/sy,w,h) for c in result.candidates)
         candidates = review_extents(image_bgr,candidates,grid)
         diagnostics = self.last_diagnostics
         diagnostics.update(identity=run_identity(image_bgr,self.bed_reference,asdict(settings)),
@@ -347,6 +351,26 @@ class MotifDetector:
             else:
                 result = self._detect_layout(detection_image, settings, fabric_mask=mask,
                                              geometry_image=image_bgr if illumination is not None else None)
+        provisional_grid = result.panel_grid
+        inferred_grid = (provisional_grid is not None and provisional_grid.confidence >= .78)
+        if (printed is None and settings.adaptive_planning and settings.layout_mode == 'auto'
+                and not matched_reference and (not inferred_grid or provisional_grid.source == 'automatic')):
+            from .printed_partition import infer_straight_printed_partition
+            panel = infer_straight_printed_partition(image_bgr)
+            # A geometric grid may have a high score after dim cell boundaries
+            # merged adjacencies. Replace it only with corroborated subdivisions,
+            # not with a different count based on the same motif fragments.
+            subdivides = (panel is not None and inferred_grid
+                          and panel.grid.columns >= provisional_grid.columns
+                          and panel.grid.rows >= provisional_grid.rows
+                          and panel.grid.columns * panel.grid.rows >
+                              provisional_grid.columns * provisional_grid.rows)
+            if panel is not None and (not inferred_grid or subdivides):
+                printed = self._detect_printed_partition(image_bgr, settings, panel=panel)
+                if printed is not None:
+                    result = printed
+                    mask = fabric_mask = None
+                    analysis_bounds = None
         timings['layout'] = perf_counter()-phase
         phase = perf_counter()
         self._progress('Checking composition ownership')
@@ -399,6 +423,21 @@ class MotifDetector:
         timings['appearance'] = perf_counter()-phase
         phase = perf_counter()
         self._progress('Checking complete artwork and image boundaries')
+        review_layout = False
+        if printed is None and settings.adaptive_planning and settings.layout_mode == 'auto' and not matched_reference:
+            grid = result.panel_grid
+            sparse = any(h['eligible'] and h['route'] == plan.get('selected_route')
+                         and h['occupied_fraction'] < .5 and h['aligned_fraction'] < .5
+                         for plan in self._plans if plan['stage'] == 'grid'
+                         for h in plan['hypotheses'])
+            chroma = any(p.get('accepted') and p.get('channel') == 'chroma' for p in self._plans)
+            if grid is None or sparse or (chroma and grid.source == 'local_contrast'):
+                rescue = self._check_frame_ownership(image_bgr, settings, result, sparse)
+                if rescue is not None:
+                    result = rescue
+                    mask = fabric_mask = None
+                else:
+                    review_layout = sparse or grid is None
         candidates = tuple(c for c in result.candidates if _inside_fabric(c, mask))
         observations = [LayoutObservation(i, (x+bw/2, y+bh/2), c.bounding_box_px,
                                           c.layout_center_px)
@@ -429,6 +468,14 @@ class MotifDetector:
             self._grid_notes.append('Refined printed boundaries with sustained local seams; retained individual cell sizes')
             final_grid = refined
         from .grid_guidance import restrict_grid_to_fabric, clip_lattice_off_image
+        if result.blank_margin_rows:
+            # Refine on the original grid first so dropping its hem cannot move
+            # the corners and centres of neighbouring printed cells.
+            from .grid_guidance import _trim_unsupported_strips
+            supported = np.ones((final_grid.rows, final_grid.columns), dtype=bool)
+            supported[list(result.blank_margin_rows), :] = False
+            final_grid = _trim_unsupported_strips(final_grid, supported)
+            self._grid_notes.append('Removed bare cloth beyond the closing printed rule')
         restricted = restrict_grid_to_fabric(final_grid,candidates,fabric_mask)
         if restricted != final_grid:
             self._grid_notes.append('Removed peripheral grid strips with no fabric or artwork support')
@@ -446,9 +493,21 @@ class MotifDetector:
                 final_grid = replace(final_grid, review_reasons=tuple(dict.fromkeys((
                     *final_grid.review_reasons,
                     'Competing panel layouts have similar support; verify grid position'))))
-        from .section_evidence import supported_missing_compositions
-        recovered=supported_missing_compositions(image_bgr,candidates,final_grid,
-                                                layout=layout if final_grid is None else None)
+        from .section_evidence import supported_missing_compositions, supported_outer_columns
+        recovered = supported_missing_compositions(image_bgr,candidates,final_grid,
+                                                  layout=layout if final_grid is None else None)
+        if (final_grid is not None and final_grid.source == 'local_contrast'
+                and any(p.get('accepted') and p.get('channel') == 'shared_background' for p in self._plans)):
+            previous_left = final_grid.x_lines_px[0]
+            final_grid, exterior, uncertain_edge = supported_outer_columns(image_bgr, candidates, final_grid)
+            if exterior:
+                first = final_grid.x_lines_px.index(previous_left)
+                for item in recovered:
+                    c,r = item['cell']
+                    item['cell'] = (c+first,r)
+                self._grid_notes.append('Additional columns verified from artwork in each outer cell')
+            recovered.extend(exterior)
+            review_layout |= uncertain_edge
         if recovered:
             additions=[]
             for item in recovered:
@@ -507,6 +566,7 @@ class MotifDetector:
             "analysis_bounds_px": analysis_bounds,
             "grid": asdict(final_grid) if final_grid is not None else None,
             "grid_notes": list(self._grid_notes),
+            "layout_needs_review": review_layout,
             "scene_profile": scene,
             "illumination": illumination,
             "analysis_policy": asdict(POLICY) if settings.adaptive_planning else None,
@@ -517,7 +577,29 @@ class MotifDetector:
         }
         return DetectionResult(candidates, final_grid)
 
-    def _detect_printed_partition(self,image,settings):
+    def _check_frame_ownership(self, image, settings, current, sparse):
+        from .printed_partition import infer_ruled_partition
+        from .logical_layout import layout_from_panel_grid
+        panel = infer_ruled_partition(image)
+        if panel is None:
+            return None
+        old = current.panel_grid
+        measured = source_grid(panel)
+        if old is not None:
+            if (old.columns, old.rows) != (measured.columns, measured.rows):
+                if not sparse or old.columns > measured.columns or old.rows > measured.rows:
+                    return None
+            else:
+                a = layout_from_panel_grid([], old)
+                b = layout_from_panel_grid([], measured)
+                offsets = [np.subtract(a.position(c,r), b.position(c,r)) for c,r,_ in old.cells()]
+                pitch = min(np.median(np.diff(old.x_lines_px)), np.median(np.diff(old.y_lines_px)))
+                shift = np.linalg.norm(np.median(offsets, axis=0))
+                if not .12*pitch < shift < .5*pitch:
+                    return None
+        return self._detect_printed_partition(image, settings, panel=panel)
+
+    def _detect_printed_partition(self,image,settings,*,panel=None):
         """Let independently observed divisions establish composition ownership.
 
         A cell's detached accessories are read together, not voted into a
@@ -526,7 +608,8 @@ class MotifDetector:
         """
         from .printed_partition import infer_printed_partition
         from .printed_composition import segment_printed_composition
-        panel = infer_printed_partition(image)
+        if panel is None:
+            panel = infer_printed_partition(image)
         if panel is None:
             return None
         # Ownership at a printed division is revisable: a single connected
@@ -552,7 +635,10 @@ class MotifDetector:
                                 'reason':'Connected artwork spans printed sections'})
             return None
         candidates = []
+        blank_rows = tuple(item['row'] for item in panel.partition_evidence.get('blank_margin_rows', ()))
         for c,r,(x,y,w,h) in panel.grid.cells():
+            if r in blank_rows:
+                continue
             # A division establishes ownership, never an irreversible crop.
             # Keep context so tails, ears and accessories close to a seam are
             # available even when the measured border has a few pixels' error.
@@ -619,14 +705,27 @@ class MotifDetector:
                     cv2.contourArea(corners.astype(np.float32))/max(1,bw*bh))),tuple(anchor),
                 issues))
         complete_cells=sum(x>=-2 and y>=-2 and x+w<=panel.image.shape[1]+2 and y+h<=panel.image.shape[0]+2
-            for _,_,(x,y,w,h) in panel.grid.cells())
+            for _,r,(x,y,w,h) in panel.grid.cells() if r not in blank_rows)
         if len(candidates) < max(1,complete_cells)*.80:
             return None
+        measured = source_grid(panel)
+        if panel.partition_evidence['method'] == 'observed_frame_intersections':
+            # Repeated lines alone cannot replace an existing detection. Demand
+            # independent foreground near the interior of every measured cell.
+            if len(candidates) != measured.rows * measured.columns:
+                return None
+            dx = .27 * np.median(np.diff(measured.x_lines_px))
+            dy = .27 * np.median(np.diff(measured.y_lines_px))
+            for candidate in candidates:
+                cx, cy = candidate.layout_center_px
+                if not any(x < cx+dx and x+w > cx-dx and y < cy+dy and y+h > cy-dy
+                           and w*h > dx*dy*.08 for x,y,w,h in candidate.artwork_support_boxes_px):
+                    return None
         self._plans.append({'stage':'independent_printed_partition',**panel.partition_evidence,
                             'columns':panel.grid.columns,'rows':panel.grid.rows,
                             'segmented_cells':len(candidates)})
         self._grid_notes.append('Two-scale printed divisions define complete composition ownership')
-        return DetectionResult(tuple(candidates),source_grid(panel))
+        return DetectionResult(tuple(candidates),measured,blank_rows)
 
     def _compare_whole_layout(self,image,settings,current):
         """Compare source-wide ink groups, including unresolved or extra parts."""

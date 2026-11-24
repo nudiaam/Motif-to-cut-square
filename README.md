@@ -9,8 +9,12 @@ A local Windows demo that converts an image of a laser cutter bed into motif cen
 The [cutting rules](docs/CUTTING_RULES.md) define section ownership, exact automatic
 centres, cut-state colours, off-bed omissions and SVG acceptance checks.
 
-The current version is **0.13.4**. Its source identity,
-comparisons and validation limits are recorded in the [version report](docs/RELEASE_0_13_4.md).
+The current version is **0.14.5**. Colour-based detection checks for
+blank cloth beyond the outer printed row. See [alignment checks and current limits](docs/ALIGNMENT_CHECKS.md)
+before comparing a camera image with a physical machine job.
+
+The earlier **0.13.4** release's source identity, comparisons and
+validation limits remain in the [version report](docs/RELEASE_0_13_4.md).
 
 The initial configuration uses an **Epilog Fusion Maker 36**, a **36 x 24 in** bed, and a global cut size of **5 x 5 in**. You can also create custom machine profiles, change working units, and adjust the cut size.
 
@@ -119,9 +123,9 @@ does not open after successful setup.
 10. Check the output summary inside **Review cuts**. It updates automatically with ready cuts, cuts with warnings
    (overlapping or clipped), and manually excluded cuts. Cuts extending outside
    the bed are removed automatically.
-11. Select **Export SVG**. Every checked cut inside the bed is saved; if any carries
-    a warning the application asks for confirmation. Details retain artwork-size
-    and incomplete-image notes; these do not make every cut red or purple.
+11. Select **4 Export to Epilog** to open the checked cuts in Epilog Dashboard.
+    Lalikul asks for confirmation if any cut carries a warning. To save a file,
+    use **Save SVG…** in the review panel.
 
 ## Zooming and panning like Illustrator
 
@@ -215,7 +219,7 @@ be dragged manually or disabled. Automatic placement never prevents later manual
 editing.
 
 The horizontal **WORKFLOW** above the canvas has four user goals: Prepare image,
-Detect + check, Review cuts (including output checks), and Export SVG. The canvas keeps the main
+Detect + check, Review cuts (including output checks), and Export to Epilog. The canvas keeps the main
 working area, while the narrower right panel shows only controls belonging to the
 current goal. Review commands such as Add cut square, Delete selected, Fix overlaps,
 Center drawings, and Clear all appear together in the contextual review panel.
@@ -353,12 +357,25 @@ and preserve the top-left origin. The file cannot override printer settings.
 Confirm alignment in Epilog Dashboard before cutting; see the manufacturer's
 [graphics software setup guide](https://support.epiloglaser.com/laser-machine/fusion-edge/usage-and-operation/system-requirements-setup/default-software-settings-printing-to-the-epilog-software-suite/).
 
+**4 Export to Epilog** opens the checked vector outlines through the local
+**Epilog Engraver** driver installed with **Epilog Software Suite** on Windows.
+Dashboard can receive jobs while running in the background. Lalikul sets the
+page size and orientation for the job and checks the driver's actual dimensions.
+Select the matching machine profile in Dashboard and compare the preview with
+the camera image before sending the job to the machine.
+
+In **Prepare image → Machine / work area**, **Save alignment check…** exports five
+known reference squares through the same SVG exporter, plus a measurement sheet
+and instructions. It works before loading a photograph and uses the selected bed
+and export units. Compare the page, square sizes and positions through the same
+workflow as a normal job. Saving the pattern does not change cuts or calibrate
+the camera. Equal figure/cell counts also do not establish correct alignment.
+
 **Review cuts** also runs the geometry verification, enables the visual cut preview, and
 states how many cuts are ready, how many carry warnings (overlapping or clipped),
-and how many are excluded. **Export SVG**
-is available from this combined review, with the summary updated after edits and
-rechecked on export. There is no separate check step or second export click; if any checked cut carries a
-review warning, the app asks for confirmation. Accepting exports all checked cuts.
+and how many are excluded. **Save SVG…** is available in this review panel.
+The summary updates after edits and is checked again before either export.
+If any checked cut carries a review warning, the app asks for confirmation.
 
 The internal debug JSON option is hidden and disabled by default for normal users.
 

@@ -4,6 +4,8 @@ os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
 from pathlib import Path
 from dataclasses import replace
 import unittest
+import json
+from unittest.mock import patch
 import cv2
 import numpy as np
 from PySide6.QtWidgets import QApplication
@@ -29,6 +31,53 @@ class PrintedPartitionTests(unittest.TestCase):
     def setUpClass(cls):
         cls.app=QApplication.instance() or QApplication([])
 
+    def test_finite_rules_keep_unequal_rows_and_ignore_the_outer_hem(self):
+        from app.imaging.printed_partition import _finite_rules
+        profile = np.zeros(540)
+        for center in (10, 29, 150, 305, 404, 512, 531):
+            profile[center-3:center+4] = 45
+        np.testing.assert_equal(_finite_rules(profile), [29, 150, 305, 404, 512])
+        profile[166:173] = 45
+        self.assertIsNone(_finite_rules(profile))
+
+    @unittest.skipUnless((PHOTOS.parents[1]/'release-0.14.4/primera-tanda').is_dir(),
+                         'Local fabric QA originals are not installed')
+    def test_shadow_border_and_letter_originals_at_five_inches(self):
+        folder = PHOTOS.parents[1]/'release-0.14.4/primera-tanda'
+        previous_dogs = json.loads((folder/'centros-perros-antes.json').read_text())
+        # Independent borders read on the four source images; never detector inputs.
+        cases = {
+            'perros-sombra': ([36,300,523,759,1011,1241,1490], [30,281,507,731,998]),
+            'mariposas-moradas': ([85,317,546,770,1000,1224,1453], [112,314,562,740,924]),
+            'mariposas-rosas': ([87,316,542,767,993,1219,1446], [100,310,509,709,919]),
+            'letras-negras': ([61,310,548,790,1025,1263,1486], [142,339,532,730,927]),
+        }
+        for name, (xs,ys) in cases.items():
+            with self.subTest(name=name):
+                w = MainWindow()
+                try:
+                    image = cv2.imread(str(folder/(name+'.png')))
+                    w._load_image(image, name)
+                    w.change_cut_size(5,5)
+                    result = w.detector.detect_with_layout(image, w.panel.detector_settings(w.mapper))
+                    w._apply_detection_result(result, w.detector.last_diagnostics)
+                    points = {tuple(d.center_px) for d in w.detections}
+                    self.assertEqual(len(w.detections),24)
+                    self.assertEqual(len(points),24)
+                    self.assertEqual((w.logical_layout.columns,w.logical_layout.rows),(6,4))
+                    for x,X in zip(xs,xs[1:]):
+                        for y,Y in zip(ys,ys[1:]):
+                            hits = [(px,py) for px,py in points if x<px<X and y<py<Y]
+                            self.assertEqual(len(hits),1)
+                            if name != 'perros-sombra':
+                                np.testing.assert_allclose(hits[0], ((x+X)/2,(y+Y)/2), atol=12)
+                    if name == 'perros-sombra':
+                        self.assertTrue(set(map(tuple,previous_dogs)).issubset(points))
+                    if name == 'letras-negras':
+                        self.assertTrue(any(d.panel_boundary_reason(w.mapper) for d in w.detections))
+                finally:
+                    w.close()
+
     def test_plain_weave_and_one_axis_stripes_do_not_establish_panels(self):
         for mode in ('plain','weave','stripes'):
             with self.subTest(mode=mode):
@@ -39,6 +88,60 @@ class PrintedPartitionTests(unittest.TestCase):
                 if mode=='weave':
                     image[30:470:3,30:730]=215;image[30:470,30:730:4]=218
                 self.assertIsNone(infer_printed_partition(image))
+
+    def test_blank_colour_hem_requires_an_empty_row_across_its_full_width(self):
+        image = np.full((1024, 1536, 3), 24, np.uint8)
+        cloth = (212, 222, 232)
+        image[15:995, 94:1450] = cloth
+        xs = np.rint(np.linspace(119, 1423, 7)).astype(int)
+        ys = np.rint(np.linspace(40, 816, 5)).astype(int)
+        for row, (top, bottom) in enumerate(zip(ys, ys[1:])):
+            for col, (left, right) in enumerate(zip(xs, xs[1:])):
+                colour = (35, 50, 157) if (row + col) % 2 else (208, 217, 228)
+                image[top:bottom, left:right] = colour
+                cv2.rectangle(image, (left, top), (right, bottom), (54, 55, 113), 2)
+                cv2.circle(image, ((left + right)//2, (top + bottom)//2), 41, (43, 105, 71), -1)
+        noise = np.random.default_rng(123).normal(0, 3, (*image.shape[:2], 1))
+        image = np.clip(image + noise, 0, 255).astype(np.uint8)
+        for mark, expected_rows in ((False, 4), (True, 5)):
+            sample = image.copy()
+            if mark:
+                # A small pale print in just one of the six cells vetoes trimming.
+                cv2.circle(sample, (1210, 920), 8, (199, 209, 219), -1)
+            for flip in (False, True):
+                with self.subTest(mark=mark, flip=flip):
+                    oriented = cv2.flip(sample, 0) if flip else sample
+                    panel = infer_printed_partition(oriented)
+                    self.assertIsNotNone(panel)
+                    self.assertEqual(panel.partition_evidence['method'], 'sustained_printed_colour')
+                    removed = panel.partition_evidence.get('blank_margin_rows', ())
+                    self.assertEqual([item['row'] for item in removed], [] if mark else [0 if flip else 4])
+                    if not mark:
+                        with patch('app.imaging.printed_partition._blank_colour_row', return_value=None):
+                            before = MotifDetector().detect_with_layout(oriented, DetectorSettings())
+                        after = MotifDetector().detect_with_layout(oriented, DetectorSettings())
+                        self.assertEqual((after.panel_grid.columns, after.panel_grid.rows), (6, expected_rows))
+                        old_layout = layout_from_panel_grid([], before.panel_grid)
+                        new_layout = layout_from_panel_grid([], after.panel_grid)
+                        for r in range(expected_rows):
+                            for c in range(6):
+                                self.assertEqual(new_layout.position(c,r), old_layout.position(c,r+int(flip)))
+                                self.assertEqual(new_layout.cell_polygon(c,r), old_layout.cell_polygon(c,r+int(flip)))
+
+    def test_textured_hem_needs_terminated_rules_and_no_isolated_print(self):
+        from app.imaging.printed_partition import _blank_colour_row
+        xs, ys = (20, 100, 180, 260, 340, 420, 500), (0, 80, 160, 240, 320)
+        y, x = np.indices((320, 520))
+        cloth = 210 + 5*np.sin(x/31) + 3*np.cos(y/20) + 4*np.cos(2*x)
+        image = np.repeat(cloth.astype(np.uint8)[:, :, None], 3, axis=2)
+        rule = (52, 56, 125)
+        cv2.line(image, (xs[0], ys[-2]), (xs[-1], ys[-2]), rule, 2)
+        self.assertIsNone(_blank_colour_row(image, xs, ys, True))
+        for col in xs:
+            cv2.line(image, (col, 0), (col, ys[-2]), rule, 2)
+        self.assertIsNotNone(_blank_colour_row(image, xs, ys, True))
+        cv2.circle(image, (425, 282), 7, (185, 180, 165), -1)
+        self.assertIsNone(_blank_colour_row(image, xs, ys, True))
 
     def test_partial_photo_keeps_measured_seams_instead_of_redistributing_rows(self):
         profile=np.zeros(380,float)

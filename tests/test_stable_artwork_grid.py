@@ -8,10 +8,25 @@ import numpy as np
 
 from app.imaging.detector import DetectorSettings, MotifCandidate, MotifDetector
 from app.imaging.detection_plan import stable_artwork_grid
+from app.imaging.contrast_grid import _align_loose_motifs
+from app.imaging.logical_layout import LayoutMatch, LogicalLayout
 from tests.diagnose_grid_typology import competing_periods
 
 
 class StableArtworkGridTests(unittest.TestCase):
+    def test_minor_drift_requires_disagreement_between_columns(self):
+        matches = tuple(LayoutMatch(3*r+c, (0, 0), None, c, r, 0., 'matched')
+                        for r in range(3) for c in range(3))
+        layout = LogicalLayout(3, 3, (50., 50.), (100., 0.), (2., 100.), matches=matches)
+        for slopes, expected in (((1, 2, 3), 2.), ((-1, 0, 1), 0.)):
+            regions = []
+            for r in range(3):
+                for c in range(3):
+                    x, y = 50+c*100+r*slopes[c], 50+r*100
+                    regions.append(MotifCandidate((x,y), (x-30,y-20,60,40), .9, 2400))
+            with self.subTest(slopes=slopes):
+                self.assertEqual(_align_loose_motifs(layout, regions)[2][0], expected)
+
     def test_added_margin_and_resizing_preserve_transport_grid(self):
         image=cv2.imread(str(Path(__file__).parent/'fixtures/transport_dashed_shared.png'))
         for altered in (cv2.copyMakeBorder(image,80,80,80,80,cv2.BORDER_CONSTANT,value=(20,20,20)),

@@ -235,11 +235,13 @@ class SidePanel(QWidget):
         export_options_layout.setContentsMargins(0, 0, 0, 0)
         export_options_layout.setSpacing(8)
         export_options_layout.addWidget(export_row)
-
         self.debug_json_checkbox = QCheckBox("Write debug JSON beside SVG")
         self.debug_json_checkbox.setChecked(False)
         self.debug_json_checkbox.setVisible(True)
         export_options_layout.addWidget(self.debug_json_checkbox)
+        self.save_svg_button = QPushButton("Save SVG…")
+        self.save_svg_button.setObjectName("reviewSecondaryAction")
+        export_options_layout.addWidget(self.save_svg_button)
 
         self.verification_label = QLabel("Round-trip verification not run")
         self.verification_label.setObjectName("verificationLabel")
@@ -358,6 +360,12 @@ class SidePanel(QWidget):
         reference_actions.addWidget(self.remove_bed_reference_button)
         reference_layout.addLayout(reference_actions)
         profile_layout.addWidget(self.machine_reference_row)
+        self.export_alignment_button = QPushButton("Save alignment check…")
+        self.export_alignment_button.setToolTip(
+            "Save five reference squares and a measurement sheet for the selected bed. "
+            "Compare their size and position through your normal machine workflow."
+        )
+        profile_layout.addWidget(self.export_alignment_button)
         layout.addWidget(profile_box)
 
         self.working_unit_combo = QComboBox()
@@ -388,6 +396,9 @@ class SidePanel(QWidget):
         layout.addWidget(
             self._parameter_readout("IMAGE SCALE", self.scale_value_label, HELP["scale"])
         )
+        alignment_note = QLabel("Image scale is assumed. Verify physical alignment with the bed.")
+        alignment_note.setWordWrap(True)
+        layout.addWidget(alignment_note)
         self.lock_image_checkbox = QCheckBox("Lock image placement")
         self.lock_image_checkbox.setChecked(True)
         self.lock_image_checkbox.setEnabled(False)
@@ -545,11 +556,11 @@ class SidePanel(QWidget):
             ),
             "review": (
                 "3  REVIEW CUTS",
-                "Adjust the cuts and review the output summary, then export the SVG.",
+                "Check the cut positions and output summary before exporting to Epilog.",
             ),
             "export": (
-                "4  EXPORT SVG",
-                "Review the saved output or return to Review cuts to make changes.",
+                "4  EXPORT TO EPILOG",
+                "Check the preview in Epilog Dashboard or return to Review cuts to make changes.",
             ),
         }
         title, hint = titles[phase]
@@ -584,7 +595,8 @@ class SidePanel(QWidget):
         self.scroll.verticalScrollBar().setValue(0)
 
     def set_detection_review_state(
-        self, has_detections: bool, confirmed: bool, *, has_image: bool = False
+        self, has_detections: bool, confirmed: bool, *, has_image: bool = False,
+        uncertain_grid: bool = False,
     ) -> None:
         self.confirm_detection_button.setEnabled(has_detections and not confirmed)
         self.review_grid_button.setEnabled(has_image and not confirmed)
@@ -595,6 +607,9 @@ class SidePanel(QWidget):
             self.confirm_detection_button.setText("✓ Detection confirmed")
         elif has_detections:
             self.detection_review_hint.setText(
+                "Review detection: check for missed figures and misplaced centres. "
+                "Use Adjust panel grid to verify the rows and columns before continuing."
+                if uncertain_grid else
                 "Compare every cut area with the image. Are all intended figures detected exactly once? "
                 "Ready cuts alone do not confirm a complete detection."
             )
@@ -771,7 +786,7 @@ class SidePanel(QWidget):
 
         self.cut_color_legend = QLabel(
             f'<span style="color:{READY_COLOR}">■ Green: no measured section crossing</span><br>'
-            f'<span style="color:{REVIEW_COLOR}">■ Purple: crosses a section boundary</span><br>'
+            f'<span style="color:{REVIEW_COLOR}">■ Purple: crosses a section boundary or needs a boundary check</span><br>'
             f'<span style="color:{INVALID_COLOR}">■ Red: impossible geometry</span>'
         )
         self.cut_color_legend.setWordWrap(True)
@@ -820,6 +835,8 @@ class SidePanel(QWidget):
             text = "Empty-bed reference applied."
         elif status == "No empty-bed reference":
             text = "No empty-bed reference is set."
+        elif status == "Too little visible honeycomb matches the empty-bed photo":
+            text = "Empty-bed photo loaded. Too little of its honeycomb matches this image."
         else:
             text = "Empty-bed reference not applied: " + status.rstrip(".") + "."
         if diagnostics.get("fabric_status", "").startswith("Visible fabric boundary"):
@@ -844,7 +861,7 @@ class SidePanel(QWidget):
         else:
             outliers = sum(match.status != "matched" for match in result.matches)
             source = ('Automatic artwork grid' if result.source == 'pattern'
-                      else 'Automatic visual grid' if result.source in {'visual', 'camera'}
+                      else 'Automatic visual grid' if result.source in {'visual', 'camera', 'printed', 'seam_consensus'}
                       else 'Automatic geometric grid')
             if self._phase == "detect":
                 applied = (f"{self._logical_accepted_count} cuts centred on this grid."
@@ -1023,7 +1040,7 @@ class SidePanel(QWidget):
         self.grid_columns_spin.setValue(int(columns))
         self.grid_rows_spin.setValue(int(rows))
         del column_blocker, row_blocker
-        if source in {"automatic", "visual", "pattern", "camera"}:
+        if source != "manual":
             status = (
                 f"Detected {columns} columns × {rows} rows · "
                 f"{confidence:.0%} confidence"
@@ -1032,8 +1049,8 @@ class SidePanel(QWidget):
             status = f"Manual grid · {columns} columns × {rows} rows"
         if figure_count is not None:
             total = int(columns) * int(rows)
-            review = max(0, total - figure_count)
-            status += f"\n{figure_count} figures · {review} cells need review"
+            status += f"\n{figure_count} figures · {total} grid cells"
+            status += "\nCheck printed boundaries and cut placement."
         self.grid_status_label.setText(status)
 
     def _on_layout_mode_changed(self) -> None:
@@ -1114,12 +1131,15 @@ class SidePanel(QWidget):
         self.detection_list.clear()
         primary_item: QListWidgetItem | None = None
         warning_ids = set()
+        confirmed_crossings = possible_crossings = 0
         for detection in detections:
             match = next((m for m in self._logical_layout.matches if m.detection_id == detection.id), None)
             warning = detection.cut_warning_reason(self._mapper) if self._mapper else None
             reasons=detection.review_reasons_for(self._mapper)
             presentation=present_cut(detection,self._mapper)
             state=presentation.state
+            confirmed_crossings += state == "SECTION CROSSING"
+            possible_crossings += state == "POSSIBLE CROSSING"
             if detection.enabled and state != "READY":
                 warning_ids.add(detection.id)
             source = ("manual" if detection.manual else "automatic") if detection.inferred else (
@@ -1163,8 +1183,8 @@ class SidePanel(QWidget):
         if self._mapper:
             assigned=[d for d in detections if d.enabled and d.cut_region_px is not None]
             if assigned:
-                crossing=sum(bool(d.panel_boundary_reason(self._mapper)) for d in assigned)
-                lines.insert(0,f'Section limits: {len(assigned)-crossing} inside measured sections; {crossing} crossing.')
+                inside = sum(d.panel_boundary_reason(self._mapper) is None for d in assigned)
+                lines.append(f'Section limits: {inside} inside measured sections; {confirmed_crossings} crossing beyond guide uncertainty.')
         clipped=sum((d.enabled or d.auto_blocked) and d.confirmed_artwork_clipped for d in detections)
         if clipped and detections:
             unit=self._working_unit
@@ -1178,10 +1198,10 @@ class SidePanel(QWidget):
                         for d in detections) if self._mapper else 0
         if image_notes:
             lines.append(f'Additional image notes: {image_notes} cuts. Select a cut to inspect its artwork and guide evidence.')
-        panel_edge_count = (sum(d.enabled and bool(d.panel_boundary_reason(self._mapper))
-                                for d in detections) if self._mapper else 0)
-        if panel_edge_count:
-            lines.append(f'Section crossing: {panel_edge_count}. Checked cuts inside the bed remain included in the SVG.')
+        if possible_crossings:
+            lines.append(f'Possible crossing: {possible_crossings} within guide uncertainty.')
+        if confirmed_crossings or possible_crossings:
+            lines.append('Section crossing warnings remain visible. Checked cuts inside the bed remain included in the SVG.')
         self.review_breakdown_label.setText('\n'.join(lines))
         self.review_breakdown_label.setVisible(bool(lines))
         spacing = physical_spacing(self._mapper, self._logical_layout,
@@ -1234,8 +1254,9 @@ class SidePanel(QWidget):
 
     def set_verification_result(self, error_x_px: float, error_y_px: float) -> None:
         self.verification_label.setText(
-            "Maximum round-trip error:\n"
-            f"X  {error_x_px:.12f} px / Y  {error_y_px:.12f} px"
+            "SVG corner error:\n"
+            f"X  {error_x_px:.12f} px / Y  {error_y_px:.12f} px\n"
+            "File geometry checked; physical alignment needs measurement."
         )
 
     def refresh_unit_display(self) -> None:

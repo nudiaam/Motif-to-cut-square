@@ -1,0 +1,632 @@
+PROMPTS PARA VALIDAR LAS TELAS DE EUGENIO
+120 imágenes de prueba · 10 por familia · una imagen por prompt
+
+Copia solo el párrafo bajo PROMPT. Guarda el resultado con el ID de cada bloque.
+COMPROBAR es la expectativa para las pruebas, después de verificar la imagen a mano.
+Las dos últimas imágenes de cada familia se reservan para la comprobación final.
+
+Series: PER Perros · PAJ Pájaros · MAR Mariposas · ALF Alfabeto · FLO Flores · NAV Navidad · COR Corazones · GAT Gatos · TRA Transportes · ANI Animales · CHE Cheeky Animals · GRI Grises
+
+=== PERROS (PER) ===
+
+PER-01 — Control frontal
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 columnas por 4 filas. Un perro pequeño y completo por casilla cuadrada, colores pastel alternos, separaciones impresas claras y margen uniforme. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones y 24 centros dentro de sus casillas.
+
+PER-02 — Quinta fila cortada
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. El diseño tiene 6 columnas por 5 filas. El encuadre muestra las primeras 4 filas completas y corta la quinta exactamente por la mitad. Sus 6 cabezas se distinguen, pero no el resto del cuerpo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones completas. Los 6 fragmentos no deben exportarse como cortes completos.
+
+PER-03 — Quinta fila completa
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 columnas por 5 filas totalmente visibles. 30 perros completos de tamaño pequeño, con bordes impresos claros y algo de margen inferior. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 30 composiciones. Comprobar por separado si el tamaño de corte cabe y avisar si no.
+
+PER-04 — Casillas casi pegadas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 × 4, fondos crema, salvia y rosa pálido con divisiones de contraste bajo. Los perros son nítidos y las casillas conservan límites visibles muy sutiles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 centros en los fondos correctos, sin saltos de fila o fase.
+
+PER-05 — Casilla estrecha
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 × 4. Una columna completa es aproximadamente un 15 % más estrecha que las demás y alberga perros igualmente completos. Las líneas impresas son visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 perros. El corte que no quepa debe tener aviso; el centro sigue en su casilla.
+
+PER-06 — Pelaje casi iluminado
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 × 4. Perros crema o blancos sobre beige. Una sombra suave afecta dos columnas sin ocultarlas. Orejas y colas claras todavía visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones, sin perder perros claros ni recortar orejas silenciosamente.
+
+PER-07 — Orejas y colas descentradas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 × 4. En cuatro casillas el cuerpo del perro queda desplazado hacia la izquierda y la cola apunta cerca del límite derecho, dentro de la casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones; comprobar que el recorte del dibujo se distingue del cruce de borde.
+
+PER-08 — Margen inferior amplio
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 6 × 4 de perros centrados. Deja debajo una franja de algodón blanco sin estampar, de altura similar a una fila. Borde de marco impreso claro. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; sin quinta fila fantasma ni desplazamiento de la última.
+
+PER-09 — Perspectiva inédita [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 5 × 4. Perros de pelo largo y corto, casillas con fondo de rayas diagonales y luz lateral. Vista un poco oblicua con los bordes superior e inferior completos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 composiciones y correspondencia de centros con las casillas.
+
+PER-10 — Contraste alterno [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Perros impresos en algodón, con pelajes, tamaños de orejas y poses variados, cada conjunto distinguible de su fondo. 7 × 3. Perros negros y blancos en tonos alternos, casillas pegadas, dobladillo gris fuera del impreso y una arruga leve transversal. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 composiciones y ningún corte en margen o arruga.
+
+=== PÁJAROS (PAJ) ===
+
+PAJ-01 — Control con ramas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4, un pájaro por casilla, posado en una rama, con fondo marfil y separaciones rectas visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 aves; las ramas pertenecen al mismo corte.
+
+PAJ-02 — Cuatro marcas superiores
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4. En el dobladillo superior, completamente separado de la cuadrícula impresa, hay cuatro motas o manchas de tinta, pequeñas y dispersas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 cortes en la cuadrícula, ninguno sobre las cuatro marcas.
+
+PAJ-03 — Ramas que apuntan al borde
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4. En seis casillas, una rama con dos hojas finas se prolonga hacia el borde sin invadir la siguiente casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos; cada rama sigue con su ave.
+
+PAJ-04 — Flores separadas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 7 × 3. Cada pájaro tiene una flor separada y dos hojas pequeñas en su misma casilla; las flores alternan posición a izquierda y derecha. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 grupos, cada uno con su flor e identificable con un único corte.
+
+PAJ-05 — Fila inferior parcial
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. Diseño 6 × 4. Tres filas completas y la cuarta cortada aproximadamente por la mitad en el límite inferior de la foto, con partes altas de plumas visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 18 composiciones completas; los restos inferiores no son cortes completos.
+
+PAJ-06 — Plumas claras
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4. Mezcla palomas blancas, carboneros y petirrojos. Fondo beige y leves cambios de textura entre casillas, con todos los detalles visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 aves, incluidas las blancas; comprobar alas y colas.
+
+PAJ-07 — Margen con hoja suelta
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4. Un dobladillo sin imprimir amplio arriba y a la derecha. Dos pequeñas hojas de verdad caídas sobre el panal, separadas visualmente del algodón. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones; las hojas de fuera no generan corte.
+
+PAJ-08 — Perspectiva trapezoidal
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 6 × 4 con marcos finos y aves posadas. Vista ligeramente oblicua, con el extremo superior algo más estrecho que el inferior y todo el panel visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 centros de casilla; revisar las cuatro esquinas de cada corte.
+
+PAJ-09 — Aves sobre fondo continuo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 5 × 4 de aves con un pequeño brote separado a su lado. Tela crema sin marcos y espacio mayor entre parejas que dentro de cada pareja. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 grupos completos, sin cortes duplicados de los brotes.
+
+PAJ-10 — Sombra y tallos finos [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de aves pequeñas impresas en algodón. El ave principal, su rama y los accesorios que se indiquen forman una composición. 7 × 3 de aves con colas finas y ramas ramificadas. Una sombra suave cruza dos filas y deja todos los grupos legibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 grupos. Conservar los detalles y la fila completa bajo sombra.
+
+=== MARIPOSAS (MAR) ===
+
+MAR-01 — Control de alas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Una mariposa completa y pequeña centrada por casilla, con fondos bastante diferentes y marcos impresos discretos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 cortes; antenas y extremos de alas en el mismo grupo.
+
+MAR-02 — Alas grandes
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Seis mariposas tienen alas extendidas cerca de sus bordes laterales; otras son pequeñas. Todas quedan dentro de su casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Al comparar tamaños, comprobar recorte del dibujo aunque el cuadrado quepa en la casilla.
+
+MAR-03 — Antenas muy finas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Antenas largas y muy tenues, visibles sobre fondos azul agua y beige casi iguales entre sí. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; registrar avisos de contorno y confirmar si se pierden antenas.
+
+MAR-04 — Fondo de manchas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Fondos con lunares y manchas pequeñas similares a dibujos de ala. Las mariposas siguen siendo el elemento principal. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; el estampado de fondo no añade cortes.
+
+MAR-05 — Sombra suave
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Una sombra diagonal atraviesa parte de 8 casillas sin ocultar contornos impresos. Colores apagados y margen visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; separar cruce de sección, solape y detalle de ala dudoso.
+
+MAR-06 — Sin casillas visibles
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4 de mariposas en disposición regular sobre algodón crema continuo, con espacio claro entre ellas, sin líneas ni marcos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 agrupaciones. Sin presentar como medido un borde de casilla inexistente.
+
+MAR-07 — Fondos oscuros
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 5 × 4. Mariposas con azules índigo y verdes apagados sobre fondo azul noche, con divisiones discretas pero legibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 composiciones. Comprobar las de menor contraste y registrar dudas reales.
+
+MAR-08 — Centro del fondo
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. Ocho mariposas están giradas y descentradas dentro de su casilla. Las alas y antenas quedan dentro de ella. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. El centro de cada corte se compara con su casilla; revisar cobertura de alas aparte.
+
+MAR-09 — Malla nueva [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 7 × 3 de mariposas de tamaños variados sobre panel con franjas impresas rectas y luz lateral suave. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21. La cuadrícula y el recuento se verifican contra el estampado visible.
+
+MAR-10 — Alas cercanas entre vecinas [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ilustraciones de mariposas impresas sobre algodón, con dos alas y antenas claramente pertenecientes a cada ejemplar. 6 × 4. En el centro del panel, dos pares de mariposas de casillas vecinas tienen alas visualmente cerca, separadas por una franja impresa fina. Ninguna se toca. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. No fusionar vecinas ni avisar de invasiones sin contrastar el borde.
+
+=== ALFABETO (ALF) ===
+
+ALF-01 — Letra y dibujo juntos
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 con exactamente las letras mayúsculas A a X en orden de lectura, una por casilla, y un icono separado a su derecha. Fondos pastel delimitados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas letra + icono; ningún corte exclusivo de la letra o el icono.
+
+ALF-02 — Icono lejos de la letra
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 con A a X. Letra pequeña en la esquina superior izquierda y dibujo grande abajo a la derecha. Amplio espacio entre casillas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones completas. Revisar la esquina opuesta antes de aceptar.
+
+ALF-03 — Letras dominantes
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 con A a X. Letras de alto contraste y pequeños dibujos pálidos a su lado, claramente visibles en la foto. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas. No centrar los cortes solo en la letra ni omitir iconos tenues.
+
+ALF-04 — Iconos dominantes
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 con A a X. Letras beige pequeñas y dibujos brillantes; en cada casilla, letra e icono tienen espacio blanco entre sí. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas; la letra tenue debe quedar en el mismo corte.
+
+ALF-05 — Fondos sin marcos
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 de A a X emparejadas con un dibujo. Fondo crema continuo, espacio dentro de la pareja menor que entre parejas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos. Comparar agrupación y centros en tres pasadas del mismo PNG.
+
+ALF-06 — Letras y accesorios
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 de A a X. Un objeto asociado y un accesorio pequeño separados de cada letra, como violín y arco, o barco y vela adicional. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos; dos o tres puntos testigo por casilla, cada uno en el mismo grupo.
+
+ALF-07 — Perspectiva y giro leve
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 de A a X, un dibujo por letra, vista levemente oblicua y tela girada alrededor de tres grados. Todas las casillas visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas y origen de cuadrícula estable al medir los centros.
+
+ALF-08 — Manchas y borde
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 con A a X. El diseño acaba en un borde impreso visible. Varias manchas textiles pequeñas en el margen superior, sin letras ni iconos extra. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas y ningún corte en el margen.
+
+ALF-09 — Formato compacto nuevo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 4 × 3, exactamente A a L en orden. Cada letra junto con dos pequeños iconos asociados, fondos diferenciados y separación estrecha. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 12 grupos de tres partes, conservando límites y composición.
+
+ALF-10 — Centrado frente a sesgo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Letras impresas que forman una unidad visual con el dibujo que las acompaña. Las letras solicitadas son las únicas palabras o caracteres de la tela. 6 × 4 de A a X. En columnas alternas la letra está a la derecha del icono; fondos suaves apenas separados. Todo el conjunto centrado en cada casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 parejas, sin que alternar el orden introduzca un desplazamiento global.
+
+=== FLORES (FLO) ===
+
+FLO-01 — Ramos de control
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 de ramos variados sin marcos, sobre fondo crema continuo, espaciados de forma regular y con margen en todo el borde. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 ramos. Repetir el mismo PNG con los mismos ajustes y comparar centros y grupos.
+
+FLO-02 — Marcas en dos esquinas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 de ramos sin marcos. En el margen izquierdo y en el inferior derecho hay dos motas de color pequeñas, claramente aisladas de los ramos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 ramos reales. Ningún corte para las dos motas.
+
+FLO-03 — Blancos y crema
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 sin marcos, con margaritas blancas, dalias crema y rosas pálidas alternadas con ramos vivos. Tallo entero visible en cada posición. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos, incluidas flores claras, tallos y hojas que sean del ramo.
+
+FLO-04 — Ramos inclinados
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 de ramos, algunos estrechos e inclinados y otros anchos. Las flores altas siguen unidas visualmente al tallo. Fondo crema continuo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones. Evitar dividir un ramo o desplazar todos los centros hacia las flores más grandes.
+
+FLO-05 — Flores pequeñas separadas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4. Cada ramo incluye dos pétalos sueltos o pequeños brotes próximos, con más espacio entre ramos que entre elementos del mismo ramo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos sin convertir pétalos o brotes en cortes separados.
+
+FLO-06 — Flores junto a borde
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4, casillas impresas muy discretas, con tres ramos en la última columna cerca del límite derecho. Todos son completos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Inspeccionar si los cortes de borde respetan el panel y contienen el ramo.
+
+FLO-07 — Cuadrícula sin contraste
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 de ramos sobre fondos crema y perla casi iguales, con leves rayas de la impresión en algunas casillas. Cama visible y sin textura dominante. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. La trama no debe desplazar la cuadrícula o tener cortes propios.
+
+FLO-08 — Sombra oblicua
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 6 × 4 sin marcos, sombra diagonal suave con los ramos legibles; algunos tulipanes y tallos finos atraviesan la sombra. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos; comparar recuento y posición con una pasada repetida del mismo archivo.
+
+FLO-09 — Panel floral distinto [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 7 × 3, ramos silvestres y pequeños racimos, con un margen inferior sin estampar más ancho que el superior y fondo continuo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 ramos y ningún corte en la franja inferior.
+
+FLO-10 — Combinación de margen y perspectiva [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Ramos botánicos vintage impresos en algodón crema con pétalos, hojas y tallos finos. Un ramo principal por posición. 5 × 4 de flores y hojas tenues en algodones de color marfil. Vista ligeramente oblicua y dobladillo visible; margen derecho más amplio. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 ramos. Comprobar extremos y centro, manteniendo todas las partes de cada ramo.
+
+=== NAVIDAD (NAV) ===
+
+NAV-01 — Control navideño
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4. Un motivo completo centrado por casilla, fondos rojo apagado, salvia y crema diferenciados, bordes impresos finos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 posiciones. Guardar el PNG para tres pasadas idénticas de detección.
+
+NAV-02 — Borde inferior vacío
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4, motivos completos y margen inferior blanco sin estampar tan alto como una casilla. Línea que cierra el impreso clara y visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24, sin quinta fila creada a partir del margen.
+
+NAV-03 — Quinta fila auténtica
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 5, las 30 casillas y todos sus motivos completos visibles. Alterna casillas rojas y claras, con borde inferior evidente. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 30 motivos; los posibles cruces por tamaño requieren aviso aparte.
+
+NAV-04 — Patrón de copos tenue
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4. Copos de nieve claros con puntas finas sobre fondo gris perla, junto a otros motivos con más contraste. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones. Comparar los avisos de extensión de las puntas.
+
+NAV-05 — Estrellas de fondo
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4, fondos de pequeñas estrellas y puntos; el motivo navideño central de cada casilla es claramente más grande. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; ninguna estrella de fondo se convierte en corte.
+
+NAV-06 — Dos partes navideñas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4, composición de un adorno principal y un accesorio separado, como caja y lazo, campana y acebo, gorro y pompón. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos completos; los accesorios no son casillas adicionales.
+
+NAV-07 — Sombra sobre la cuarta fila
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4, vista cenital y sombra horizontal suave en la parte inferior. Todas las impresiones de la cuarta fila son visibles y completas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. La sombra no cambia el recuento ni crea una división nueva.
+
+NAV-08 — Última fila recortada
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4 en el diseño, tres filas completas y solo la parte superior de la cuarta visible porque queda fuera del encuadre inferior. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 18 composiciones completas. No exportar fragmentos como cortes completos.
+
+NAV-09 — Nuevo formato y contraste [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 5 × 4, motivos de invierno de acuarela sobre casillas azul noche y marfil, vistas con una perspectiva leve. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 composiciones. Revisar el resultado en los tonos oscuros y claros.
+
+NAV-10 — Franjas con fase dudosa [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Motivos navideños originales impresos en algodón: árboles, regalos, copos, gorros, campanas o coronas, sin marcas comerciales. 6 × 4, finas franjas blancas entre casillas pastel de pinos y adornos, con el borde superior a menor distancia del margen que el inferior. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 centros en sus casillas. Comparar fase y polos superior e inferior en las repeticiones.
+
+=== CORAZONES (COR) ===
+
+COR-01 — Control
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4. Corazones pequeños completos en casillas con fondos pastel distintos y divisiones impresas rectas. Márgenes equilibrados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Revisar el centro de cada casilla y ausencia de intrusiones a un tamaño viable.
+
+COR-02 — Cruces hacia arriba
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4. Las casillas de una fila son visiblemente más bajas que las de las otras filas. Sus corazones están completos y cerca del borde superior. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Ante un tamaño excesivo, el aviso debe identificar el cruce superior sin mover el centro.
+
+COR-03 — Quinta fila parcial
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. Diseño de 6 × 5. Cuatro filas completas y quinta cortada a media altura por el encuadre inferior, con solo las partes superiores de seis corazones visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones completas. No exportar los seis fragmentos como corazones completos.
+
+COR-04 — Quinta fila real
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 5 totalmente visible con 30 corazones pequeños completos en sus casillas claramente delimitadas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 30 composiciones si cada casilla se ve completa. Comprobar aparte la cabida del corte.
+
+COR-05 — Corazones a ras del borde
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4, corazones florales que llegan cerca de cada borde de su casilla, con motivos pequeños y grandes alternados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Puede haber pérdida de detalles al reducir la medida aunque el contorno siga dentro de la casilla.
+
+COR-06 — Marco superior tenue
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4, primera línea horizontal oscura muy fina, marcos interiores claros y margen crema desigual. Los corazones están centrados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 y primera fila dentro de sus fondos; la primera división debe leerse sobre la impresión.
+
+COR-07 — Margen inferior ancho
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4. Dobladillo inferior liso, sin estampado, del ancho de media a una fila. La última línea impresa se distingue del borde de la tela. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. La franja no se interpreta como otra fila ni atrae los centros.
+
+COR-08 — Giro del panel
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 6 × 4. Casillas cuadradas de corazones de patchwork con tela girada unos grados sobre la cama, toda visible y con sombras suaves realistas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Comparar el centro y los cuatro lados de cortes horizontales a tamaños que quepan.
+
+COR-09 — Cuadrícula diferente [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 7 × 3 con corazones de flores oscuras sobre fondos de cuadritos, franjas y puntos de tonos suaves. Fila superior muy clara. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21. No confundir filas claras con tela vacía.
+
+COR-10 — Borde lateral y fila distinta [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Corazones textiles impresos en algodón, cada uno con un diseño floral o geométrico interior, sin letras. 5 × 4. Corazones con bordes asimétricos, una segunda fila más estrecha en altura y franjas blancas finas entre casillas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 y aviso si algún cuadrado fijo no puede caber.
+
+=== GATOS (GAT) ===
+
+GAT-01 — Control limpio
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4. Gatos pequeños centrados en casillas completas. Fondos lisos alternos arena, melocotón, lavanda y verde agua, con bordes impresos visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24, centrados y sin avisos de cruce al usar un tamaño que quepa.
+
+GAT-02 — Colas onduladas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4. Gatos descentrados; sus colas largas se curvan dentro de la casilla y algunas llegan cerca del borde inferior. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Comprobar por separado la cola fuera del corte y el cruce del borde impreso.
+
+GAT-03 — Gatos blancos
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4 con gatos muy pálidos sobre perla y beige, bordes claros y orejas apenas más oscuras que su fondo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 gatos, incluidos los de menor contraste. Registrar dudas de contorno sin contarlas como cruces.
+
+GAT-04 — Columna estrecha
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4. Una columna algo más estrecha contiene cuatro casillas y un gato completo en cada una. Las otras cinco columnas mantienen anchuras similares. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 gatos. La columna estrecha debe producir aviso con tamaño excesivo sin descentrarse.
+
+GAT-05 — Patrones altos
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4, fondos de rayas y huellas pequeñas que llegan al borde. Un gato principal de rasgos claros por casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; huellas y rayas no generan gatos extra ni falsos límites.
+
+GAT-06 — Dos accesorios por gato
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 4 × 3. Cada gato tiene un ovillo y un pez pequeño impresos separados, todos en su propia casilla y cerca del motivo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 12 composiciones. Los accesorios deben quedar dentro del mismo corte.
+
+GAT-07 — Casilla vacía
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4, deja completamente sin gato la casilla de segunda fila y última columna. Mantén su color de fondo igual al de sus vecinas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 23 composiciones. La casilla vacía no se rellena.
+
+GAT-08 — Sombra en el límite
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 6 × 4 de gatos completos. Sombra diagonal que oscurece parcialmente tres columnas, con marcos y contornos legibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Comprobar discrepancias de conteo o cruces solo si se ven en la imagen.
+
+GAT-09 — Fondos contiguos nuevos [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 5 × 4, gatos en poses distintas y fondos de motivos ornamentales de escala pequeña. Vista ligeramente oblicua con todos los bordes visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20 grupos. Medir centros y esquinas sobre el fondo asignado.
+
+GAT-10 — Gatos en fondo continuo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Gatos ilustrados e impresos en algodón, con orejas, patas y colas legibles. Fondos textiles variados y sin texto. 7 × 3, gatos pequeños en tonos cálidos y fríos sobre crema sin marcos, con espacio regular entre ellos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 grupos. Un aviso de recorte del arte no debe confundirse con cruce de división impresa.
+
+=== TRANSPORTES (TRA) ===
+
+TRA-01 — Control de casillas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 4. Vehículos distintos, uno por casilla, fondos alternos bien diferenciados de estrellas, lunares y rayas. Perímetro visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 cortes; contrastar posición y cabida.
+
+TRA-02 — Fondo azul continuo
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 4 de vehículos completos sobre fondo azul común de estrellas pequeñas, sin líneas impresas que separen las posiciones. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 ilustraciones; el patrón no crea cortes. Las divisiones no impresas no se dan por medidas.
+
+TRA-03 — Divisiones discontinuas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 4 sobre fondo común celeste, con líneas punteadas finas entre casillas y vehículos centrados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Los tramos ausentes de una línea no deben cambiar el número de casillas.
+
+TRA-04 — Fila inferior parcial
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. Diseño de 6 × 5. Cuatro filas completas y la quinta cortada por el borde inferior de la foto, con elementos truncados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 composiciones completas y ninguna salida de un fragmento incompleto como corte final.
+
+TRA-05 — Quinta fila completa
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 5, 30 casillas y vehículos visibles por completo, con margen inferior claro tras el estampado. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 30 composiciones. El recuento no sustituye la comprobación de la cama y el tamaño.
+
+TRA-06 — Vehículo de dos casillas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. Malla impresa 5 × 4. En dos casillas vecinas de una fila hay un solo tren largo y conectado que atraviesa su división; las otras 18 tienen un vehículo cada una. No hay otro dibujo junto al tren. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 19 composiciones. El tren permanece entero y avisa si el cuadrado solicitado no lo contiene.
+
+TRA-07 — Sombras irregulares
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 4 con fondo azul de estrellas. Dos bandas de sombra oblicuas alteran la luz, con vehículos y divisiones todavía visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. No pueden aparecer dibujos nuevos ni perderse en las zonas oscuras.
+
+TRA-08 — Vehículos cerca del borde
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 6 × 4, casillas pegadas de anchuras ligeramente distintas; algunos vehículos quedan cerca de los límites de la primera o la última fila. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Si un corte invade una casilla vecina, comprobar que sale avisado y conserva su tamaño.
+
+TRA-09 — Formato estrecho nuevo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 7 × 3. Una bici, triciclo o patinete en cada casilla sobre crema, radios y manillares finos, perspectiva pequeña. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21 y conservación de los trazos finos.
+
+TRA-10 — Panel corto nuevo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Vehículos de juguete ilustrados en algodón: trenes, aviones, coches, barcos, camiones y bicicletas. Todos pertenecen a un grupo salvo las excepciones descritas. 4 × 3, locomotoras y barcos de alto contraste sobre fondos alternos sutiles; margen inferior sin imprimir y un lateral parcialmente en sombra. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 12 grupos. Comprobar el límite inferior y que no se pierde la columna sombreada.
+
+=== ANIMALES (ANI) ===
+
+ANI-01 — Control genérico
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4. Animales completos centrados, marcos impresos finos y fondos claros. Luz uniforme y tela entera visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos; control de la familia que Eugenio vio bien.
+
+ANI-02 — Primera fila y marco fino
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4. La primera línea del marco impreso es oscura, muy fina y queda cerca del dobladillo superior; abajo hay más margen. Animales centrados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Comprobar en píxeles el borde real superior y el centro de la primera fila.
+
+ANI-03 — Beige y perspectiva
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4. Animales en tonos beige pálido, disposición ligeramente trapezoidal. La parte superior queda más estrecha pero toda impresa y visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24, incluidas las casillas de arriba; comparar centro y los cuatro lados.
+
+ANI-04 — Sombra diagonal
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4. Animales en acuarela clara; una sombra suave cubre fragmentos de varias filas sin ocultar sus dibujos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos y ninguna fila inventada por la sombra.
+
+ANI-05 — Animales y dos detalles
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 4 × 3. Cada animal tiene dos elementos impresos separados a su lado, como fruta, hierba, ramas u hojas, todos completos y dentro de su propia casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 12 grupos. Los dos detalles conservan el mismo propietario.
+
+ANI-06 — Siluetas descentradas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 5 × 3. Algunos animales ocupan la derecha de la casilla; otros tienen cuerpo muy alto a la izquierda. Divisiones cuadradas visibles. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 15. El centro de la casilla es estable y el recorte de arte se revisa aparte.
+
+ANI-07 — Un animal muy tenue y un hueco
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4. Una oveja muy pálida completa ocupa la primera casilla. La última casilla conserva su fondo pero está completamente vacía. Las demás tienen un animal nítido. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 23; recuperar la oveja y dejar vacío el hueco.
+
+ANI-08 — Margen inferior liso
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4 de animales centrados, marcos delgados y margen de tela sin impresión debajo de la última fila, del ancho de una casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Mantener la última fila y no inventar una quinta.
+
+ANI-09 — Nuevo grupo pastel [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 5 × 4 de animales de bosque muy pálidos sobre fondos alternos. La cámara muestra la tela desde otro ángulo suave, con todo el perímetro a la vista. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20. Revisar primeras y últimas columnas.
+
+ANI-10 — Corte de encuadre nuevo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Animales de granja y bosque en ilustración clásica o acuarela sobre algodón. Esta serie modela el panel genérico de Animales, con estética distinta del panel infantil Cheeky. 6 × 4 de animales con casillas cuadradas. La imagen muestra completas las tres primeras filas, con la cuarta cortada a media altura abajo. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 18 composiciones completas y las filas completas conservan su posición.
+
+=== CHEEKY ANIMALS (CHE) ===
+
+CHE-01 — Control de contraste alto
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Animales infantiles centrados y completos en casillas muy diferenciadas de lunares, rayas y estrellas. Separaciones rectas. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 y referencia visual clara de cada sección.
+
+CHE-02 — Cuadros pegados
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Los fondos se tocan sin franja blanca. Patrones muy diferentes, un animal completo en cada casilla. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Cualquier cruce hacia la vecina se comprueba contra la transición impresa real.
+
+CHE-03 — Última fila más baja
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. La última fila es aproximadamente un 15 % más baja. Sus 6 animales son pequeños y completos; marco final visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. A tamaño grande, revisar avisos de la fila inferior, sin reclasificarla como ausente.
+
+CHE-04 — Una columna más estrecha
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Una columna central es claramente más estrecha que las vecinas, con cuatro animales completos y pequeños. El resto mantiene casillas regulares. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Si un contorno fijo no cabe debe avisar, conservando centro y tamaño.
+
+CHE-05 — Animales grandes en esquinas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Animales con orejas y colas cerca de las esquinas en cuatro casillas extremas, siempre dentro de su fondo impreso. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Distinguir detalle de dibujo recortado de cruce del borde.
+
+CHE-06 — Patrones de direcciones opuestas
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Rayas verticales, horizontales, zigzags y estrellas distribuidos alternadamente. Las divisiones de casilla son cambios de patrón, sin marcos blancos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Ninguna raya o estrella produce detecciones propias.
+
+CHE-07 — Tela ligeramente girada
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Toda la tela visible y girada ligeramente en la cama; algunos cuadraditos llevan patrones más suaves que otros. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Verificar los bordes cruzados con el tamaño elegido y el centro con la casilla.
+
+CHE-08 — Sombra en última fila
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Sombra diagonal tenue que cruza la última fila y sus límites. Aún se ven los seis animales y sus fondos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 y revisión de los seis cortes inferiores por separado.
+
+CHE-09 — Malla de colores nueva [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 5 × 4. Animales cómicos en fondos saturados variados, casillas pegadas y margen irregular. Luz lateral suave. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 20; cada casilla única, sin solapes no avisados.
+
+CHE-10 — Casilla faltante y borde estrecho [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil de animales de caricatura originales, caras expresivas y contornos nítidos, impreso en algodón. Fondos estampados variados sin personajes con marca. 6 × 4. Casilla inferior derecha vacía con patrón visible, otras 23 con un animal completo. La última columna es un poco más estrecha. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 23 composiciones y aviso si la medida de un corte vecino excede su casilla.
+
+=== GRISES (GRI) ===
+
+GRI-01 — Control de grises
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. Motivos centrados pequeños con fondos grises de patrón diferente. Franjas discretas y espacio alrededor de cada dibujo. Todo el perímetro visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 cortes centrados. Comparar caso a caso el encaje a 4 y 5 pulgadas con la escala disponible.
+
+GRI-02 — Séptima columna fantasma
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. A la derecha del límite impreso nítido hay margen liso y cama visible. Cuatro manchas grises pequeñas y separadas del estampado caen sobre el lateral. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Las cuatro marcas laterales no producen otra columna ni cortes.
+
+GRI-03 — Séptima columna real
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 7 × 4. Las siete columnas y sus 28 motivos son visibles, incluida la derecha, con casillas impresas y separación clara de la cama. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 28 composiciones completas. Una columna real no se pierde por estar a la derecha.
+
+GRI-04 — Luminancia casi igual
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4, casillas pegadas, alternando lunares gris perla, rayas beige y ondas salvia muy claras. Sin líneas oscuras entre fondos. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; detectar cambios de textura y tono a lo largo de ambos ejes.
+
+GRI-05 — Final inferior visible
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. Margen inferior de tela gris sin imprimir tan alto como media fila. Cierre impreso discreto pero visible a lo ancho. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. El límite inferior queda donde acaba el estampado.
+
+GRI-06 — Franjas claras, bordes irregulares
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. Franjas blancas impresas, con ligeras ondulaciones y anchuras variables. Los dibujos se mantienen pequeños y centrados. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24; las guías siguen las divisiones observables y no arrastran todos los centros a una separación media.
+
+GRI-07 — Dibujos pálidos con adornos
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4, con conejos, lunas y estrellas pálidas. En seis casillas, el motivo principal y un símbolo separado forman una unidad inequívoca. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 grupos. No contar símbolos secundarios como cortes independientes.
+
+GRI-08 — Condición de cámara
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. El paño aparece sobre una cama completa visible, con perspectiva suave y una sombra tenue en el lateral derecho. Ninguna fila está cortada. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24 posiciones. La referencia incompatible se detecta como tal; la colocación sobre máquina se mide aparte.
+
+GRI-09 — Panel denso nuevo [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 7 × 3, animales grises y estrellas muy pálidas en casillas pegadas sobre algodón beige, con espacio entre motivos justo pero visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 21. Comparar identidades y posición después de reducir una copia del mismo PNG.
+
+GRI-10 — Última fila con otros fondos [reserva]
+PROMPT
+Genera una sola imagen de prueba, en formato horizontal 3:2, como una fotografía realista de un único panel de algodón impreso sobre una cama láser negra de panal. Panel infantil en gris perla, crema, salvia apagado y beige, con animales, nubes, lunas y estrellas pequeñas. Aspecto parecido a la foto original de grises, con motivos originales. 6 × 4. Las tres primeras filas tienen alto contraste; la cuarta usa solo grises casi iguales y animales pequeños. Conserva la cuarta fila completa y un borde inferior visible. Las filas son horizontales y las columnas verticales. Muestra la trama real del algodón y deja los bordes del panel visibles salvo el recorte indicado. Entrega una imagen limpia, en PNG si está disponible, con resolución objetivo de 2340 × 1560 px. Evita mosaicos de fotos, ventanas de software, reglas, números de casilla, marcas de agua y líneas de corte añadidas. Conserva únicamente las letras impresas si se han pedido como parte del diseño.
+COMPROBAR — 24. Una propuesta 6 × 3 que deje fuera la fila pálida no es aceptable.

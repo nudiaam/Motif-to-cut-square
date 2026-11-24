@@ -25,6 +25,9 @@ def present_cut(detection,mapper=None):
     if impossible or (mapper and not square.is_valid(mapper.bed_width_in,mapper.bed_height_in)):
         return CutPresentation('IMPOSSIBLE',INVALID_COLOR,'The rectangle does not fit the machine bed')
     if mapper and detection.panel_boundary_reason(mapper):
+        if not detection.confirmed_panel_boundary_reason(mapper):
+            return CutPresentation('POSSIBLE CROSSING', REVIEW_COLOR,
+                                   'The cut edge is within the uncertainty of the measured guide.')
         return CutPresentation('SECTION CROSSING',REVIEW_COLOR,
             'The cut crosses its section boundary; its centre and requested size are retained')
     return CutPresentation('READY',READY_COLOR,'No measured section crossing detected')

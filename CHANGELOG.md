@@ -1,5 +1,67 @@
 # Change log
 
+## 0.14.5
+
+- Package the validated 0.14.4 detection, bed-reference and cut-review changes
+  for testing on original Epilog camera images with 5-inch cuts.
+
+## 0.14.4 - fabric detection (updated 2026-11-24)
+
+- Match a darker exposure of the empty bed when its honeycomb still aligns
+  across the frame. Show when the loaded reference has insufficient visual support.
+- Correct small column drift on unruled motifs when a straight axis better
+  covers the observed artwork. Label possible section crossings separately
+  from crossings that exceed the uncertainty of the measured guide.
+- Recover outer columns when each additional cell contains independently
+  detected artwork. Keep existing centres. Use measured printed rules to
+  resolve ambiguous layouts and systematically displaced colour anchors.
+- Flag incomplete automatic layouts for review before confirmation.
+
+- In the automatic colour partition, discard an estimated outer row when
+  a closing rule leads into a uniform fabric margin across the printed width.
+  Keep the existing coordinates of the retained rows. See the
+  [comparison on the original images](docs/FABRIC_VALIDATION_0_14_4.md).
+
+## 0.14.3 — fabric corpus verification (2026-11-23)
+
+- Compare the touching-panel correction with the prior routes across 66
+  inputs, including the exact customer performance photo and settings.
+- Record per-image cut counts, grid dimensions, warnings and SVG geometry
+  at 4 and 5 inches. See [the fabric audit](docs/FABRIC_VALIDATION_0_14_3.md).
+
+## 0.14.2 — touching pastel panels (2026-11-23)
+
+- Recover nearly straight printed sections from repeated changes across fabric
+  strips when a grid is missing, uncertain, or merges distinct printed cells.
+  Require agreement on both axes and two smoothing scales, with artwork inside
+  the detected sections. Preserve the requested cut size and source coordinates.
+- Flag an uncertain automatic grid next to the detection confirmation and point
+  to **Adjust panel grid** for printed sections.
+
+## 0.14.1 — local alignment and physical verification (2026-11-22)
+
+- Make **4 Export to Epilog** the final workflow step and keep **Save SVG…** in
+  the review panel. Validate the page size and orientation
+  reported by the Windows driver before sending the vector preview. The
+  36 × 24 inch preview matched all five reference squares and the 24 cuts of
+  the customer grey panel in local Dashboard testing.
+
+- Refine internal sections inferred from artwork spacing using sustained print
+  transitions on both axes, multiple strips and two smoothing scales. Preserve
+  shared corners, explicit guides, requested dimensions and unmeasured exteriors.
+- Repeat the local section check on original pixels for large camera images.
+  Retain a review note for section limits that remain estimates.
+- Show figure and cell counts separately; an equal count no longer claims that
+  zero cells need review. Identify automatically inferred grids as automatic.
+- Add **Save alignment check…** for the selected machine and export unit. Save
+  five reference squares, expected/measured coordinates and bilingual instructions
+  without changing the current image or cuts.
+- Verify the SVG's page, origin, formatted rectangle coordinates and all corners, including
+  serialized position/size errors. Increase numeric precision to twelve decimal
+  places. This verifies file geometry, not camera calibration or driver output.
+- Physical machine alignment and the newly reported flower-photo failure remain
+  unverified until the required measurements and original image are available.
+
 ## 0.13.4 — section boundaries, final-cut colours and Navigator (2026-11-16)
 
 Public release containing the changes below. Earlier candidate entries preserve

@@ -9,6 +9,7 @@ import numpy as np
 
 from .camera_panel import CameraPanel, _axis_choices, _measured_lines
 from .panel_grid import PanelGrid
+from .seam_grid import _axis_lines
 
 
 def _cloth_plane(image):
@@ -275,6 +276,59 @@ def _observed_frame_sequence(profile,perpendicular_pitch):
     return tuple(measured),.8,{'observed':(True,)*len(measured),'finite_frame_sequence':True}
 
 
+def _blank_colour_row(image, xs, ys, at_end):
+    """Confirm an extrapolated end row is bare cloth beyond a closing rule."""
+    # Read towards the bottom in both orientations. Examine the full printed
+    # width so that even a single faint motif can protect the whole row.
+    if not at_end:
+        image = image[::-1]
+        ys = [image.shape[0] - 1 - y for y in reversed(ys)]
+    pitch = ys[-1] - ys[-2]
+    radius = round(.12 * pitch)
+    start = max(0, round(ys[-2]) - radius - 2)
+    stop = min(image.shape[0], round(ys[-2]) + radius + 3)
+    left, right = max(0, round(xs[0])), min(image.shape[1], round(xs[-1]))
+    if stop - start < 5 or right - left < 20:
+        return None
+    strip = cv2.GaussianBlur(image[start:, left:right], (0, 0), 1.2)
+    window = strip[:stop - start].astype(np.int16)
+    steps = np.max(np.abs(window[4:] - window[:-4]), axis=2)
+    # A closing rule has a colour or luminance step across most of the sheet.
+    profile = np.percentile(steps, 20, axis=1)
+    peak = int(np.argmax(profile))
+    if profile[peak] < 15:
+        return None
+    border = start + peak + 2
+    # Exclude the rule itself and the interpolation rim of the cloth warp.
+    # A near-uniform *entire* strip is positive evidence of a blank hem.
+    hem = strip[peak + 7:-3]
+    if len(hem) < .70 * pitch:
+        return None
+    if np.ptp(hem, axis=(0, 1)).max() > 6:
+        # Woven cloth and a folded edge can vary in brightness. Require the
+        # vertical rules to end here, then inspect the whole width for print.
+        from .section_evidence import trim_unprinted_extensions
+        estimated = [{'estimated': []}, {'estimated': [len(ys) - 1]}]
+        _, closures = trim_unprinted_extensions(image, (xs, ys), estimated)
+        if not closures:
+            return None
+        pad = max(3, round(.08 * pitch))
+        interior = image[border + pad:-pad, left:right]
+        if len(interior) < .65 * pitch:
+            return None
+        smooth = cv2.GaussianBlur(interior, (0, 0), 2.5).astype(np.float32)
+        chroma = smooth - smooth.mean(axis=2, keepdims=True)
+        if np.ptp(chroma, axis=(0, 1)).max() > 8:
+            return None
+        spread = np.ptp(smooth, axis=(0, 1))
+        low, high = np.percentile(smooth, (10, 90), axis=(0, 1))
+        # Compare extremes with the normal variation of this same fabric.
+        # Sparse marks in a smooth margin must not be averaged away.
+        if np.any(spread > np.minimum(36, 6 + 3.5 * (high - low))):
+            return None
+    return border if at_end else image.shape[0] - 1 - border
+
+
 def infer_printed_partition(image):
     plane = _cloth_plane(image)
     if plane is None:
@@ -360,6 +414,15 @@ def infer_printed_partition(image):
                     'source_edge_truncation':used_truncation,
                     'closed_frame_extensions_removed':removed,
                     'axis_observations':[axis[1] for axis in combined]}
+        if mode == 'colour' and not used_truncation and len(ys) >= 5:
+            blank_rows = []
+            for at_end, edge, row in ((False, 0, 0), (True, len(ys)-1, len(ys)-2)):
+                if edge in combined[1][1]['estimated'] and not truncated[1][int(at_end)]:
+                    closing = _blank_colour_row(rectified, xs, ys, at_end)
+                    if closing is not None:
+                        blank_rows.append({'row': row, 'closing_border': closing})
+            if blank_rows:
+                evidence['blank_margin_rows'] = blank_rows
         spread = max(axis[1]['spread_px'] for axis in combined)
         uncertainty = max(3.5,spread)
         evidence['boundary_uncertainty_px'] = float(uncertainty)
@@ -369,6 +432,137 @@ def infer_printed_partition(image):
                            review_reasons=issues,
                            boundary_uncertainty_px=float(uncertainty)),inverse,evidence)
     return None
+
+
+def _finite_rules(profile):
+    """Read the actual positions of sustained rules, including uneven rows."""
+    indices = np.flatnonzero(profile > max(12., .48 * np.percentile(profile, 98.5)))
+    if not len(indices):
+        return None
+    bands = np.split(indices, np.flatnonzero(np.diff(indices) > 1) + 1)
+    # At the cloth rim the projection filter has a truncated support window.
+    lines = np.array([(band[0] + band[-1]) / 2 for band in bands
+                      if len(band) >= 3 or (len(band) == 2 and
+                      min(band[0], len(profile)-1-band[-1]) < .025 * len(profile))])
+    if len(lines) < 4:
+        return None
+    # Decorative hems often contain several close parallel rules. Use the
+    # innermost of these, but never remove an internal division.
+    gaps = np.diff(lines)
+    pitch = np.median(gaps[gaps >= .55 * np.percentile(gaps, 80)])
+    while len(lines) >= 4 and lines[1] - lines[0] < .45 * pitch:
+        lines = lines[1:]
+    while len(lines) >= 4 and lines[-1] - lines[-2] < .45 * pitch:
+        lines = lines[:-1]
+    gaps = np.diff(lines)
+    if (len(lines) < 4 or gaps.min() < .60 * pitch or gaps.max() > 1.48 * pitch
+            or lines[-1] - lines[0] < .70 * len(profile)):
+        return None
+    return lines
+
+
+def infer_ruled_partition(image):
+    plane = _cloth_plane(image)
+    if plane is None:
+        return None
+    view, inverse = plane
+    votes = []
+    for sigma in (.6, .85):
+        axes = [_finite_rules(p) for p in _profiles(view, 'frames', sigma)]
+        if any(axis is None for axis in axes):
+            return None
+        votes.append(axes)
+    lines = []
+    for a, b in zip(*votes):
+        if len(a) != len(b) or np.max(np.abs(a - b)) > 3:
+            return None
+        lines.append(tuple((a + b) / 2))
+    xs, ys = lines
+    aspect = np.median(np.diff(xs)) / np.median(np.diff(ys))
+    if not .60 <= aspect <= 1.75 or (len(xs)-1)*(len(ys)-1) > 150:
+        return None
+    return CameraPanel(view, PanelGrid(xs, ys, .93, 'printed', boundary_uncertainty_px=3.5),
+                       inverse, {'method': 'observed_frame_intersections', 'agreeing_scales': 2})
+
+
+def _measure_touching_divisions(lab):
+    votes = []
+    for sigma in (1.2, 2.2):
+        smooth = cv2.GaussianBlur(lab, (0, 0), sigma)
+        measurements = []
+        for axis in (1, 0):
+            along = np.swapaxes(smooth, 0, axis)
+            rim = max(1, round(along.shape[1] * .06))
+            strips = np.array_split(along[:, rim:-rim], 16, axis=1)
+            colours = np.stack([strip.mean(axis=1) for strip in strips], axis=1)
+            colours = cv2.GaussianBlur(colours, (1, 0), sigmaY=2, sigmaX=0)
+            # Normalise each strip against its local texture before combining
+            # them. A strong hem or one dark motif cannot set the whole vote.
+            change = np.linalg.norm(colours[12:] - colours[:-12], axis=2)
+            baseline = cv2.GaussianBlur(change, (1, 0), sigmaY=14, sigmaX=0)
+            peaks = np.maximum(0., change - .9 * baseline) / np.maximum(1.5, baseline)
+            profile = np.pad(np.sort(peaks, axis=1)[:, 3:-3].mean(axis=1), (6, 6))
+            suggested = _axis_lines(profile)
+            if suggested is None:
+                return None
+            radius = round(np.median(np.diff(suggested)) * .11)
+            measured = [_response_center(profile, np.arange(max(0, round(p) - radius),
+                         min(len(profile), round(p) + radius + 1)), 0., 1., .32)
+                        for p in suggested]
+            if any(reading is None for reading in measured):
+                return None
+            measurements.append(np.array([reading[0] for reading in measured]))
+        votes.append(measurements)
+
+    limits = []
+    for first, second in zip(*votes):
+        pitch = np.median(np.diff(first))
+        if len(first) != len(second) or max(abs(first - second)) > pitch * .04:
+            return None
+        measured = (first + second) / 2
+        if min(np.diff(measured)) < pitch * .82 or max(np.diff(measured)) > pitch * 1.18:
+            return None
+        limits.append(tuple(measured))
+    xs, ys = limits
+    aspect = np.median(np.diff(xs)) / np.median(np.diff(ys))
+    if not .70 <= aspect <= 1.45 or (len(xs) - 1) * (len(ys) - 1) > 150:
+        return None
+    return xs, ys
+
+
+def infer_straight_printed_partition(image):
+    """Find touching, nearly straight panels when the fabric outline is ambiguous."""
+    height, width = image.shape[:2]
+    if min(height, width) < 200:
+        return None
+    scale = min(2., 1000 / max(height, width))
+    size = (round(width * scale), round(height * scale))
+    small = cv2.resize(image, size, interpolation=cv2.INTER_AREA if scale < 1. else cv2.INTER_LINEAR)
+    lab = cv2.cvtColor(small, cv2.COLOR_BGR2LAB).astype(np.float32)
+    # Keep the source coordinates even when the analysis image is straightened.
+    to_source = np.diag([width / size[0], height / size[1], 1.])
+    evidence = {'method': 'sustained_printed_transitions', 'agreeing_scales': 2}
+    lines = _measure_touching_divisions(lab)
+    if lines is not None:
+        return CameraPanel(small, PanelGrid(*lines, .90, 'printed', boundary_uncertainty_px=5.),
+                           to_source, evidence)
+
+    # Try a small tilt in either direction. A rotated proposal still needs all
+    # the seam tests. Two competing proposals are ambiguous.
+    supported = []
+    for angle in (-1., 1.):
+        rotation = cv2.getRotationMatrix2D((size[0] / 2, size[1] / 2), angle, 1.)
+        view = cv2.warpAffine(lab, rotation, size, borderMode=cv2.BORDER_REFLECT_101)
+        lines = _measure_touching_divisions(view)
+        if lines is not None:
+            supported.append((angle, rotation, lines))
+    if len(supported) != 1:
+        return None
+    angle, rotation, lines = supported[0]
+    rectified = cv2.warpAffine(small, rotation, size, borderMode=cv2.BORDER_REFLECT_101)
+    inverse = np.vstack((cv2.invertAffineTransform(rotation), (0., 0., 1.)))
+    grid = PanelGrid(*lines, .90, 'printed', boundary_uncertainty_px=5.)
+    return CameraPanel(rectified, grid, to_source @ inverse, {**evidence, 'analysis_rotation_degrees': angle})
 
 
 def include_faint_ink(image, box, core_bounds=None):

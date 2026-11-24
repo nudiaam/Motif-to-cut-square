@@ -42,7 +42,9 @@ from app.demo.demo_image import create_demo_image
 from app.config.bed_references import BedReferences
 from app.diagnostics_log import get_logger
 from app.export.debug_exporter import export_debug_json, export_detection_bundle
-from app.export.svg_exporter import SVGExporter
+from app.export.alignment_check import export_alignment_check
+from app.export.epilog_dashboard import send_to_dashboard
+from app.export.svg_exporter import SVGExporter, cuts_for_output
 from app.export.verifier import verify_export_geometry
 from app.geometry.coordinate_mapper import CoordinateMapper
 from app.geometry.units import LengthUnit
@@ -179,6 +181,8 @@ class MainWindow(QMainWindow):
         self._connect_signals()
         self.panel.load_bed_reference_button.clicked.connect(self.load_bed_reference)
         self.panel.remove_bed_reference_button.clicked.connect(self.remove_bed_reference)
+        self.panel.export_alignment_button.clicked.connect(self.save_alignment_check)
+        self.panel.save_svg_button.clicked.connect(self.export_svg)
         self.panel.detection_report_button.clicked.connect(self.save_detection_report)
         self.panel.detection_bundle_button.clicked.connect(self.save_diagnostic_package)
         self._load_machine_reference()
@@ -381,9 +385,12 @@ class MainWindow(QMainWindow):
         )
         layout.addWidget(self.workflow_review_button, 1)
 
-        self.workflow_export_button = QPushButton("4  Export SVG")
+        self.workflow_export_button = QPushButton("4  Export to Epilog")
         self.workflow_export_button.setObjectName("reviewAction")
-        self.workflow_export_button.clicked.connect(self.export_svg)
+        self.workflow_export_button.setToolTip(
+            "Open the reviewed cuts in Epilog Dashboard at the selected bed size."
+        )
+        self.workflow_export_button.clicked.connect(self.open_in_epilog_dashboard)
         layout.addWidget(self.workflow_export_button, 1)
 
         self.add_center_button = QToolButton()
@@ -924,10 +931,11 @@ class MainWindow(QMainWindow):
             if self.panel_grid is not None
             else f"Detected {len(self.detections)} figures — {valid} ready cuts"
         )
-        self.statusBar().showMessage(
-            f"{detection_summary} — check the result before continuing",
-            7000,
-        )
+        if diagnostics.get('layout_needs_review'):
+            detection_summary = f"Review detection - check the {len(self.detections)} proposed cuts for missing or misplaced figures"
+        else:
+            detection_summary += " - check the result before continuing"
+        self.statusBar().showMessage(detection_summary, 7000)
 
     def _start_detection_worker(self):
         settings = self.panel.detector_settings(self.mapper)
@@ -1518,6 +1526,73 @@ class MainWindow(QMainWindow):
             10000,
         )
 
+    def save_alignment_check(self) -> None:
+        suggested = Path.cwd() / f"lalikul_alignment_{datetime.now():%Y%m%d_%H%M%S}.svg"
+        filename, _ = QFileDialog.getSaveFileName(
+            self, "Save alignment check", str(suggested),
+            "SVG files (*.svg)"
+        )
+        if not filename:
+            return
+        path = Path(filename).with_suffix('.svg')
+        try:
+            result = export_alignment_check(path, self.current_machine.bed_width_in,
+                                            self.current_machine.bed_height_in,
+                                            self.panel.export_unit())
+        except (OSError, ValueError) as exc:
+            QMessageBox.critical(self, "Alignment check failed", str(exc))
+            return
+        QMessageBox.information(
+            self, "Alignment check saved",
+            f"SVG: {result.svg_path}\nMeasurements: {result.measurements_path}\n"
+            f"Instructions: {result.instructions_path}\n\n"
+            "Import through the same workflow as your cuts. Compare all five square centres "
+            "and dimensions with the bed. Record actual measurements in the sheet.\n\n"
+            "This check does not change camera calibration or your current cuts."
+        )
+
+    def _confirm_output(self, exported: int, warnings: int) -> bool:
+        if exported == 0:
+            QMessageBox.warning(
+                self,
+                "No cuts selected",
+                "Check at least one cut inside the bed.",
+            )
+            return False
+        if warnings:
+            answer = QMessageBox.warning(
+                self,
+                "Some cuts have warnings",
+                f"The output includes {exported} checked cuts. "
+                f"{warnings} require review. "
+                "The cut details show the reasons. Continue?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
+                QMessageBox.StandardButton.Cancel,
+            )
+            return answer == QMessageBox.StandardButton.Yes
+        return True
+
+    def open_in_epilog_dashboard(self) -> None:
+        if self.mapper is None or not self._detection_review_complete:
+            self.show_preflight()
+            return
+        self._update_output_summary()
+        cuts = cuts_for_output(self.mapper, self.detections)
+        if not self._confirm_output(len(cuts), self._cut_warning_count()):
+            return
+        width, height = self.mapper.bed_width_in, self.mapper.bed_height_in
+        title = f"Lalikul {datetime.now():%Y-%m-%d %H-%M-%S} - {width:g}x{height:g} in"
+        try:
+            send_to_dashboard(title, width, height, [cut.square_inches for cut in cuts])
+        except (OSError, ValueError) as exc:
+            QMessageBox.critical(self, "Could not open Epilog Dashboard preview", str(exc))
+            return
+        self._set_workflow_phase("export")
+        self.statusBar().showMessage(
+            f"Queued {len(cuts)} vector cuts for Epilog Dashboard on a {width:g} × {height:g} in page.",
+            10000,
+        )
+
     def export_svg(self) -> None:
         if self.mapper is None:
             self._request_image()
@@ -1526,27 +1601,9 @@ class MainWindow(QMainWindow):
             self.show_preflight()
             return
         self._update_output_summary()
-        exported = sum(item.enabled for item in self.detections)
-        warnings = self._cut_warning_count()
-        if exported == 0:
-            QMessageBox.warning(
-                self,
-                "Nothing to export",
-                "No cut is currently checked. Select at least one cut to export.",
-            )
+        cuts = cuts_for_output(self.mapper, self.detections)
+        if not self._confirm_output(len(cuts), self._cut_warning_count()):
             return
-        if warnings:
-            answer = QMessageBox.warning(
-                self,
-                "Some cuts have warnings",
-                f"All {exported} checked cuts will be exported, but {warnings} "
-                "cross their section boundary or have impossible rectangle geometry. "
-                "The cut details show the reasons. Continue?",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
-                QMessageBox.StandardButton.Cancel,
-            )
-            if answer != QMessageBox.StandardButton.Yes:
-                return
         export_unit = self.panel.export_unit()
         if self.panel.export_uses_override() and export_unit != self.working_unit:
             answer = QMessageBox.warning(
@@ -1596,13 +1653,12 @@ class MainWindow(QMainWindow):
         details = f"SVG saved with {result.rectangle_count} cuts:\n{result.path}"
         if json_path is not None:
             details += f"\n\nDebug JSON:\n{json_path}"
-        QMessageBox.information(self, "Export complete", details)
-        self._set_workflow_phase("export")
         self.statusBar().showMessage(
             f"Exported {result.rectangle_count} cuts in {result.unit.value} to "
             f"{result.path.name}",
             7000,
         )
+        QMessageBox.information(self, "Export complete", details)
 
     def change_machine(self, machine_id: str) -> None:
         profile = next(
@@ -1838,7 +1894,7 @@ class MainWindow(QMainWindow):
             return f"Centered · {collision_count} overlapping cuts still need resolution"
         if invalid_geometry_count:
             return f"Centered · Review {invalid_geometry_count} clipped or out-of-bed cuts"
-        return "Review the output summary · Export SVG when ready"
+        return "Review the output summary · Export to Epilog when ready"
 
     def _update_review_controls(self) -> None:
         collision_count = sum(
@@ -1864,6 +1920,7 @@ class MainWindow(QMainWindow):
         self.workflow_export_button.setEnabled(
             self._preflight_complete and ready_count > 0
         )
+        self.panel.save_svg_button.setEnabled(self.workflow_export_button.isEnabled())
         self.add_action.setEnabled(
             has_image and self._workflow_phase == "review"
         )
@@ -1893,7 +1950,9 @@ class MainWindow(QMainWindow):
             else "Center drawings"
         )
         self.panel.set_detection_review_state(
-            has_detections, self._detection_review_complete, has_image=has_image
+            has_detections, self._detection_review_complete, has_image=has_image,
+            uncertain_grid=bool(self.detection_diagnostics.get('layout_needs_review') or
+                                (self.logical_layout.columns and not self.logical_layout.reliable)),
         )
         self.review_guidance.setText(self._review_guidance_text(
             has_image=has_image, has_detections=has_detections,
@@ -1946,7 +2005,8 @@ class MainWindow(QMainWindow):
         )
         self._set_workflow_state(
             self.workflow_export_button,
-            "active" if self._preflight_complete else "locked",
+            "complete" if self._workflow_phase == "export"
+            else "active" if self._preflight_complete else "locked",
         )
         self._set_workflow_state(
             self.center_cuts_button,

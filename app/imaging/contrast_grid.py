@@ -42,6 +42,40 @@ def _shared_background(lab):
     return background,noise
 
 
+def _align_loose_motifs(layout, regions):
+    """Prefer a straight axis when it covers the widest motif more tightly."""
+    origin, column, row = map(np.array, (layout.origin_px, layout.column_vector_px,
+                                          layout.row_vector_px))
+    matches = layout.matches
+    if (min(layout.columns, layout.rows) < 3 or len(matches) != layout.columns * layout.rows
+            or any(m.status != 'matched' for m in matches)):
+        return origin, column, row
+    ordered = sorted(matches, key=lambda m: (m.row, m.column))
+    boxes = np.asarray([regions[m.detection_id].bounding_box_px for m in ordered])
+    boxes = boxes.reshape(layout.rows, layout.columns, 4)
+    for axis, (along, across) in enumerate(((column, row), (row, column))):
+        tracks = boxes if axis == 0 else boxes.transpose(1, 0, 2)
+        step = np.arange(tracks.shape[0])[:, None]
+        track = np.arange(tracks.shape[1])
+        drift_fraction = abs(across[axis] * np.ptp(step) / along[axis])
+        if not .01 <= drift_fraction <= .06:
+            continue
+        low = tracks[..., axis] - track * along[axis]
+        high = low + tracks[..., axis+2]
+        middle = (low + high) / 2
+        shifts = middle[-1] - middle[0]
+        # Coherent displacement across tracks is evidence of a genuinely tilted print.
+        if min(shifts) >= 0 or max(shifts) <= 0:
+            continue
+        old_centres = origin[axis] + step * across[axis]
+        old_radius = max(np.max(old_centres-low), np.max(high-old_centres))
+        radius = (high.max()-low.min()) / 2
+        if radius + .5 < old_radius and 2*radius < abs(along[axis]):
+            origin[axis] = (high.max()+low.min()) / 2
+            across[axis] = 0.
+    return origin, column, row
+
+
 def infer_contrast_geometry(image, *, channel='dark'):
     h, w = image.shape[:2]
     if min(h,w) < 100:
@@ -126,9 +160,10 @@ def infer_contrast_geometry(image, *, channel='dark'):
     if best is None:
         return None
     _, layout, agreeing, regions = best
-    origin = tuple(v/scale for v in layout.origin_px)
-    column = tuple(v/scale for v in layout.column_vector_px)
-    row = tuple(v/scale for v in layout.row_vector_px)
+    axes = (layout.origin_px, layout.column_vector_px, layout.row_vector_px)
+    if shared is not None:
+        axes = _align_loose_motifs(layout, regions)
+    origin, column, row = (tuple(float(v)/scale for v in vector) for vector in axes)
     grid = PanelGrid(
         tuple(origin[0]+(c-.5)*column[0]+(layout.rows-1)*row[0]/2 for c in range(layout.columns+1)),
         tuple(origin[1]+(r-.5)*row[1]+(layout.columns-1)*column[1]/2 for r in range(layout.rows+1)),

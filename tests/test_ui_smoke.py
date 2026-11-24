@@ -20,6 +20,8 @@ from app.imaging.panel_grid import PanelGrid  # noqa: E402
 from app.imaging.detector import DetectionResult, MotifCandidate  # noqa: E402
 from tests.test_logical_layout import cut_fixture  # noqa: E402
 
+PASTEL_REPORT = Path(__file__).parents[1] / 'tmp/analysis-20261123-pastel/source.png'
+
 
 class UISmokeTests(unittest.TestCase):
     def test_empty_detection_can_open_create_and_retry_a_grid(self) -> None:
@@ -76,7 +78,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(window.panel.detection_list.selectedItems(), [])
 
         window.verify_export()
-        self.assertIn("Maximum round-trip error", window.panel.verification_label.text())
+        self.assertIn("SVG corner error", window.panel.verification_label.text())
 
         first_id = window.detections[0].id
         original_region = window.detections[0].cut_region_px
@@ -230,6 +232,51 @@ class UISmokeTests(unittest.TestCase):
                 )
         finally:
             window.close()
+
+    @unittest.skipUnless(PASTEL_REPORT.exists(), 'Local pastel panel original is not installed')
+    def test_touching_pastel_report_keeps_one_cut_per_printed_cell(self) -> None:
+        import cv2
+        from app.export.svg_exporter import SVGExporter, SVG_NAMESPACE
+
+        image = cv2.imread(str(PASTEL_REPORT))
+        height, width = image.shape[:2]
+        window = MainWindow()
+        self.addCleanup(window.close)
+        # Independent readings from the printed image, in source pixels.
+        xs = (125, 350, 554, 761, 973, 1193, 1417)
+        ys = (73, 294, 510, 725, 941)
+        cells = {(col, row) for row in range(4) for col in range(6)}
+        results = []
+        for scale, angle in ((1., 0.), (1., 0.), (.5, 0.), (1., 1.)):
+            transform = cv2.getRotationMatrix2D((width/2, height/2), angle, 1.)
+            source = image
+            if scale != 1.:
+                source = cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+            if angle:
+                source = cv2.warpAffine(source, transform, (width, height), borderMode=cv2.BORDER_REFLECT)
+            window._load_image(source, 'reported touching pastel sections')
+            window.change_cut_size(4., 4.)
+            window.detect_motifs()
+            self.assertEqual((window.logical_layout.columns, window.logical_layout.rows), (6, 4))
+            self.assertTrue(window.logical_layout.reliable)
+            self.assertEqual(len(window.detections), 24)
+            self.assertEqual({cut.layout_cell for cut in window.detections}, cells)
+            self.assertEqual(window._cut_warning_count(), 0)
+            for cut in window.detections:
+                col, row = cut.layout_cell
+                source_centre = ((xs[col]+xs[col+1])/2, (ys[row]+ys[row+1])/2, 1.)
+                expected = (transform @ source_centre) * scale
+                np.testing.assert_allclose(cut.center_px, expected, atol=10. * scale)
+                self.assertFalse(cut.overlaps_cut)
+            results.append({cut.layout_cell: cut.center_px for cut in window.detections})
+        self.assertEqual(results[0], results[1])
+        window.confirm_detection()
+        svg = SVGExporter().build_tree(window.mapper, window.detections)
+        outlines = svg.findall(f'{{{SVG_NAMESPACE}}}rect')
+        self.assertEqual(len(outlines), 24)
+        self.assertTrue(all((rect.get('width'), rect.get('height')) == ('4', '4') for rect in outlines))
+        window.change_cut_size(5., 5.)
+        self.assertGreater(window._cut_warning_count(), 0)
 
     def test_bed_reference_does_not_turn_an_empty_row_into_cuts(self):
         import cv2
@@ -706,7 +753,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertTrue(window.center_cuts_button.isEnabled())
         window.center_cuts()
         self.assertFalse(window.center_cuts_button.isEnabled())
-        self.assertIn("Export SVG when ready", window.review_guidance.text())
+        self.assertIn("Export to Epilog when ready", window.review_guidance.text())
         moved = window.detections[1]
         manual_position = window.mapper.inches_to_pixel(22.0, 15.0)
         window.move_detection(moved.id, *manual_position)
@@ -737,7 +784,7 @@ class UISmokeTests(unittest.TestCase):
         window.center_cuts_button.click()
         self.application.processEvents()
         self.assertFalse(any(item.overlaps_cut for item in window.detections))
-        self.assertIn("Export SVG when ready", window.review_guidance.text())
+        self.assertIn("Export to Epilog when ready", window.review_guidance.text())
 
         window.select_detection(window.detections[0].id)
         QTest.keyClick(window, Qt.Key.Key_Delete)
@@ -879,7 +926,7 @@ class UISmokeTests(unittest.TestCase):
         self.assertEqual(
             window.remove_detection_button.property("workflowState"), "neutral"
         )
-        self.assertIn("Export SVG when ready", window.review_guidance.text())
+        self.assertIn("Export to Epilog when ready", window.review_guidance.text())
         toolbar = window.findChild(DelayedHelpToolBar, "mainToolbar")
         assert toolbar is not None
         toolbar_texts = {action.text() for action in toolbar.actions()}
@@ -919,7 +966,7 @@ class UISmokeTests(unittest.TestCase):
                 "1  Prepare image",
                 "2  Detect + check",
                 "3  Review cuts",
-                "4  Export SVG",
+                "4  Export to Epilog",
             ],
         )
         window.close()
@@ -1134,12 +1181,16 @@ class UISmokeTests(unittest.TestCase):
         self.assertIn("Skipped (unchecked): 0", window.panel.verification_label.text())
         with TemporaryDirectory() as directory:
             path = Path(directory) / "cuts.svg"
-            with patch("app.ui.main_window.QFileDialog.getSaveFileName", return_value=(str(path), "SVG files (*.svg)")) as save, patch("app.ui.main_window.QMessageBox.information"), patch("app.ui.main_window.QMessageBox.warning") as warning:
-                window.workflow_export_button.click()
+            with (
+                patch("app.ui.main_window.QFileDialog.getSaveFileName", return_value=(str(path), "SVG files (*.svg)")) as save,
+                patch("app.ui.main_window.QMessageBox.information"),
+                patch("app.ui.main_window.QMessageBox.warning") as warning,
+            ):
+                window.panel.save_svg_button.click()
             save.assert_called_once()
             warning.assert_not_called()
             self.assertTrue(path.is_file())
-        self.assertEqual(window._workflow_phase, "export")
+        self.assertEqual(window._workflow_phase, "review")
 
     def test_manual_grid_dimensions_and_distribution_update_canvas(self) -> None:
         window = MainWindow()

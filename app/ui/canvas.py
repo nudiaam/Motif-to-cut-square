@@ -489,10 +489,9 @@ class BedCanvas(QWidget):
             painter.drawEllipse(center, 6.0 if selected else 3.5, 6.0 if selected else 3.5)
 
             painter.setFont(label_font)
-            label_text = (f"#{detection.id:02d} · Excluded" if not detection.enabled
-                          else f"#{detection.id:02d} · Impossible" if presentation.state=='IMPOSSIBLE'
-                          else f"#{detection.id:02d} · Section crossing" if presentation.state=='SECTION CROSSING'
-                          else f"#{detection.id:02d}")
+            label_text = f"#{detection.id:02d}"
+            if presentation.state != "READY":
+                label_text += " · " + presentation.state.capitalize()
             label_rect = QRectF(center.x() + 7, center.y() - 19,
                                 160 if ' · ' in label_text else 42, 18)
             painter.setPen(Qt.PenStyle.NoPen)

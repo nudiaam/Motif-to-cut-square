@@ -47,6 +47,17 @@ class BedReferenceTests(unittest.TestCase):
         other=cv2.resize(other,(self.reference.shape[1],self.reference.shape[0]))
         self.assertIsNone(locate_fabric(other,self.reference).mask)
 
+    def test_dark_exposure_recovers_only_the_cloth_on_the_registered_bed(self):
+        image = (self.reference.astype(np.float32) * .42).astype(np.uint8)
+        empty = locate_fabric(image, self.reference)
+        self.assertIsNotNone(empty.mask, empty.reason)
+        self.assertFalse(np.any(empty.mask))
+        image[90:390, 140:570] = (35, 60, 85)
+        cloth = locate_fabric(image, self.reference)
+        self.assertIsNotNone(cloth.mask, cloth.reason)
+        self.assertGreater(np.mean(cloth.mask[95:385, 145:565] > 0), .99)
+        self.assertFalse(np.any(cloth.mask[:75]))
+
     def test_small_camera_shift_can_be_registered(self):
         image=self.reference.copy()
         image[90:390,140:570]=15

@@ -8,6 +8,7 @@ import numpy as np
 from PySide6.QtWidgets import QApplication,QMessageBox,QFileDialog
 from app.models import Detection
 from app.geometry.coordinate_mapper import CoordinateMapper
+from app.geometry.cut_presentation import present_cut
 from app.geometry.review_summary import review_counts
 from app.imaging.detector import MotifDetector,MotifCandidate,DetectionResult,_scale_candidate,_consolidate_grid_candidates
 from app.imaging.panel_grid import PanelGrid
@@ -93,6 +94,7 @@ class ArtworkEvidenceTests(unittest.TestCase):
         self.assertIsNone(d.confirmed_panel_boundary_reason(mapper))
         self.assertIsNone(d.cut_warning_reason(mapper))
         self.assertIn('Possible section crossing',d.panel_boundary_review_reason(mapper))
+        self.assertEqual(present_cut(d,mapper).state, 'POSSIBLE CROSSING')
         self.assertEqual(cut_status_color(d,mapper=mapper),REVIEW_COLOR)
         # Explicitly confirmed guides have no error band. The identical
         # geometry is then a measured crossing, still checked and exportable.
@@ -100,6 +102,7 @@ class ArtworkEvidenceTests(unittest.TestCase):
         d.cut_region_uncertainty_px=0.;d.recalculate_for_mapper(mapper)
         self.assertIn('panel boundary',d.cut_warning_reason(mapper))
         self.assertEqual(before,ET.tostring(SVGExporter().build_tree(mapper,[d]).getroot()))
+        self.assertEqual(present_cut(d,mapper).state, 'SECTION CROSSING')
 
     def test_section_crossing_beyond_the_measured_error_remains_a_conflict(self):
         mapper,d=self.scene();d.cut_region_uncertainty_px=3.
